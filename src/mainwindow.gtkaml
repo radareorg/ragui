@@ -1,8 +1,7 @@
 <!-- ragui - copyright(C) 2009 - pancake<nopcode.org> -->
 
 <Window xmlns="Gtk"
-        xmlns:GLib="GLib"
-        xmlns:class="http://gtkaml.org/0.2"
+        xmlns:GLib="GLib" xmlns:class="http://gtkaml.org/0.2"
         class:name="Ragui.MainWindow"
         title="ragui">
 
@@ -39,12 +38,14 @@
       </submenu>
     </MenuItem>
   </MenuBar>
+
   <Toolbar expand="false">
     <Button use-stock="true" label="gtk-new" />
     <Button use-stock="true" label="gtk-open" />
   </Toolbar>
-  <HBox border-width="3" expand="true"> <!-- hpaned -->
-   <VBox border-width="3" expand="false">
+
+  <HPaned border-width="3" expand="true">
+   <VBox border-width="3">
      <ComboBox expand="false">
      </ComboBox>
      <ScrolledWindow can-focus="true"
@@ -54,29 +55,44 @@
        </TreeView>
      </ScrolledWindow>
    </VBox>
-   <VBox expand="true">
-     <Notebook tab-vborder="1">
-       <Label label="code-foo">
-         <tab-label>
-           <Label label="code" />
-         </tab-label>
-       </Label>
-       <Label label="data-foo">
-         <tab-label>
-           <Label label="hexdump" />
-         </tab-label>
-       </Label>
-     </Notebook>
-     <ScrolledWindow can-focus="true" hscrollbar-policy="{PolicyType.AUTOMATIC}" expand="false">
-       <TextView can-focus="true" editable="false" class:private="console" />
-     </ScrolledWindow>
-     <HBox expand="false">
-       <Entry expand="true" />
-       <Button label=">" expand="false" />
-     </HBox>
-   </VBox>
-  </HBox> <!-- hpaned -->
-  <Statusbar expand="false" />
+
+   <VPaned add2="true">
+     <VBox>
+       <!-- this is probably wrong -->
+       <Notebook expand="true" tab-vborder="1">
+         <Label label="code-foo">
+           <tab-label>
+             <Label label="code" />
+           </tab-label>
+         </Label>
+         <Label label="data-foo">
+           <tab-label>
+             <Label label="hexdump" />
+           </tab-label>
+         </Label>
+         <Label label="graph-foo">
+           <tab-label>
+             <Label label="graph" />
+           </tab-label>
+         </Label>
+       </Notebook>
+     </VBox>
+
+     <VBox add2="true">
+       <ScrolledWindow can-focus="true" hscrollbar-policy="{PolicyType.AUTOMATIC}">
+         <TextView can-focus="true" editable="false" class:private="console" />
+       </ScrolledWindow>
+       <HBox expand="false">
+         <Entry expand="true" />
+         <Button label=">" expand="false" />
+       </HBox>
+     </VBox>
+   </VPaned>
+  </HPaned> <!-- hpaned -->
+  <HBox expand="false">
+    <ProgressBar expand="false" />
+    <Statusbar expand="true" />
+  </HBox>
 </VBox>
 
 </Window>
