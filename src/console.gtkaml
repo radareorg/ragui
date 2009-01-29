@@ -1,0 +1,17 @@
+<!-- ragui - copyright(C) 2009 - pancake<nopcode.org> -->
+
+<VBox xmlns:class="http://gtkaml.org/0.2"
+      xmlns:Glib="GLib" 
+      xmlns:Gtk="Gtk" 
+      xmlns="Gtk"
+      class:name="Ragui.Console">
+
+  <ScrolledWindow can-focus="true" hscrollbar-policy="{PolicyType.AUTOMATIC}">
+    <TextView can-focus="true" editable="false" class:private="console" />
+  </ScrolledWindow>
+
+  <HBox expand="false">
+    <Entry expand="true" />
+    <Button label=">" expand="false" />
+  </HBox>
+</VBox>

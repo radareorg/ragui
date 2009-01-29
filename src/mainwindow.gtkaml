@@ -1,8 +1,12 @@
 <!-- ragui - copyright(C) 2009 - pancake<nopcode.org> -->
 
-<Window xmlns="Gtk"
-        xmlns:GLib="GLib" xmlns:class="http://gtkaml.org/0.2"
+<Window xmlns:class="http://gtkaml.org/0.2"
+        xmlns="Gtk"
+        xmlns:Gtk="Gtk"
+        xmlns:GLib="GLib"
+	xmlns:Ragui="Ragui"
         class:name="Ragui.MainWindow"
+	delete-event="{OnWindowCloseEvent}"
         title="ragui">
 
 <VBox border-width="1">
@@ -13,7 +17,7 @@
           <ImageMenuItem stock-id="gtk-new" />
           <ImageMenuItem stock-id="gtk-open" />
           <SeparatorMenuItem />
-          <ImageMenuItem stock-id="gtk-quit" />
+          <ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}" />
         </Menu>
       </submenu>
     </MenuItem>
@@ -24,7 +28,7 @@
           <ImageMenuItem stock-id="gtk-copy" />
           <ImageMenuItem stock-id="gtk-paste" />
           <SeparatorMenuItem />
-          <ImageMenuItem stock-id="gtk-preferences" />
+          <ImageMenuItem stock-id="gtk-preferences" activate="{OnMenuEditPreferences}" />
         </Menu>
       </submenu>
     </MenuItem>
@@ -33,7 +37,7 @@
         <Menu>
           <ImageMenuItem stock-id="gtk-help" />
           <SeparatorMenuItem />
-          <ImageMenuItem stock-id="gtk-about" />
+          <ImageMenuItem stock-id="gtk-about" activate="{OnMenuHelpAbout}" />
         </Menu>
       </submenu>
     </MenuItem>
@@ -78,6 +82,9 @@
        </Notebook>
      </VBox>
 
+<!--
+     <Ragui:Console add2="true" />
+-->
      <VBox add2="true">
        <ScrolledWindow can-focus="true" hscrollbar-policy="{PolicyType.AUTOMATIC}">
          <TextView can-focus="true" editable="false" class:private="console" />
@@ -94,5 +101,45 @@
     <Statusbar expand="true" />
   </HBox>
 </VBox>
+
+<!-- about dialog -->
+<AboutDialog class:standalone="true" class:private="aboutdialog" delete-event="{aboutdialog.hide_on_delete}"
+  border-width="5" title="About ragui" resizable="false" modal="true"
+  window-position="{WindowPosition.CENTER_ON_PARENT}" has-separator="false"
+  program-name="ragui" version="0.1" copyright="Copyright (c) 2009 pancake"
+  comments="Graphical hexeditor, disassembler and debugger"
+  website="http://www.radare.org/"
+  authors='{new string[] {"pancake (pancake@nopcode.com)", "nibble (nibble.ds@gmail.com)", null}}'>
+</AboutDialog>
+
+
+<![CDATA[
+	public signal void on_quit();
+
+	private void OnQuit()
+	{
+		on_quit();
+	}
+
+	private bool OnWindowCloseEvent(Ragui.MainWindow mw, Gdk.Event ev)
+	{
+		OnQuit();
+		return true;
+	}
+
+	private void OnMenuEditPreferences ()
+	{
+		Ragui.PreferencesWindow pw = new Ragui.PreferencesWindow();
+		pw.transient_for = this;
+		pw.show_all();
+	}
+
+	private void OnMenuHelpAbout ()
+	{
+		aboutdialog.transient_for = this;
+		aboutdialog.run ();
+		aboutdialog.hide();
+	}
+]]>
 
 </Window>
