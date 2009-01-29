@@ -9,6 +9,7 @@
         class:name="Ragui.PreferencesWindow"
 	delete-event="{OnWindowCloseEvent}"
         title="ragui preferences">
+
   <VBox border-width="1">
     <!-- wrong again -->
     <Notebook>
@@ -27,6 +28,7 @@
       <Button label="gtk-ok" use-stock="true" clicked="{OnButtonCloseClicked}" />
     </HButtonBox>
   </VBox>
+
 <![CDATA[
 	private void OnButtonCloseClicked()
 	{
@@ -39,4 +41,5 @@
 		return true;
 	}
 ]]>
+
 </Window>

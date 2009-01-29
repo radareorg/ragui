@@ -5,7 +5,7 @@ BIN=ragui
 PKG+=--save-temps
 
 all:
-	gtkamlc ${AML} -c ${PKG} mainwindow.gtkaml console.gtkaml preferences.gtkaml
+	gtkamlc ${AML} -c ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
 	valac ${PKG} *.vala -o ${BIN}
 
 clean:
