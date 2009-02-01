@@ -1,0 +1,33 @@
+/* Code widget */
+-----------------
+
+- offset -> 
+
+classes needed:
+
+  CodeContext
+     - Stores a sorted list of code lines
+     - have an interface for generating new CodeLines and CodeJumps
+       in runtime by callbacks
+
+  CodeLine
+     offset
+     hexpairs
+     disassembly
+
+  CodeJump
+     origin
+     destination
+
+OnClick - colorize row
+
+         offset   bytes    opcode      flags
+.------------------------------------------.
+|                                       |  |
+| .-> 0x8048000 3834848  mov esp, ebp   |  |
+| |   ......... ..                      |  |
+| |                                     |==|
+| :                                     |__|
+| `-- 0x8048490 930204 jz 0x8048000     |  |
+|                                       |  |
+`------------------------------------------'
