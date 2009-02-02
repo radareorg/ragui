@@ -5,6 +5,7 @@
         xmlns:Gtk="Gtk"
         xmlns:GLib="GLib"
 	xmlns:Ragui="Ragui"
+	xmlns:Codewidget="Codewidget"
         class:name="Ragui.MainWindow"
 	delete-event="{OnWindowCloseEvent}"
         title="ragui">
@@ -64,6 +65,13 @@
      <VBox>
        <!-- this is probably wrong -->
        <Notebook expand="true" tab-vborder="1">
+         <VBox>
+	   <tab-label>
+	   <Label label="Disassembly" />
+	   </tab-label>
+           <Codewidget:Widget expand="true" /> 
+         </VBox>
+
          <Label label="code-foo">
            <tab-label>
              <Label label="code" />
