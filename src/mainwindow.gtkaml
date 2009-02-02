@@ -61,13 +61,13 @@
      </ScrolledWindow>
    </VBox>
 
-   <VPaned add2="true">
+   <VPaned position="600" add2="true">
      <VBox>
        <!-- this is probably wrong -->
        <Notebook expand="true" tab-vborder="1">
          <VBox>
 	   <tab-label>
-	   <Label label="Disassembly" />
+	     <Label label="Disassembly" />
 	   </tab-label>
            <Codewidget:Widget expand="true" /> 
          </VBox>
@@ -77,11 +77,13 @@
              <Label label="code" />
            </tab-label>
          </Label>
+
          <Label label="data-foo">
            <tab-label>
              <Label label="hexdump" />
            </tab-label>
          </Label>
+
          <Label label="graph-foo">
            <tab-label>
              <Label label="graph" />

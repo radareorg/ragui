@@ -13,11 +13,15 @@
   <VBox border-width="1">
     <!-- wrong again -->
     <Notebook>
-      <Label label="todo">
+      <VBox>
         <tab-label>
           <Label label="Disassembly" />
         </tab-label>
-      </Label>
+	<CheckButton label="Hide bytes" />
+	<CheckButton label="Hide comments" />
+	<HSeparator />
+	<CheckButton label="Hide metadata" />
+      </VBox>
       <Label label="todo">
         <tab-label>
           <Label label="Analysis" />

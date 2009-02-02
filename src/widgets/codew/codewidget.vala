@@ -32,7 +32,7 @@ public class Codewidget.Widget : ScrolledWindow {
 	const double ZOOM_FACTOR = 0.1;
 	[Widget] public DrawingArea da;
 	public const double S = 96;
-	public double zoom = 1;
+	public double zoom = 1.4;
 	public int cursor = 0;
 	public double lineh = 10;
 	public int breakpoint = 6;
@@ -251,22 +251,13 @@ public class Codewidget.Widget : ScrolledWindow {
 		menu.popup(null, null, null, 0, 0);
 	}
 
-	public void do_popup_menu()
-	{
-		ImageMenuItem imi;
-		menu = new Menu();
-
-		//menu.popup(null, null, null, null, eb.button, 0);
-		menu.popup(null, null, null, 0, 0);
-	}
-
 	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb)
 	{
 		if (eb.button == 3) {
 			do_popup_generic();
 		}
 		
-		if (eb.x < 50*zoom)
+		if (eb.x < 50)
 			breakpoint = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 		int w, h;
 		da.window.get_size(out w, out h);
@@ -286,12 +277,14 @@ public class Codewidget.Widget : ScrolledWindow {
 	private double opanx = 0;
 	private double opany = 0;
 
+/*
 	private double abs(double x)
 	{
 		if (x>0)
 			return x;
 		return -x;
 	}
+*/
 
 	Node on = null;
 	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em)
@@ -306,16 +299,11 @@ public class Codewidget.Widget : ScrolledWindow {
 		this.grab_focus();
 		/* pan view */
 		if ((opanx!=0) && (opany!=0)) {
-			double x = em.x-opanx;
-			double y = em.y-opany;
-			pany += y;
-			//		codew.panx+=x;//*0.8;
-			//		codew.pany+=y;//*0.8;
-			//codew.draw(Gdk.cairo_create(da.window));
+		//	double x = em.x-opanx;
+		//	double y = em.y-opany;
+			pany += (em.y-opany);
 			refresh(da);
 		}
-		//Graph.selected = null;
-		//pany += opany - em.y;
 		opanx = em.x;
 		opany = em.y;
 		return true;
@@ -323,7 +311,6 @@ public class Codewidget.Widget : ScrolledWindow {
 
 	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev)
 	{               
-		DrawingArea da = (DrawingArea)w;
 		draw();
 		return true;
 	}
@@ -356,6 +343,9 @@ public class Codewidget.Widget : ScrolledWindow {
 		Context ctx = Gdk.cairo_create(da.window);
 		//ctx.save();
 		ctx.save();
+		// Sans Serif
+		ctx.select_font_face("Sans Serif", FontSlant.NORMAL, FontWeight.BOLD);
+		ctx.set_font_size(12);
 		ctx.translate(0, pany);
 		ctx.scale(zoom, zoom);
 		ctx.set_source_rgb(1, 1, 1);
@@ -370,7 +360,7 @@ public class Codewidget.Widget : ScrolledWindow {
 			if (i==cursor) {
 				ctx.save();
 				ctx.translate(10,y+1);
-				ctx.set_source_rgba(0.1, 0, 0.9, 0.4);
+				ctx.set_source_rgba(0.1, 0, 0.9, 0.2);
 				square(ctx, 300, lineh+1);
 				ctx.fill();
 				//ctx.stroke();
@@ -387,9 +377,9 @@ public class Codewidget.Widget : ScrolledWindow {
 			}
 			ctx.move_to(20,y);
 			ctx.show_text("0x%08llx".printf(0x8048000+(i*2)));
-			ctx.move_to(100,y);
+			ctx.move_to(120,y);
 			ctx.show_text("90");
-			ctx.move_to(150,y);
+			ctx.move_to(170,y);
 			ctx.show_text("nop");
 		}
 		ctx.stroke();
@@ -402,7 +392,7 @@ public class Codewidget.Widget : ScrolledWindow {
 			/* upper arrow */
 			ctx.save();
 			ctx.translate(w-20, 10);
-			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.4);
+			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
 			square(ctx, 15, 15);
 			ctx.fill();
 			ctx.restore();
@@ -418,7 +408,7 @@ public class Codewidget.Widget : ScrolledWindow {
 			/* bottom arrow */
 			ctx.save();
 			ctx.translate(w-20, h-20);
-			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.4);
+			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
 			square(ctx, 15, 15);
 			ctx.fill();
 			ctx.restore();
