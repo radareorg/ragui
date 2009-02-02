@@ -34,9 +34,12 @@ public class Codewidget.Widget : ScrolledWindow {
 	public const double S = 96;
 	public double zoom = 1.4;
 	public int cursor = 0;
+	public int ccursor = 0;
 	public double lineh = 10;
 	public int breakpoint = 6;
 	public double pany = 0;
+	private double opanx = 0;
+	private double opany = 0;
 	private WheelAction wheel_action = WheelAction.PAN;
 	Menu menu;
 
@@ -111,7 +114,7 @@ public class Codewidget.Widget : ScrolledWindow {
 		case ScrollDirection.UP:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				pany += 20;
+				pany += 300*ZOOM_FACTOR;
 				break;
 			case WheelAction.ZOOM:
 				zoom += ZOOM_FACTOR;
@@ -121,7 +124,7 @@ public class Codewidget.Widget : ScrolledWindow {
 		case ScrollDirection.DOWN:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				pany -= 20;
+				pany -= 300*ZOOM_FACTOR;
 				break;
 			case WheelAction.ZOOM:
 				zoom -= ZOOM_FACTOR;
@@ -187,7 +190,7 @@ public class Codewidget.Widget : ScrolledWindow {
 				wheel_action = WheelAction.PAN;
 				break;
 			case 65505: // SHIFT
-				wheel_action = WheelAction.PAN;
+				wheel_action = WheelAction.ZOOM;
 				break;
 			default:
 				handled = false;
@@ -262,7 +265,6 @@ public class Codewidget.Widget : ScrolledWindow {
 		int w, h;
 		da.window.get_size(out w, out h);
 		if (eb.x > w-30) {
-			
 			if (eb.y <50)
 				pany+=20;
 			else pany-=20;
@@ -272,10 +274,6 @@ public class Codewidget.Widget : ScrolledWindow {
 		refresh(da);
 		return true;
 	}
-
-	// drag nodes
-	private double opanx = 0;
-	private double opany = 0;
 
 /*
 	private double abs(double x)
@@ -345,7 +343,7 @@ public class Codewidget.Widget : ScrolledWindow {
 		ctx.save();
 		// Sans Serif
 		ctx.select_font_face("Sans Serif", FontSlant.NORMAL, FontWeight.BOLD);
-		ctx.set_font_size(12);
+		ctx.set_font_size(10);
 		ctx.translate(0, pany);
 		ctx.scale(zoom, zoom);
 		ctx.set_source_rgb(1, 1, 1);
@@ -376,7 +374,7 @@ public class Codewidget.Widget : ScrolledWindow {
 				ctx.restore();
 			}
 			ctx.move_to(20,y);
-			ctx.show_text("0x%08llx".printf(0x8048000+(i*2)));
+			ctx.show_text("0x%08llx".printf((uint64)0x8048000+(i*2)));
 			ctx.move_to(120,y);
 			ctx.show_text("90");
 			ctx.move_to(170,y);
@@ -391,14 +389,14 @@ public class Codewidget.Widget : ScrolledWindow {
 	//stdout.printf("%d %d\n", w, h);
 			/* upper arrow */
 			ctx.save();
-			ctx.translate(w-20, 10);
+			ctx.translate(w-20, 5);
 			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
 			square(ctx, 15, 15);
 			ctx.fill();
 			ctx.restore();
 
 			ctx.save();
-			ctx.translate(w-17, 12);
+			ctx.translate(w-17, 6);
 			ctx.set_source_rgba(1,1,1,1);
 			triangle(ctx, 9,9, false);
 			ctx.fill();
@@ -423,11 +421,11 @@ public class Codewidget.Widget : ScrolledWindow {
 
 			/* navigation bar */
 			ctx.save();
-			ctx.translate(w-20, 30);
-			ctx.set_source_rgba(0.7, 0.7, 0.7, 0.2);
-			square(ctx, 15, h-60);
+			ctx.translate(w-20, 25);
+			ctx.set_source_rgba(0.7, 0.7, 0.7, 0.3);
+			square(ctx, 15, h-50);
 			ctx.set_line_width(1);
-			ctx.stroke();
+			ctx.fill();
 			ctx.restore();
 	}
 

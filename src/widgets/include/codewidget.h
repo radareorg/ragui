@@ -60,7 +60,6 @@ struct _CodewidgetWidgetClass {
 GtkWidget* codewidget_widget_get_widget (CodewidgetWidget* self);
 void codewidget_widget_create_widgets (CodewidgetWidget* self);
 void codewidget_widget_do_popup_generic (CodewidgetWidget* self);
-void codewidget_widget_do_popup_menu (CodewidgetWidget* self);
 void codewidget_widget_square (cairo_t* ctx, double w, double h);
 void codewidget_widget_triangle (cairo_t* ctx, double w, double h, gboolean down);
 void codewidget_widget_draw (CodewidgetWidget* self);

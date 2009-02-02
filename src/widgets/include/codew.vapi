@@ -29,7 +29,6 @@ namespace Codewidget {
 		public const double S;
 		public void create_widgets ();
 		public void do_popup_generic ();
-		public void do_popup_menu ();
 		public void draw ();
 		public Gtk.Widget get_widget ();
 		public Widget ();

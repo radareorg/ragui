@@ -100,16 +100,6 @@
 				<type name="none"/>
 			</return-value>
 		</method>
-		<method name="do_popup_menu" c:identifier="codewidget_widget_do_popup_menu">
-			<parameters>
-				<parameter name="self">
-					<type name="Codewidget.Widget"/>
-				</parameter>
-			</parameters>
-			<return-value>
-				<type name="none"/>
-			</return-value>
-		</method>
 		<method name="square" c:identifier="codewidget_widget_square">
 			<parameters>
 				<parameter name="ctx">
