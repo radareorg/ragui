@@ -225,6 +225,19 @@ public class Codewidget.Widget : ScrolledWindow {
 
 		menu.append(new SeparatorMenuItem());
 
+		imi = new ImageMenuItem.from_stock("View in hex", null);
+		imi.activate += imi => {
+			stdout.printf("redo\n");
+		};
+		menu.append(imi);
+		imi = new ImageMenuItem.from_stock("View in graph", null);
+		imi.activate += imi => {
+			stdout.printf("redo\n");
+		};
+		menu.append(imi);
+
+		menu.append(new SeparatorMenuItem());
+
 		imi = new ImageMenuItem.from_stock("Continue until here", null);
 		imi.activate += imi => {
 			//run_cmd("!step");

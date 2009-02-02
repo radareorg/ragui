@@ -10,7 +10,7 @@ CC?=gcc
 
 all:
 	cd widgets/codew && ${MAKE}
-	cd widgets && ${MAKE}
+	#cd widgets && ${MAKE}
 	gtkamlc ${AML} -c ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
 	#valac ${PKG} *.vala ${WIDGETS} -o ${BIN}
 	valac -c ${PKG} *.vala
