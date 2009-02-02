@@ -1,0 +1,879 @@
+<?xml version="1.0"?>
+<repository version="1.0">
+<namespace name="Grava" version="1.0">
+	<enumeration name="Shape" c:type="GravaShape" glib:get-type="grava_shape_get_type">
+		<member name="rectangle"/>
+		<member name="circle"/>
+	</enumeration>
+	<class name="DefaultLayout" parent="Grava.Layout" glib:type-name="GravaDefaultLayout" glib:get-type="grava_default_layout_get_type">
+		<field name="y_offset">
+			<type name="double"/>
+		</field>
+		<field name="x_offset">
+			<type name="double"/>
+		</field>
+		<field name="data">
+			<type name="GLib.HashTable<string,Grava.Node>"/>
+		</field>
+		<method name="reset" c:identifier="grava_default_layout_reset">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.DefaultLayout"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="reset_real" c:identifier="grava_default_layout_reset_real">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.DefaultLayout"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="setxy" c:identifier="grava_default_layout_setxy">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.DefaultLayout"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="getxy" c:identifier="grava_default_layout_getxy">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.DefaultLayout"/>
+				</parameter>
+				<parameter name="n" direction="inout" transfer-ownership="full">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="bool"/>
+			</return-value>
+		</method>
+		<method name="walkChild" c:identifier="grava_default_layout_walkChild">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.DefaultLayout"/>
+				</parameter>
+				<parameter name="node">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="level">
+					<type name="int"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="get_parent" c:identifier="grava_default_layout_get_parent">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.DefaultLayout"/>
+				</parameter>
+				<parameter name="node">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="Grava.Node?"/>
+			</return-value>
+		</method>
+		<constructor name="new" c:identifier="grava_default_layout_new">
+			<parameters>
+			</parameters>
+			<return-value>
+				<type name="Grava.DefaultLayout"/>
+			</return-value>
+		</constructor>
+	</class>
+	<class name="Edge" parent="GLib.Object" glib:type-name="GravaEdge" glib:get-type="grava_edge_get_type">
+		<field name="data">
+			<type name="GLib.HashTable<string,string>"/>
+		</field>
+		<field name="orig">
+			<type name="Grava.Node"/>
+		</field>
+		<field name="dest">
+			<type name="Grava.Node"/>
+		</field>
+		<field name="visible">
+			<type name="bool"/>
+		</field>
+		<field name="jmpcnd">
+			<type name="bool"/>
+		</field>
+		<method name="get" c:identifier="grava_edge_get">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Edge"/>
+				</parameter>
+				<parameter name="val">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="string"/>
+			</return-value>
+		</method>
+		<method name="set" c:identifier="grava_edge_set">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Edge"/>
+				</parameter>
+				<parameter name="val">
+					<type name="string"/>
+				</parameter>
+				<parameter name="key">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="with" c:identifier="grava_edge_with">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Edge"/>
+				</parameter>
+				<parameter name="a">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="b">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="Grava.Edge"/>
+			</return-value>
+		</method>
+		<method name="distance" c:identifier="grava_edge_distance">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Edge"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="double"/>
+			</return-value>
+		</method>
+		<constructor name="new" c:identifier="grava_edge_new">
+			<parameters>
+			</parameters>
+			<return-value>
+				<type name="Grava.Edge"/>
+			</return-value>
+		</constructor>
+	</class>
+	<class name="Graph" parent="GLib.Object" glib:type-name="GravaGraph" glib:get-type="grava_graph_get_type">
+		<field name="layout">
+			<type name="Grava.Layout"/>
+		</field>
+		<field name="selhist">
+			<type name="GLib.SList<Grava.Node>"/>
+		</field>
+		<field name="nodes">
+			<type name="GLib.SList<Grava.Node>"/>
+		</field>
+		<field name="edges">
+			<type name="GLib.SList<Grava.Edge>"/>
+		</field>
+		<field name="data">
+			<type name="GLib.HashTable<string,string>"/>
+		</field>
+		<field name="grava_graph_selected">
+			<type name="Grava.Node"/>
+		</field>
+		<field name="zoom">
+			<type name="double"/>
+		</field>
+		<field name="panx">
+			<type name="double"/>
+		</field>
+		<field name="pany">
+			<type name="double"/>
+		</field>
+		<field name="angle">
+			<type name="double"/>
+		</field>
+		<method name="undo_select" c:identifier="grava_graph_undo_select">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="reset" c:identifier="grava_graph_reset">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="set" c:identifier="grava_graph_set">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="key">
+					<type name="string"/>
+				</parameter>
+				<parameter name="val">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="get" c:identifier="grava_graph_get">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="key">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="string"/>
+			</return-value>
+		</method>
+		<method name="select_next" c:identifier="grava_graph_select_next">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="select_true" c:identifier="grava_graph_select_true">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="select_false" c:identifier="grava_graph_select_false">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="is_selected" c:identifier="grava_graph_is_selected">
+			<parameters>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="bool"/>
+			</return-value>
+		</method>
+		<method name="update" c:identifier="grava_graph_update">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="add_node" c:identifier="grava_graph_add_node">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="add_edge" c:identifier="grava_graph_add_edge">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="e">
+					<type name="Grava.Edge"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="unlinked_nodes" c:identifier="grava_graph_unlinked_nodes">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="GLib.SList<Grava.Node>"/>
+			</return-value>
+		</method>
+		<method name="outer_nodes" c:identifier="grava_graph_outer_nodes">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="GLib.SList<Grava.Node>"/>
+			</return-value>
+		</method>
+		<method name="inner_nodes" c:identifier="grava_graph_inner_nodes">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="GLib.SList<Grava.Node>"/>
+			</return-value>
+		</method>
+		<method name="click" c:identifier="grava_graph_click">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="x">
+					<type name="double"/>
+				</parameter>
+				<parameter name="y">
+					<type name="double"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="Grava.Node?"/>
+			</return-value>
+		</method>
+		<method name="overlaps" c:identifier="grava_graph_overlaps">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="bool"/>
+			</return-value>
+		</method>
+		<method name="draw" c:identifier="grava_graph_draw">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="add" c:identifier="grava_graph_add">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="link" c:identifier="grava_graph_link">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Graph"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="n2">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<constructor name="new" c:identifier="grava_graph_new">
+			<parameters>
+			</parameters>
+			<return-value>
+				<type name="Grava.Graph"/>
+			</return-value>
+		</constructor>
+	</class>
+	<class name="Layout" parent="GLib.Object" glib:type-name="GravaLayout" glib:get-type="grava_layout_get_type">
+		<method name="run" c:identifier="grava_layout_run">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Layout"/>
+				</parameter>
+				<parameter name="graph">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="set_graph" c:identifier="grava_layout_set_graph">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Layout"/>
+				</parameter>
+				<parameter name="graph">
+					<type name="Grava.Graph"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="reset" c:identifier="grava_layout_reset">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Layout"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+	</class>
+	<class name="Node" parent="GLib.Object" glib:type-name="GravaNode" glib:get-type="grava_node_get_type">
+		<field name="data">
+			<type name="GLib.HashTable<string,string>"/>
+		</field>
+		<field name="baseaddr">
+			<type name="uint"/>
+		</field>
+		<field name="calls">
+			<type name="GLib.SList<string>"/>
+		</field>
+		<field name="xrefs">
+			<type name="GLib.SList<string>"/>
+		</field>
+		<field name="visible">
+			<type name="bool"/>
+		</field>
+		<field name="selected">
+			<type name="bool"/>
+		</field>
+		<field name="has_body">
+			<type name="bool"/>
+		</field>
+		<field name="shape">
+			<type name="int"/>
+		</field>
+		<field name="x">
+			<type name="double"/>
+		</field>
+		<field name="y">
+			<type name="double"/>
+		</field>
+		<field name="w">
+			<type name="double"/>
+		</field>
+		<field name="h">
+			<type name="double"/>
+		</field>
+		<method name="set" c:identifier="grava_node_set">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="key">
+					<type name="string"/>
+				</parameter>
+				<parameter name="val">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="set_i" c:identifier="grava_node_set_i">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="key">
+					<type name="string"/>
+				</parameter>
+				<parameter name="val">
+					<type name="uint64"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="get" c:identifier="grava_node_get">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="key">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="string"/>
+			</return-value>
+		</method>
+		<method name="add_call" c:identifier="grava_node_add_call">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="addr">
+					<type name="uint64"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="add_xref" c:identifier="grava_node_add_xref">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="addr">
+					<type name="uint64"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="overlaps" c:identifier="grava_node_overlaps">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+				<parameter name="n">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="bool"/>
+			</return-value>
+		</method>
+		<method name="fit" c:identifier="grava_node_fit">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<constructor name="new" c:identifier="grava_node_new">
+			<parameters>
+			</parameters>
+			<return-value>
+				<type name="Grava.Node"/>
+			</return-value>
+		</constructor>
+	</class>
+	<record name="Renderer">
+		<method name="draw_edge" c:identifier="grava_renderer_draw_edge">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="edge">
+					<type name="Grava.Edge"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="set_color" c:identifier="grava_renderer_set_color">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="ht">
+					<type name="GLib.HashTable<string,string>"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="set_color_str" c:identifier="grava_renderer_set_color_str">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="color">
+					<type name="string?"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="bool"/>
+			</return-value>
+		</method>
+		<method name="draw_node" c:identifier="grava_renderer_draw_node">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="node">
+					<type name="Grava.Node"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="circle" c:identifier="grava_renderer_circle">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="w">
+					<type name="double"/>
+				</parameter>
+				<parameter name="h">
+					<type name="double"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="square" c:identifier="grava_renderer_square">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="w">
+					<type name="double"/>
+				</parameter>
+				<parameter name="h">
+					<type name="double"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="line" c:identifier="grava_renderer_line">
+			<parameters>
+				<parameter name="ctx">
+					<type name="Cairo.Context"/>
+				</parameter>
+				<parameter name="x">
+					<type name="double"/>
+				</parameter>
+				<parameter name="y">
+					<type name="double"/>
+				</parameter>
+				<parameter name="w">
+					<type name="double"/>
+				</parameter>
+				<parameter name="h">
+					<type name="double"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<constructor name="new" c:identifier="grava_renderer_new">
+			<parameters>
+			</parameters>
+			<return-value>
+				<type name="Grava.Renderer"/>
+			</return-value>
+		</constructor>
+	</record>
+	<class name="Widget" parent="GLib.Object" glib:type-name="GravaWidget" glib:get-type="grava_widget_get_type">
+		<field name="da">
+			<type name="Gtk.DrawingArea"/>
+		</field>
+		<field name="graph">
+			<type name="Grava.Graph"/>
+		</field>
+		<constant name="GRAVA_WIDGET_S"/>
+		<method name="get_widget" c:identifier="grava_widget_get_widget">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Widget"/>
+				</parameter>
+			</parameters>
+			<return-value transfer-ownership="full">
+				<type name="Gtk.Widget"/>
+			</return-value>
+		</method>
+		<method name="create_widgets" c:identifier="grava_widget_create_widgets">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Widget"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="do_popup_generic" c:identifier="grava_widget_do_popup_generic">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Widget"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="do_popup_menu" c:identifier="grava_widget_do_popup_menu">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Widget"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="draw" c:identifier="grava_widget_draw">
+			<parameters>
+				<parameter name="self">
+					<type name="Grava.Widget"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="focus_at_label" c:identifier="core_load_graph_at_label">
+			<parameters>
+				<parameter name="obj">
+					<type name="void*"/>
+				</parameter>
+				<parameter name="addr">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="set_breakpoint" c:identifier="mygrava_bp_at">
+			<parameters>
+				<parameter name="obj">
+					<type name="void*"/>
+				</parameter>
+				<parameter name="addr">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="unset_breakpoint" c:identifier="mygrava_bp_rm_at">
+			<parameters>
+				<parameter name="obj">
+					<type name="void*"/>
+				</parameter>
+				<parameter name="addr">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</method>
+		<constructor name="new" c:identifier="grava_widget_new">
+			<parameters>
+			</parameters>
+			<return-value>
+				<type name="Grava.Widget"/>
+			</return-value>
+		</constructor>
+		<glib:signal name="load_graph_at">
+			<parameters>
+				<parameter name="addr">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
+		<glib:signal name="breakpoint_at">
+			<parameters>
+				<parameter name="addr">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
+		<glib:signal name="run_cmd">
+			<parameters>
+				<parameter name="addr">
+					<type name="string"/>
+				</parameter>
+			</parameters>
+			<return-value>
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
+	</class>
+</namespace>
+</repository>

@@ -9,6 +9,8 @@ WIDGETS=widgets/codew/*.o
 CC?=gcc
 
 all:
+	cd widgets/codew && ${MAKE}
+	cd widgets && ${MAKE}
 	gtkamlc ${AML} -c ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
 	#valac ${PKG} *.vala ${WIDGETS} -o ${BIN}
 	valac -c ${PKG} *.vala
@@ -16,3 +18,4 @@ all:
 
 clean:
 	rm -f ${BIN} *.c *.h mainwindow.vala *.o preferences.vala
+	cd widgets && ${MAKE} clean
