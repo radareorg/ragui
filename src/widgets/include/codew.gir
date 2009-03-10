@@ -60,6 +60,9 @@
 		<field name="cursor">
 			<type name="int"/>
 		</field>
+		<field name="ccursor">
+			<type name="int"/>
+		</field>
 		<field name="lineh">
 			<type name="double"/>
 		</field>

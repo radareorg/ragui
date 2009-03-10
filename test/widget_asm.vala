@@ -1,3 +1,9 @@
+/* radare - GPLv3 Copyright (C) pancake <at> nopcode.org
+ * -----------------------------------------------------
+ * To compile:
+ *   valac --pkg gtk+-2.0 --pkg libr widget_asm.vala
+ */
+
 using GLib;
 using Gtk;
 using Radare;

@@ -46,6 +46,7 @@ struct _CodewidgetWidget {
 	GtkDrawingArea* da;
 	double zoom;
 	gint cursor;
+	gint ccursor;
 	double lineh;
 	gint breakpoint;
 	double pany;

@@ -9,6 +9,7 @@ WIDGETS=widgets/codew/*.o
 CC?=gcc
 
 all:
+	cd widgets && ${MAKE}
 	cd widgets/codew && ${MAKE}
 	#cd widgets && ${MAKE}
 	gtkamlc ${AML} -c ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml

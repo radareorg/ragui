@@ -12,6 +12,8 @@ namespace Grava {
 		public DefaultLayout ();
 		public void reset ();
 		public void reset_real ();
+		public override void run (Grava.Graph graph);
+		public override void set_graph (Grava.Graph graph);
 		public void setxy (Grava.Node n);
 		public void walkChild (Grava.Node node, int level);
 	}

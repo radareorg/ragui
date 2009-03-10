@@ -21,6 +21,7 @@ namespace Codewidget {
 	[CCode (cheader_filename = "codewidget.h")]
 	public class Widget : Gtk.ScrolledWindow {
 		public int breakpoint;
+		public int ccursor;
 		public int cursor;
 		public Gtk.DrawingArea da;
 		public double lineh;
