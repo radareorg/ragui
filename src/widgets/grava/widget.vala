@@ -160,11 +160,11 @@ public class Grava.Widget : GLib.Object {
 		switch (ek.keyval) {
 		case 'b':
 		case 65471: // F2 - set breakpoint
-			Widget.set_breakpoint(null, Graph.selected.get("label"));
+			set_breakpoint(null, Graph.selected.get("label"));
 			break;
 		case 'B':
 		//case 65471: // F2 - set breakpoint
-			Widget.set_breakpoint(null, "-%s".printf(Graph.selected.get("label")));
+			set_breakpoint(null, "-%s".printf(Graph.selected.get("label")));
 			break;
 		case 'S':
 			run_cmd("!stepo");
@@ -365,7 +365,7 @@ load_graph_at("$$");
 		imi = new ImageMenuItem.from_stock("gtk-zoom-in", null);
 		imi.activate += imi => {
 	//		stdout.printf("go in!\n");
-			Widget.focus_at_label(null, Graph.selected.get("label"));
+			focus_at_label(null, Graph.selected.get("label"));
 			//MenuItem mi = menu.get_active();
 			//load_graph_at(((Label)imi.child).get_text()); //"0x400");
 			//stdout.printf(" cocococo "+ menu.);
@@ -375,13 +375,13 @@ load_graph_at("$$");
 		imi = new ImageMenuItem.with_label("Breakpoint here");
 		imi.activate += imi => {
 	//		stdout.printf("add bp!\n");
-			Widget.set_breakpoint(null, Graph.selected.get("label"));
+			set_breakpoint(null, Graph.selected.get("label"));
 		};
 		menu.append(imi);
 
 		imi = new ImageMenuItem.with_label("Remove breakpoint");
 		imi.activate += imi => {
-			Widget.unset_breakpoint(null, Graph.selected.get("label"));
+			unset_breakpoint(null, Graph.selected.get("label"));
 		};
 		menu.append(imi);
 
@@ -527,17 +527,16 @@ load_graph_at("$$");
 		if (graph.zoom < 0.05)
 			graph.zoom = 0.05;
 		graph.draw(ctx);
+		if (separator != 0) {
+			ctx.move_to (0, 0);
+			Renderer.square(ctx, 150, 2048);
+		}
 	}
 
-        [Import]
-        [CCode (cname="core_load_graph_at_label")]
-        public static extern void focus_at_label(void *obj, string addr);
+	public int separator = 0;
 
-        [Import]
-        [CCode (cname="mygrava_bp_at")]
-        public static extern void set_breakpoint(void *obj, string addr);
-
-        [Import]
-        [CCode (cname="mygrava_bp_rm_at")]
-        public static extern void unset_breakpoint(void *obj, string addr);
+	/* XXX : do not make it static */
+        public signal int focus_at_label(void *obj, string addr);
+        public signal int set_breakpoint(void *obj, string addr);
+        public signal int unset_breakpoint(void *obj, string addr);
 }

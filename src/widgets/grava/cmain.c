@@ -1,6 +1,9 @@
+#if 0
 #include "widget.h"
 #include "node.h"
 #include "edge.h"
+#endif
+#include "gravawidget.h"
 
 void load_graph_at()
 {

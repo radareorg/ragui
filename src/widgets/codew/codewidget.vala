@@ -178,6 +178,12 @@ public class Codewidget.Widget : ScrolledWindow {
 			case 'K':
 				pany+=20*zoom;
 				break;
+			case 65365: // re.pag
+				pany+=100*zoom;
+				break;
+			case 65366: // av.pag
+				pany-=100*zoom;
+				break;
 			case 65364:
 			case 'j':
 				cursor++;
