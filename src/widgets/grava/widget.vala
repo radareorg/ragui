@@ -516,7 +516,7 @@ load_graph_at("$$");
 
 	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev)
 	{
-		DrawingArea da = (DrawingArea)w;
+		//DrawingArea da = (DrawingArea)w;
 		draw();
 		return true;
 	}
@@ -524,12 +524,16 @@ load_graph_at("$$");
 	public void draw()
 	{
 		Context ctx = Gdk.cairo_create(da.window);
+		ctx.save();
 		if (graph.zoom < 0.05)
 			graph.zoom = 0.05;
 		graph.draw(ctx);
+		ctx.restore();
 		if (separator != 0) {
+			ctx.set_source_rgba (0.6, 0.6, 0.6, 0.2);
 			ctx.move_to (0, 0);
-			Renderer.square(ctx, 150, 2048);
+			Renderer.square(ctx, separator, 2048);
+			ctx.fill();
 		}
 	}
 

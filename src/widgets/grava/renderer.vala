@@ -289,7 +289,6 @@ public class Grava.Renderer
 		ctx.close_path ();
 	}
 
-
 	public static void line (Context ctx, double x, double y, double w, double h) {
 		ctx.move_to (x,y);
 		ctx.rel_line_to (w, h);

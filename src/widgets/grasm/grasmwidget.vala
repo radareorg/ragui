@@ -1,6 +1,6 @@
 /*
  *  Grasm - Graph assembler for radare2
- *  Copyright (C) 2009  pancake <youterm.com>
+ *  Copyright (C) 2009  pancake <nopcode.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,13 +29,15 @@ public class Grasmwidget.Widget : VBox {
 	private Entry inputasm;
 	private Grava.Widget gw;
 	private Radare.Asm rasm;
+	private Asm.Aop op;
 
 	public Gtk.Widget get_widget()
 	{
 		return this;
 	}
 
-	construct {
+	construct
+	{
 		create_widgets ();
 	}
 
@@ -44,8 +46,40 @@ public class Grasmwidget.Widget : VBox {
 		stdout.printf("funk!\n");
 	}
 
+	private void error(string msg)
+	{
+		var d = new Gtk.Dialog();
+		d.title = "grasm error";
+		d.modal = true;
+		d.add_button("gtk-ok", 0);
+		d.vbox.add(new Label(msg));
+		d.run();
+		d.destroy();
+		d = null;
+	}
+
+	private string? o2b(string code)
+	{
+		string b;
+		if (code == "")
+			return null;
+		rasm.set_pc(0x8048000);
+		if (rasm.massemble(out op, code) <1) {
+			error("Invalid opcode");
+			return null;
+		}
+		b = op.buf_hex;
+		stdout.printf("BYTES(%s)\n", b);
+		return b;
+	}
+
 	private void add_node()
 	{
+		if (o2b(inputasm.get_text()) == null) {
+			error("Cannot assemble this opcode");
+			return;
+		}
+
 		Grava.Node *n = new Grava.Node();
 			n->set("label", inputoff.get_text());
 			n->set("color", "blue");
@@ -54,7 +88,6 @@ public class Grasmwidget.Widget : VBox {
 		gw.graph.add_node(n);
 		gw.graph.update();
 		gw.draw();
-
 		generate_code();
 	}
 
@@ -62,18 +95,14 @@ public class Grasmwidget.Widget : VBox {
 	{
 	/* XXX: sort by Y */
 	/* XXX: ignore nodes in X<separator */
-		Asm.Aop op;
-		outputbytes.set_text("");
-		string str="";
+		outputbytes.text = "";
+		string str = "";
 		foreach(weak Grava.Node node in gw.graph.nodes) {
 			string code = node.get("body");
-			if (rasm.massemble(out op, code) <1) {
-				stderr.printf("error\n");
-			} else {
-				str += op.buf_hex;
-			}
+			string bytes = o2b(code);
+			str = bytes;
 		}
-		outputbytes.set_text(str);
+		outputbytes.text = str;
 	}
 
 	public void create_widgets ()
@@ -83,16 +112,9 @@ public class Grasmwidget.Widget : VBox {
 		rasm.set_syntax(Asm.Syntax.INTEL);
 		rasm.set_bits(32);
 		rasm.set_big_endian(false);
+
 		gw = new Grava.Widget();
 		var hb0 = new HBox(false, 2);
-/*
-		Grava.Node *n = new Grava.Node();
-			n->set("label", "cow");
-			n->set("color", "blue");
-			n->set("body", "hello world");
-			gw.graph.add_node(n);
-*/
-
 		gw.graph.update();
 		gw.separator = 150;
 		gw.load_graph_at.connect(load_graph_at);
