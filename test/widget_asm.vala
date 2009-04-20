@@ -13,7 +13,7 @@ public class widget
 	public static Entry easm;
 	public static Entry ehex;
 	public static Asm st;
-	public static unowned Asm.Aop aop;
+	public static Asm.Aop aop;
 
 	public static void set_arch(string arch)
 	{
@@ -41,7 +41,7 @@ public class widget
 		set_arch("asm_x86_olly");
 
 		/* test code */
-		st.assemble(widget.aop, "nop");
+		st.assemble(out widget.aop, "nop");
 		stdout.printf("Nop is '%s'\n", widget.aop.buf_hex);
 
 		var mw = new Window(WindowType.TOPLEVEL);
@@ -55,7 +55,7 @@ public class widget
 		widget.easm = new Entry();
 		easm.key_release_event += (foo) => {
 			string str = widget.easm.get_text ();
-			widget.st.assemble (widget.aop, str);
+			widget.st.assemble (out widget.aop, str);
 			widget.ehex.set_text (widget.aop.buf_hex);
 			return false;
 		};
@@ -64,7 +64,7 @@ public class widget
 			uint8 [] buffer = new uint8 [64];
 			string str = widget.ehex.get_text ();
 			int len = Util.hex_str2bin(str, buffer);
-			widget.st.disassemble (widget.aop, buffer, len);
+			widget.st.disassemble (out widget.aop, buffer, len);
 			widget.easm.set_text (widget.aop.buf_asm);
 			return false;
 		};

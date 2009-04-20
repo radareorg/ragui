@@ -1,4 +1,5 @@
 all:
+	cd src && ${MAKE} stuff
 	cd src && ${MAKE} all
 
 clean:

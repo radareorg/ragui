@@ -31,7 +31,8 @@ public class Grava.Widget : GLib.Object {
 
 	const int SIZE = 30;
 	const double ZOOM_FACTOR = 0.1;
-	[Widget] public DrawingArea da;
+	//[Widget] public DrawingArea da;
+	public DrawingArea da;
 	public Grava.Graph graph;
 	public const double S = 96;
 	private WheelAction wheel_action = WheelAction.PAN;
@@ -493,8 +494,6 @@ load_graph_at("$$");
 
 			//n.x += (offx-(offx*graph.zoom));
 			//n.y += (offy-(offy*graph.zoom));
-			//n.x*=graph.zoom;
-			//n.y*=graph.zoom;
 			da.queue_draw_area(0, 0, 5000, 3000);
 			Graph.selected = n;
 		} else {
