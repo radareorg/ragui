@@ -27,6 +27,7 @@ public class Grasmwidget.Widget : VBox {
 	private Entry outputbytes;
 	private Entry inputoff;
 	private Entry inputasm;
+	private Entry inputasm_hex;
 	private Grava.Widget gw;
 	private Radare.Asm rasm;
 	private Asm.Aop op;
@@ -115,11 +116,23 @@ public class Grasmwidget.Widget : VBox {
 
 		gw = new Grava.Widget();
 		var hb0 = new HBox(false, 2);
+		gw.graph.zoom = 2;
 		gw.graph.update();
 		gw.separator = 150;
 		gw.load_graph_at.connect(load_graph_at);
 		hb0.add (gw.get_widget());
 		VBox vb = new VBox(false, 4);
+			ComboBox cb = new ComboBox.text();
+			cb.changed += (self) => {
+				string str = self.get_active_text();
+				rasm.set(str);
+			};
+			cb.insert_text(0, "asm_x86_olly");
+			cb.insert_text(1, "asm_java");
+			cb.insert_text(2, "asm_mips");
+			cb.set_active(0);
+
+			vb.pack_start(cb, false, false, 4);
 			vb.pack_start(new Label("Offset:"), false, false, 4);
 			inputoff = new Entry();
 			inputoff.set_text("0x8048000");
@@ -127,7 +140,18 @@ public class Grasmwidget.Widget : VBox {
 			vb.pack_start(new Label("Opcode"), false, false, 4);
 			inputasm = new Entry();
 			inputasm.activate.connect(add_node);
+			inputasm.key_release_event += (foo) => {
+				Radare.Asm.Aop aop;
+				string str = inputasm.get_text ();
+				rasm.assemble (out aop, str);
+				inputasm_hex.set_text (aop.buf_hex);
+				return false;
+			};
 			vb.pack_start(inputasm, false, false, 4);
+			inputasm_hex = new Entry();
+			inputasm_hex.editable = false;
+			vb.pack_start(inputasm_hex, false, false, 4);
+
 			assemble = new Button.with_label("Assemble");
 			assemble.clicked.connect(add_node);
 			vb.pack_start(assemble, false, false, 4);
@@ -136,6 +160,7 @@ public class Grasmwidget.Widget : VBox {
 		var hb = new HBox(false, 2);
 		hb.pack_start(new Label("Output bytes:"), false, false, 2);
 		outputbytes = new Entry();
+		outputbytes.editable = false;
 		hb.add(outputbytes);
 		pack_start(hb, false, false, 4);
 	}

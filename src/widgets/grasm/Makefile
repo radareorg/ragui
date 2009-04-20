@@ -3,7 +3,7 @@ VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg libr --pkg grava --vapidir=../grava
 SOURCES=grasmwidget.vala
 
 all:
-	-valac -g -H ../include/grasmwidget.h -Cc ${VALAFLAGS} *.vala
+	valac -g -H ../include/grasmwidget.h -Cc ${VALAFLAGS} *.vala
 	${CC} -c -g `pkg-config gtk+-2.0 libr cairo --cflags` -I/usr/include/libr -I../include $(SOURCES:.vala=.c)
 	${CC} -g -I../include `pkg-config gtk+-2.0 cairo libr --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o a.out ../grava/*.o
 

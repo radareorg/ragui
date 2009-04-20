@@ -216,6 +216,9 @@ public class Grava.Widget : GLib.Object {
 				graph.pany = -Graph.selected.y + 350;
 			}
 			break;
+		case '1':
+			graph.zoom = 1;
+			break;
 		case 65361: // arrow left
 		case 'h':
 			graph.panx+=S*graph.zoom;
@@ -476,24 +479,22 @@ load_graph_at("$$");
 		Node n = graph.selected; //graph.click(em.x-graph.panx, em.y-graph.pany);
 		sw.grab_focus();
 		if (n != null) {
+			double emx = em.x - graph.panx;// * graph.zoom;
+			double emy = em.y - graph.pany;// * graph.zoom;
 			/* drag node */
 			/* TODO: properly handle the graph.zoom */
 			if (n != on) {
-				offx = (em.x - n.x);
-				offy = (em.y - n.y);
+				/* offx, offy are the delta between click and node x,y */
+				//emx/=graph.zoom;
+				//emy/=graph.zoom;
+				offx = (emx/graph.zoom - n.x);//graph.zoom;
+				offy = (emy/graph.zoom - n.y);///graph.zoom;
 				on = n;
-			} 
-			n.x = (em.x) - (offx);
-			n.y = (em.y) - (offy);
+			}
 
-			offx = (em.x - n.x);
-			offy = (em.y - n.y);
+			n.x = (emx - offx)/graph.zoom;
+			n.y = (emy - offy)/graph.zoom;
 
-			//offx += (offx/graph.zoom);
-			//offy += (offy/graph.zoom);
-
-			//n.x += (offx-(offx*graph.zoom));
-			//n.y += (offy-(offy*graph.zoom));
 			da.queue_draw_area(0, 0, 5000, 3000);
 			Graph.selected = n;
 		} else {

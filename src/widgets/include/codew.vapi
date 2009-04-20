@@ -2,15 +2,15 @@
 
 [CCode (cprefix = "Codewidget", lower_case_cprefix = "codewidget_")]
 namespace Codewidget {
-	[CCode (cheader_filename = "codecontext.h")]
+	[CCode (cheader_filename = "codewidget.h")]
 	public class CodeContext : GLib.Object {
 		public CodeContext ();
 	}
-	[CCode (ref_function = "codewidget_jumps_ref", unref_function = "codewidget_jumps_unref", param_spec_function = "codewidget_param_spec_jumps", cheader_filename = "codejump.h")]
+	[CCode (ref_function = "codewidget_jumps_ref", unref_function = "codewidget_jumps_unref", param_spec_function = "codewidget_param_spec_jumps", cheader_filename = "codewidget.h")]
 	public class Jumps {
 		public Jumps ();
 	}
-	[CCode (ref_function = "codewidget_line_ref", unref_function = "codewidget_line_unref", param_spec_function = "codewidget_param_spec_line", cheader_filename = "codeline.h")]
+	[CCode (ref_function = "codewidget_line_ref", unref_function = "codewidget_line_unref", param_spec_function = "codewidget_param_spec_line", cheader_filename = "codewidget.h")]
 	public class Line {
 		public string hex;
 		public uint64 offset;

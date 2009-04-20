@@ -33,7 +33,6 @@ public class Grava.Renderer
 
 		ctx.save();
 
-
 		set_color(ctx, edge.data);
 
 		ctx.set_line_width (2);
@@ -53,7 +52,13 @@ public class Grava.Renderer
 
 			dx = edge.dest.w;
 			//dy += edge.dest.h/2;
-			ctx.curve_to(0, 0, 200, 100, dx-edge.orig.w/2, dy);
+			//////ctx.curve_to(0, 0, 200, 100, dx-edge.orig.w/2, dy);
+			ctx.curve_to(0, 0, 
+				(edge.dest.x-edge.orig.x)/2 , 
+				(edge.dest.y-edge.orig.y)/2 , 
+				(edge.dest.x-edge.orig.x)/2 , 
+				(edge.dest.y-edge.orig.y)/2);
+				//dx-edge.orig.w/2, dy);
 /*
 			dx += edge.dest.w;
 			dy += edge.dest.h/2;
@@ -96,10 +101,18 @@ public class Grava.Renderer
 			//arrow
 			if (Graph.selected == edge.orig)
 				ctx.set_line_width (6);
-			ctx.curve_to(dx, 100, ox, (ox>0)?200:-200, dx, dy);
+			double _x = -(edge.orig.x-edge.dest.x)/1.5;
+			double _y = -(edge.orig.y-edge.dest.y)/3;
+			ctx.curve_to( _x, _y, _x, _y, dx,dy);
+
 			//ctx.stroke();
 		}
 		ctx.stroke();
+		/* triangle dest*/
+		ctx.translate(dx-4,dy-8);
+		triangle(ctx, 8,8,true);
+		ctx.fill();
+
 		ctx.restore();
 		ctx.set_source_rgba (0.6, 0.6, 0.6,1);
 
@@ -205,8 +218,8 @@ public class Grava.Renderer
 		ctx.save();
 		//ctx.set_source_rgba (0.7, 0.0, 0.0, 1);
 		ctx.set_source_rgba (0.6, 0.6, 0.6, 0.8);
-		ctx.translate (node.w-16, 0);
-		square (ctx, 16, 16);
+		ctx.translate (node.w-13, 3);
+		square (ctx, 10, 10);
 		ctx.fill();
 		ctx.restore();
 
@@ -278,6 +291,21 @@ public class Grava.Renderer
 		ctx.rel_line_to (0, h);
 		ctx.rel_line_to (-w, 0);
 */
+		ctx.close_path ();
+	}
+
+	public static void triangle (Context ctx, double w, double h, bool down) {
+		ctx.move_to (0, 0);
+		ctx.set_line_width (1);
+		if (down) {
+			ctx.rel_line_to (w/2, h);
+			ctx.rel_line_to (w/2, -h);
+			ctx.rel_line_to (-w, 0);
+		} else {
+			ctx.rel_line_to (w/2, -h);
+			ctx.rel_line_to (w/2, h);
+			ctx.rel_line_to (-w, 0);
+		}
 		ctx.close_path ();
 	}
 
