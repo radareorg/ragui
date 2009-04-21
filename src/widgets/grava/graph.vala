@@ -43,6 +43,18 @@ public class Grava.Graph : GLib.Object
 	//	s = new ImageSurface.from_png("/tmp/file.png");
 	}
 
+	public void do_zoom(double z)
+	{
+		zoom += z;
+		if (z>0) {
+			panx += panx*z;
+			pany += pany*z;
+		} else {
+			panx += panx*z;
+			pany += pany*z;
+		}
+	}
+
 	public void undo_select()
 	{
 		uint length = selhist.length();
@@ -227,14 +239,13 @@ public class Grava.Graph : GLib.Object
 
 	public void draw(Context ctx)
 	{
-//		ctx.set_operator (Cairo.Operator.SOURCE);
-		// XXX THIS FLICKERS! MUST USE DOUBLE BUFFER
 		if (ctx == null)
 			return;
 
 		ctx.set_source_rgba(1, 1, 1, 1);
 		ctx.translate( panx, pany);
 		ctx.scale( zoom, zoom );
+		//ctx.translate( panx*zoom, pany*zoom);
 		ctx.rotate( angle );
 	
 		/* blank screen */
@@ -255,8 +266,6 @@ public class Grava.Graph : GLib.Object
 			if (node.visible)
 				Renderer.draw_node(ctx, node);
 		}
-
-		// TODO: double buffering
 	}
 
 	public void add(Node n)

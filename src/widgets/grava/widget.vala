@@ -218,6 +218,7 @@ public class Grava.Widget : GLib.Object {
 			break;
 		case '1':
 			graph.zoom = 1;
+			graph.panx = graph.pany = 0;
 			break;
 		case 65361: // arrow left
 		case 'h':
@@ -285,10 +286,12 @@ load_graph_at("$$");
 			graph.select_false();
 			break;
 		case '+':
-			graph.zoom+=ZOOM_FACTOR;
+			graph.do_zoom(+ZOOM_FACTOR);
+			//graph.zoom+=ZOOM_FACTOR;
 			break;
 		case '-':
-			graph.zoom-=ZOOM_FACTOR;
+			graph.do_zoom(-ZOOM_FACTOR);
+			//graph.zoom-=ZOOM_FACTOR;
 			break;
 		case '*':
 			graph.angle+=0.05;

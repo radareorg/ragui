@@ -33,6 +33,19 @@ public class Grava.Renderer
 
 		ctx.save();
 
+		/* triangle dest*/
+		if (Graph.selected == edge.orig)
+			ctx.set_line_width (6);
+		else ctx.set_line_width (1);
+		set_color(ctx, edge.data);
+		ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
+		ctx.translate(dx-4, dy);
+		triangle(ctx, 8,8,true);
+		ctx.stroke();
+
+		ctx.restore();
+		ctx.save();
+
 		set_color(ctx, edge.data);
 
 		ctx.set_line_width (2);
@@ -82,7 +95,8 @@ public class Grava.Renderer
 			//ctx.translate (edge.orig.x+(edge.orig.w/1.3),edge.orig.y+oh);
 			ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
 			ctx.move_to(0, 0);
-			  dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
+			  //dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
+			  dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
 			  dy = edge.dest.y-edge.orig.y - oh;
 			//ctx.move_to(30,30);
 		//ctx.set_source_rgb (0.0, 0.0, 0.0);
@@ -94,7 +108,7 @@ public class Grava.Renderer
 			ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
 			ctx.move_to(0, 0);
 			  //dx = edge.dest.x-edge.orig.x;
-			  dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
+			  dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
 			  dy = edge.dest.y-edge.orig.y- oh; // or 80 or so depending if > or < ???
 			double ox = dx;
 //			if (ox == 0){ ox = 150; }
@@ -108,10 +122,14 @@ public class Grava.Renderer
 			//ctx.stroke();
 		}
 		ctx.stroke();
+		if (Graph.selected == edge.orig)
+			ctx.set_line_width (6);
+		else ctx.set_line_width (1);
+
 		/* triangle dest*/
-		ctx.translate(dx-4,dy-8);
+		ctx.translate(dx-4, dy-8);
 		triangle(ctx, 8,8,true);
-		ctx.fill();
+		ctx.stroke();
 
 		ctx.restore();
 		ctx.set_source_rgba (0.6, 0.6, 0.6,1);
@@ -296,7 +314,7 @@ public class Grava.Renderer
 
 	public static void triangle (Context ctx, double w, double h, bool down) {
 		ctx.move_to (0, 0);
-		ctx.set_line_width (1);
+		//ctx.set_line_width (1);
 		if (down) {
 			ctx.rel_line_to (w/2, h);
 			ctx.rel_line_to (w/2, -h);

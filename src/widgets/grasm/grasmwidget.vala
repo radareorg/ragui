@@ -99,9 +99,8 @@ public class Grasmwidget.Widget : VBox {
 		outputbytes.text = "";
 		string str = "";
 		foreach(weak Grava.Node node in gw.graph.nodes) {
-			string code = node.get("body");
-			string bytes = o2b(code);
-			str = bytes;
+			stdout.printf("NX: %lf\n", node.x+gw.graph.panx);
+			str += o2b(node.get("body"));
 		}
 		outputbytes.text = str;
 	}
@@ -162,6 +161,9 @@ public class Grasmwidget.Widget : VBox {
 		outputbytes = new Entry();
 		outputbytes.editable = false;
 		hb.add(outputbytes);
+		var genbut = new Button.with_label("Compile");
+		genbut.clicked.connect( (v)=>{ generate_code(); } );
+		hb.pack_start(genbut, false, false, 2);
 		pack_start(hb, false, false, 4);
 	}
 }
