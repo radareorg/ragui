@@ -5,6 +5,7 @@ all:
 clean:
 	cd src && ${MAKE} clean
 
+#TODO: Push on a arch-specific subdir (x86-32, x86-64, powerpc, ...)
 push:
 	scp src/ragui \
 	src/widgets/codew/codew \

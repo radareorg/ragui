@@ -157,6 +157,10 @@ public class Grava.Widget : GLib.Object {
 		/* */
 		stdout.printf("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 
+		if (user_key_pressed(w, ek.keyval)) {
+			draw();
+			return true;
+		}
 
 		switch (ek.keyval) {
 		case 'b':
@@ -546,6 +550,7 @@ load_graph_at("$$");
         public signal int focus_at_label(void *obj, string addr);
         public signal int set_breakpoint(void *obj, string addr);
         public signal int unset_breakpoint(void *obj, string addr);
+        public signal bool user_key_pressed(void *obj, uint key);
 #if 0
         [Import]
         [CCode (cname="core_load_graph_at_label")]

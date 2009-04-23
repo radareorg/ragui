@@ -21,14 +21,15 @@ using Grava;
 using GLib;
 using Gtk;
 
-public class Grasmwidget.Widget : VBox { 
-
+public class Grasmwidget.Widget : VBox
+{
 	private Button assemble;
 	private Entry outputbytes;
 	private Entry inputoff;
 	private Entry inputasm;
 	private TextView inputasm_multi;
 	private Entry inputasm_hex;
+	private Entry inputasm_multi_hex;
 	private Grava.Widget gw;
 	private Radare.Asm rasm;
 	private Asm.Aop op;
@@ -56,6 +57,7 @@ public class Grasmwidget.Widget : VBox {
 		d.modal = true;
 		d.add_button("gtk-ok", 0);
 		d.vbox.add(new Label(msg));
+		d.show_all();
 		d.run();
 		d.destroy();
 		d = null;
@@ -67,10 +69,8 @@ public class Grasmwidget.Widget : VBox {
 		if (code == "")
 			return null;
 		rasm.set_pc(0x8048000);
-		if (rasm.massemble(out op, code) <1) {
-			error("Invalid opcode");
+		if (rasm.massemble(out op, code) <1)
 			return null;
-		}
 		b = op.buf_hex;
 		if (debug) stdout.printf("BYTES(%s)\n", b);
 		return b;
@@ -94,13 +94,17 @@ public class Grasmwidget.Widget : VBox {
 		generate_code();
 	}
 
-	private void add_node_multi()
+	private string get_multi_str()
 	{
-		string str;
 		Gtk.TextIter tiend, tistart;
 		inputasm_multi.buffer.get_start_iter(out tistart);
 		inputasm_multi.buffer.get_end_iter(out tiend);
-		str = inputasm_multi.buffer.get_text (tiend, tistart, false);
+		return inputasm_multi.buffer.get_text (tiend, tistart, false);
+	}
+
+	private void add_node_multi()
+	{
+		string str = get_multi_str();
 		if (o2b(str) == null) {
 			error("Cannot assemble this opcode");
 			return;
@@ -109,9 +113,10 @@ public class Grasmwidget.Widget : VBox {
 		Grava.Node *n = new Grava.Node();
 			n->set("label", inputoff.get_text());
 			n->set("color", "blue");
-			n->set("body", inputasm.get_text());
+			n->set("body", str);
 		// TODO: inputasm.set_text("");
-		str = inputasm_multi.buffer.get_text (tiend, tistart, false);
+		//str = inputasm_multi.buffer.get_text (tiend, tistart, false);
+		inputasm_multi.buffer =new TextBuffer(null); //tiend, tistart, false);
 		gw.graph.add_node(n);
 		gw.graph.update();
 		gw.draw();
@@ -130,6 +135,7 @@ public class Grasmwidget.Widget : VBox {
 				return (int)(na->y - nb->y);
 			}
 		);
+
 		/* TODO: Change color of node depending on ignored or not */
 		foreach(weak Grava.Node node in gw.graph.nodes) {
 			double posx = (node.x+gw.graph.panx)*gw.graph.zoom;
@@ -172,8 +178,9 @@ public class Grasmwidget.Widget : VBox {
 			cb.insert_text(1, "asm_java");
 			cb.insert_text(2, "asm_mips");
 			cb.set_active(0);
-
 			vb.pack_start(cb, false, false, 4);
+
+			vb.pack_start(new HSeparator(), false, false, 4);
 			vb.pack_start(new Label("Offset:"), false, false, 4);
 			inputoff = new Entry();
 			inputoff.set_text("0x8048000");
@@ -184,11 +191,16 @@ public class Grasmwidget.Widget : VBox {
 			inputasm.key_release_event += (foo) => {
 				Radare.Asm.Aop aop;
 				string str = inputasm.get_text ();
-				rasm.assemble (out aop, str);
+				rasm.massemble (out aop, str);
 				inputasm_hex.set_text (aop.buf_hex);
 				return false;
 			};
 			vb.pack_start(inputasm, false, false, 4);
+
+			inputasm_hex = new Entry();
+			inputasm_hex.editable = false;
+			vb.pack_start(inputasm_hex, false, false, 4);
+
 			assemble = new Button.with_label("Assemble");
 			assemble.clicked.connect(add_node);
 			vb.pack_start(assemble, false, false, 4);
@@ -197,13 +209,20 @@ public class Grasmwidget.Widget : VBox {
 			var sw = new ScrolledWindow(null, null);
 			sw.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 			inputasm_multi = new TextView();
+			inputasm_multi.key_release_event += (foo) => {
+				Radare.Asm.Aop aop;
+				string str = get_multi_str();
+				rasm.massemble (out aop, str);
+				inputasm_multi_hex.set_text (aop.buf_hex);
+				return false;
+			};
 			//inputasm_multi..connect(add_node_multi); // +=( (foo)=> {add_node_multi(); });
 			sw.add(inputasm_multi);
 			vb.pack_start(sw, false, false, 4);
 
-			inputasm_hex = new Entry();
-			inputasm_hex.editable = false;
-			vb.pack_start(inputasm_hex, false, false, 4);
+			inputasm_multi_hex = new Entry();
+			inputasm_multi_hex.editable = false;
+			vb.pack_start(inputasm_multi_hex, false, false, 4);
 
 			assemble = new Button.with_label("Assemble");
 			assemble.clicked.connect(add_node_multi);
@@ -220,7 +239,7 @@ public class Grasmwidget.Widget : VBox {
 		hb.pack_start(genbut, false, false, 2);
 		pack_start(hb, false, false, 4);
 
-		/* XXX: Quick hack to not modify dramatically grava */
+		/* XXX: SLOW Quick hack to not modify dramatically grava */
 		Timeout.add (512, () => {
 			generate_code();
 			return true;
