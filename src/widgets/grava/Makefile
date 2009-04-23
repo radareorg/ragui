@@ -1,6 +1,6 @@
 #include ../../config.mk
 
-SOURCES=default_lgrava.vala edge.vala graph.vala lgrava.vala \
+SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
 	node.vala renderer.vala widget.vala shape.vala
 VALAFLAGS=--pkg gtk+-2.0 --pkg cairo -g
 
