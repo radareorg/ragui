@@ -546,4 +546,17 @@ load_graph_at("$$");
         public signal int focus_at_label(void *obj, string addr);
         public signal int set_breakpoint(void *obj, string addr);
         public signal int unset_breakpoint(void *obj, string addr);
+#if 0
+        [Import]
+        [CCode (cname="core_load_graph_at_label")]
+        public static extern void focus_at_label(void *obj, string addr);
+
+        [Import]
+        [CCode (cname="mygrava_bp_at")]
+        public static extern void set_breakpoint(void *obj, string addr);
+
+        [Import]
+        [CCode (cname="mygrava_bp_rm_at")]
+        public static extern void unset_breakpoint(void *obj, string addr);
+#endif
 }

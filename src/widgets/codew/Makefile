@@ -6,9 +6,9 @@ all:
 	-valac -H ../include/codewidget.h --library codew -Cc ${VALAFLAGS} *.vala
 	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
 	cp codew.vapi ../include
-	${CC} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o a.out
+	${CC} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o codew
 
 clean:
 	mv cmain.c __
-	rm -f *.c *.h *.o a.out
+	rm -f *.c *.h *.o a.out codew
 	mv __ cmain.c
