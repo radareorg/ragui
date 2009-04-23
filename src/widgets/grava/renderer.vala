@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007  pancake <youterm.com>
+ *  Copyright (C) 2007-2009  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -235,7 +235,8 @@ public class Grava.Renderer
 		/* draw minimize button */
 		ctx.save();
 		//ctx.set_source_rgba (0.7, 0.0, 0.0, 1);
-		ctx.set_source_rgba (0.6, 0.6, 0.6, 0.8);
+		//ctx.set_source_rgba (0.6, 0.6, 0.6, 0.8);
+		ctx.set_source_rgba (0, 0, 0, 0.6);
 		ctx.translate (node.w-13, 3);
 		square (ctx, 10, 10);
 		ctx.fill();

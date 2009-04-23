@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007, 2008  pancake <youterm.com>
+ *  Copyright (C) 2007, 2008, 2009  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@ using Cairo;
 using Gtk;
 using Gdk;
 
-
-public class Grava.Widget : GLib.Object {
+public class Grava.Widget : GLib.Object
+{
 	enum WheelAction {
-		PAN   = 0,
-		ZOOM  = 1,
+		PAN = 0,
+		ZOOM = 1,
 		ROTATE = 2
 	}
 
@@ -443,8 +443,9 @@ load_graph_at("$$");
 			else	do_popup_generic();
 		}
 		if (n != null) {
-			if (((eb.y-(16*graph.zoom)-graph.pany)<(n.y*graph.zoom))
-			&&  (eb.x-graph.panx>(n.x+n.w-(16*graph.zoom))*graph.zoom)) {
+			/* XXX this is not scaling properly */
+			if (((eb.y-(10*graph.zoom)-graph.pany)<(n.y*graph.zoom))
+			&&  (eb.x-graph.panx>(n.x+n.w-(10*graph.zoom))*graph.zoom)) {
 				n.has_body = !n.has_body;
 				n.fit();
 			}
@@ -452,8 +453,7 @@ load_graph_at("$$");
 			opanx = eb.x;
 			opany = eb.y;
 
-//			graph.draw(Gdk.cairo_create(da.window));
-			da.queue_draw_area(0,0,5000,3000);
+			da.queue_draw_area(0, 0, 5000, 3000);
 			
 		}
 		return true;
@@ -486,16 +486,14 @@ load_graph_at("$$");
 		Node n = graph.selected; //graph.click(em.x-graph.panx, em.y-graph.pany);
 		sw.grab_focus();
 		if (n != null) {
-			double emx = em.x - graph.panx;// * graph.zoom;
-			double emy = em.y - graph.pany;// * graph.zoom;
+			double emx = em.x - graph.panx;
+			double emy = em.y - graph.pany;
 			/* drag node */
 			/* TODO: properly handle the graph.zoom */
 			if (n != on) {
 				/* offx, offy are the delta between click and node x,y */
-				//emx/=graph.zoom;
-				//emy/=graph.zoom;
-				offx = (emx/graph.zoom - n.x);//graph.zoom;
-				offy = (emy/graph.zoom - n.y);///graph.zoom;
+				offx = (emx/graph.zoom - n.x);
+				offy = (emy/graph.zoom - n.y);
 				on = n;
 			}
 
@@ -511,10 +509,8 @@ load_graph_at("$$");
 				double y = em.y-opany;
 				graph.panx+=x;//*0.8;
 				graph.pany+=y;//*0.8;
-				//graph.draw(Gdk.cairo_create(da.window));
 				da.queue_draw_area(0, 0, 5000, 3000);
 			}
-			//Graph.selected = null;
 			opanx = em.x;
 			opany = em.y;
 		}
