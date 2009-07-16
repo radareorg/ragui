@@ -12,6 +12,7 @@ public class widget
 {
 	public static Entry easm;
 	public static Entry ehex;
+	public static Entry eoff;
 	public static Asm st;
 	public static Asm.Aop aop;
 
@@ -51,6 +52,19 @@ public class widget
 			Gtk.main_quit();
 		};
 
+		widget.eoff = new Entry();
+		widget.eoff.set_text("0x8048000");
+		widget.eoff.key_release_event += (foo) => {
+			uint8 [] buffer = new uint8 [64];
+			string str = widget.eoff.get_text ();
+			widget.st.set_pc(Util.num_get(null, str));
+
+			str = widget.easm.get_text ();
+			widget.st.assemble (out widget.aop, str);
+			widget.ehex.set_text (widget.aop.buf_hex);
+			return false;
+		};
+
 		VBox vb = new VBox(false, 5);
 		widget.easm = new Entry();
 		easm.key_release_event += (foo) => {
@@ -59,6 +73,7 @@ public class widget
 			widget.ehex.set_text (widget.aop.buf_hex);
 			return false;
 		};
+
 		widget.ehex = new Entry();
 		ehex.key_release_event += (foo) => {
 			uint8 [] buffer = new uint8 [64];
@@ -80,6 +95,7 @@ public class widget
 		cb.set_active(0);
 		
 		vb.pack_start(get_label_hbox("Architecture", cb), false, false, 3);
+		vb.pack_start(get_label_hbox("Offset", eoff), false, false, 3);
 		vb.pack_start(get_label_hbox("Opcode", easm), false, false, 3);
 		vb.pack_start(get_label_hbox("Hexpairs", ehex), false, false, 3);
 
