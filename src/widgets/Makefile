@@ -1,4 +1,5 @@
 all:
+	mkdir -p include
 	cd grava && ${MAKE}
 	cd grasm && ${MAKE}
 	cd codew && ${MAKE}
