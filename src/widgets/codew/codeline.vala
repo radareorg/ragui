@@ -1,7 +1,7 @@
 using GLib;
 using Cairo;
 
-public class Codewidget.Line
+public class RaguiWidget.CodeView.Line
 {
 	public uint64 offset;
 	public string hex;

@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose codewing library for Vala
- *  Copyright (C) 2007, 2008  pancake <youterm.com>
+ *  Copyright (C) 2007, 2008, 2009  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@ using Cairo;
 using Gtk;
 using Gdk;
 
-public class Codewidget.Widget : ScrolledWindow {
+public class Hexview.Widget : ScrolledWindow
+{
 	enum WheelAction {
 		PAN   = 0,
 		ZOOM  = 1,
-		ROTATE = 2
 	}
 
 	const int SIZE = 30;
@@ -33,9 +33,7 @@ public class Codewidget.Widget : ScrolledWindow {
 	[Widget] public DrawingArea da;
 	public const double S = 96;
 	public double zoom = 1.4;
-	public int cursor = 0;
-	public int ccursor = 0;
-	public double lineh = 10;
+	public double lineh = 10; // MUST BE STATIC
 	public int breakpoint = 6;
 	public double pany = 0;
 	private double opanx = 0;
@@ -43,24 +41,18 @@ public class Codewidget.Widget : ScrolledWindow {
 	private WheelAction wheel_action = WheelAction.PAN;
 	Menu menu;
 
+	public int cursor = 0;
+	public int xcursor = 0;
+	public uint64 selfrom = -1LL;
+	public uint64 selto = -1LL;
+
 	/*
 	   public signal void load_codew_at(string addr);
 	   public signal void breakpoint_at(string addr);
 	   public signal void run_cmd(string addr);
 	 */
 
-	public Gtk.Widget get_widget()
-	{
-		return this;
-	}
-
 	construct {
-/*
-		super(	new Adjustment(0, 10, 1000, 2, 100, 1000),
-			new Adjustment(0, 10, 1000, 2, 100, 1000));
-*/
-
-		//sw = new ScrolledWindow(
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		create_widgets ();
 	}
@@ -81,7 +73,6 @@ public class Codewidget.Widget : ScrolledWindow {
 		da.button_release_event += button_release;
 		da.button_press_event += button_press;
 		da.scroll_event += scroll_press;
-
 /*
 		sw = new ScrolledWindow(
 				new Adjustment(0, 10, 1000, 2, 100, 1000),
@@ -90,8 +81,8 @@ public class Codewidget.Widget : ScrolledWindow {
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 
 		Viewport vp = new Viewport(
-				new Adjustment(0, 10, 1000, 2, 100, 1000),
-				new Adjustment(0, 10, 1000, 2, 100, 1000));
+			new Adjustment(0, 10, 1000, 2, 100, 1000),
+			new Adjustment(0, 10, 1000, 2, 100, 1000));
 		vp.add(da);
 
 		this.add_events(  Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
@@ -99,10 +90,6 @@ public class Codewidget.Widget : ScrolledWindow {
 		this.key_release_event += key_release;
 
 		this.add_with_viewport(vp);
-
-		//load_codew_at += (obj, addr) => {
-		//			stdout.printf("HOWHOWHOW "+addr);
-		//};
 	}
 
 	/* capture mouse motion */
@@ -192,6 +179,20 @@ public class Codewidget.Widget : ScrolledWindow {
 			case 'k':
 				cursor--;
 				break;
+			case 'l':
+				xcursor++;
+				if (xcursor>15) {
+					xcursor=0;
+					cursor++;
+				}
+				break;
+			case 'h':
+				xcursor--;
+				if (xcursor<0) {
+					xcursor=15;
+					cursor--;
+				}
+				break;
 			case 65507: // CONTROL KEY
 				wheel_action = WheelAction.PAN;
 				break;
@@ -214,45 +215,37 @@ public class Codewidget.Widget : ScrolledWindow {
 		menu = new Menu();
 
 		// XXX: most of this should be done in a tab panel or so
-		imi = new ImageMenuItem.from_stock("Set breakpoint", null);
+		imi = new ImageMenuItem.from_stock("Copy", null);
 		imi.activate += imi => {
 			stdout.printf("foo\n");
 		};
 		menu.append(imi);
 
-		imi = new ImageMenuItem.from_stock("Change opcode", null);
+		imi = new ImageMenuItem.from_stock("Paste", null);
 		imi.activate += imi => {
-			stdout.printf("redo\n");
+			stdout.printf("foo\n");
 		};
 		menu.append(imi);
 
-		imi = new ImageMenuItem.from_stock("Nop instruction", null);
+		imi = new ImageMenuItem.from_stock("Overwrite", null);
 		imi.activate += imi => {
-			stdout.printf("redo\n");
+			stdout.printf("foo\n");
 		};
 		menu.append(imi);
 
-		menu.append(new SeparatorMenuItem());
-
-		imi = new ImageMenuItem.from_stock("View in hex", null);
-		imi.activate += imi => {
-			stdout.printf("redo\n");
+		var mi = new CheckMenuItem.with_label("Fix zoom");
+		mi.toggled += mi => {
+			stdout.printf("foo %d\n", (int)mi.get_active());
+			mi.set_active(!mi.get_active());
+			//mi.activate_item();
+		//	var active = mi.get_active();
+			//mi.active = !mi.active;
 		};
-		menu.append(imi);
-		imi = new ImageMenuItem.from_stock("View in graph", null);
-		imi.activate += imi => {
-			stdout.printf("redo\n");
-		};
-		menu.append(imi);
+		menu.append(mi);
 
-		menu.append(new SeparatorMenuItem());
-
-		imi = new ImageMenuItem.from_stock("Continue until here", null);
+		imi = new ImageMenuItem.from_stock("hexwidth=16", null);
 		imi.activate += imi => {
-			//run_cmd("!step");
-			//run_cmd(".!regs*");
-			stdout.printf("redo\n");
-			//load_codew_at("$$");
+			stdout.printf("foo\n");
 		};
 		menu.append(imi);
 
@@ -262,20 +255,22 @@ public class Codewidget.Widget : ScrolledWindow {
 
 	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb)
 	{
-		if (eb.button == 3) {
-			do_popup_generic();
-		}
-		
-		if (eb.x < 50)
-			breakpoint = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 		int w, h;
 		da.window.get_size(out w, out h);
+
+		if (eb.button == 3)
+			do_popup_generic();
+		if (eb.x < 50)
+			breakpoint = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 		if (eb.x > w-30) {
-			if (eb.y <50)
-				pany+=20;
+			if (eb.y <50) pany+=20;
 			else pany-=20;
-		} else
-			cursor = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
+		} else cursor = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
+
+stdout.printf("x=%f y=%f\n", eb.x, eb.y);
+		if ((eb.x>(90*zoom)) && (eb.x<(350*zoom))) {
+			xcursor = (int)((eb.x-(90*zoom))/(35*zoom));
+		}
 
 		refresh(da);
 		return true;
@@ -344,6 +339,12 @@ public class Codewidget.Widget : ScrolledWindow {
 
 	public void draw()
 	{
+		int w, h;
+		da.window.get_size(out w, out h);
+
+		/* adapt zoom to size */
+		zoom = ((double)w)/500.0;
+
 		Context ctx = Gdk.cairo_create(da.window);
 		//ctx.save();
 		ctx.save();
@@ -365,10 +366,20 @@ public class Codewidget.Widget : ScrolledWindow {
 				ctx.save();
 				ctx.translate(10,y+1);
 				ctx.set_source_rgba(0.1, 0, 0.9, 0.2);
-				square(ctx, 300, lineh+1);
+				square(ctx, 90, lineh+1);
 				ctx.fill();
 				//ctx.stroke();
 				ctx.restore();
+
+				/* draw xcursor */
+				ctx.save();
+				ctx.translate((xcursor*15)+100, y+1);
+				ctx.set_source_rgba(0.3, 0, 0.9, 0.4);
+				square(ctx, 15, lineh+1);
+				ctx.fill();
+				//ctx.stroke();
+				ctx.restore();
+//stdout.printf("xcursor=%d\n", xcursor);
 			}
 			if (i==breakpoint) {
 				ctx.save();
@@ -381,58 +392,76 @@ public class Codewidget.Widget : ScrolledWindow {
 			}
 			ctx.move_to(20,y);
 			ctx.show_text("0x%08llx".printf((uint64)0x8048000+(i*2)));
-			ctx.move_to(120,y);
-			ctx.show_text("90");
-			ctx.move_to(170,y);
-			ctx.show_text("nop");
+			for(int j=0;j<8;j++) {
+				ctx.move_to(100+(j*30), y);
+				ctx.show_text("4141");
+			}
+			for(int j=0;j<8;j++) {
+				ctx.move_to(350+(j*15), y);
+				ctx.show_text("AA ");
+			}
 		}
 		ctx.stroke();
 		ctx.restore();
 
+		/* topline */
+		ctx.save();
+		ctx.translate(0, 0);
+		ctx.set_source_rgba(0.5, 0.5, 0.5, 0.9);
+		square(ctx, w, 20);
+		ctx.fill();
+		ctx.restore();
+
+		ctx.save();
+		ctx.move_to(100*zoom, 18);
+		ctx.scale(zoom, zoom);
+		ctx.select_font_face("Sans Serif", FontSlant.NORMAL, FontWeight.BOLD);
+		ctx.set_source_rgb(1, 1, 1);
+		ctx.show_text(" 0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F");
+		ctx.restore();
+
 		/* arrows */
-		int w, h;
-		da.window.get_size(out w, out h);
 	//stdout.printf("%d %d\n", w, h);
-			/* upper arrow */
-			ctx.save();
-			ctx.translate(w-20, 5);
-			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
-			square(ctx, 15, 15);
-			ctx.fill();
-			ctx.restore();
+		/* upper arrow */
+		ctx.save();
+		ctx.translate(w-20, 20+5);
+		ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
+		square(ctx, 15, 15);
+		ctx.fill();
+		ctx.restore();
 
-			ctx.save();
-			ctx.translate(w-17, 6);
-			ctx.set_source_rgba(1,1,1,1);
-			triangle(ctx, 9,9, false);
-			ctx.fill();
-			//ctx.stroke();
-			ctx.restore();
+		ctx.save();
+		ctx.translate(w-17, 20+6);
+		ctx.set_source_rgba(1,1,1,1);
+		triangle(ctx, 9,9, false);
+		ctx.fill();
+		//ctx.stroke();
+		ctx.restore();
 
-			/* bottom arrow */
-			ctx.save();
-			ctx.translate(w-20, h-20);
-			ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
-			square(ctx, 15, 15);
-			ctx.fill();
-			ctx.restore();
+		/* bottom arrow */
+		ctx.save();
+		ctx.translate(w-20, h-20);
+		ctx.set_source_rgba(0.5, 0.5, 0.5, 0.6);
+		square(ctx, 15, 15);
+		ctx.fill();
+		ctx.restore();
 
-			ctx.save();
-			ctx.translate(w-17, h-17);
-			ctx.set_source_rgba(1,1,1,1);
-			triangle(ctx, 9,9, true);
-			ctx.fill();
-			//ctx.stroke();
-			ctx.restore();
+		ctx.save();
+		ctx.translate(w-17, h-17);
+		ctx.set_source_rgba(1,1,1,1);
+		triangle(ctx, 9,9, true);
+		ctx.fill();
+		//ctx.stroke();
+		ctx.restore();
 
-			/* navigation bar */
-			ctx.save();
-			ctx.translate(w-20, 25);
-			ctx.set_source_rgba(0.7, 0.7, 0.7, 0.3);
-			square(ctx, 15, h-50);
-			ctx.set_line_width(1);
-			ctx.fill();
-			ctx.restore();
+		/* navigation bar */
+		ctx.save();
+		ctx.translate(w-20, 25);
+		ctx.set_source_rgba(0.7, 0.7, 0.7, 0.3);
+		square(ctx, 15, h-50);
+		ctx.set_line_width(1);
+		ctx.fill();
+		ctx.restore();
 	}
 
 	public void refresh(DrawingArea da)

@@ -3,6 +3,7 @@ all:
 	cd grava && ${MAKE}
 	cd grasm && ${MAKE}
 	cd codew && ${MAKE}
+	cd hexview && ${MAKE}
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../codew/*.vala --library codew
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../grava/*.vala --library grava
 

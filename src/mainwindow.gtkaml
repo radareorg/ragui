@@ -5,10 +5,14 @@
         xmlns:Gtk="Gtk"
         xmlns:GLib="GLib"
 	xmlns:Ragui="Ragui"
-	xmlns:Codewidget="Codewidget"
+	xmlns:Codeview="Codeview"
+	xmlns:Hexview="Hexview"
         class:name="Ragui.MainWindow"
 	delete-event="{OnWindowCloseEvent}"
         title="ragui">
+<!--
+	xmlns:Widget="Widget"
+-->
 
 <VBox border-width="1">
   <MenuBar expand="false">
@@ -69,7 +73,7 @@
 	   <tab-label>
 	     <Label label="Disassembly" />
 	   </tab-label>
-           <Codewidget:Widget expand="true" /> 
+           <Codeview:Widget expand="true" /> 
          </VBox>
 
          <Label label="code-foo">
@@ -91,8 +95,10 @@
          </Label>
        </Notebook>
      </VBox>
-
+<!--
      <Ragui:Console add2="true" />
+-->
+     <Hexview:Widget add2="true" /> 
 
    </VPaned>
   </HPaned> <!-- hpaned -->

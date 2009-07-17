@@ -1,6 +1,6 @@
 using GLib;
 
-public class Codewidget.CodeContext : GLib.Object
+public class RaguiWidget.CodeView.CodeContext : GLib.Object
 {
 //	SList <Codewidget.Line> lines;
 

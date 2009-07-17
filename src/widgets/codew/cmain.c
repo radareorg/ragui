@@ -1,8 +1,8 @@
-#include "codewidget.h"
+#include "codeview.h"
 
 int main(int argc, char **argv)
 {
-	CodewidgetWidget *codew;
+	CodeviewWidget *codew;
 	GtkWindow *w;
 	char *_tmp0 = "label";
 	char *_tmp1 = "mov eax, ebx\nmov ebx,ecx\n inc ecx";
@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 	//gtk_init(&argc, &argv);
 	gtk_init(NULL, NULL);
 
-	codew = codewidget_widget_new();
+	codew = codeview_widget_new();
 
 	//code_widget_update(grava->graph);
 
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	gtk_window_resize(w, 300, 200);
 	g_signal_connect (w, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-	gtk_container_add(GTK_CONTAINER(w), codewidget_widget_get_widget(codew));
+	gtk_container_add(GTK_CONTAINER(w), codew);
 
 	//g_signal_connect_object (grava, "load-graph-at", ((GCallback) load_graph_at), grava, 0);
 
