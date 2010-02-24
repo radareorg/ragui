@@ -10,10 +10,6 @@
         class:name="Ragui.MainWindow"
 	delete-event="{OnWindowCloseEvent}"
         title="ragui">
-<!--
-	xmlns:Widget="Widget"
--->
-
 <VBox border-width="1">
   <MenuBar expand="false">
     <MenuItem label="_File" with-mnemonic="true">

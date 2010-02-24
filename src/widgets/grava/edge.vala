@@ -27,7 +27,8 @@ public class Grava.Edge : GLib.Object
 	public bool jmpcnd; // verd == true , vermell == false
 
 	construct {
-		data = new HashTable<string,string>.full(str_hash, str_equal, g_free, Object.unref);
+		data = new HashTable<string,string>.full (
+			str_hash, str_equal, g_free, Object.unref);
 		orig = dest = null;
 		visible = true;
 	}
@@ -42,11 +43,9 @@ public class Grava.Edge : GLib.Object
 		data.insert(val, key);
 	}
 
-	public Edge with(Node a, Node b)
-	{
+	public Edge (Node a, Node b) {
 		orig = a;
 		dest = b;
-		return this;
 	}
 
 	/* workaround for netbsd's libm 
@@ -62,7 +61,8 @@ public class Grava.Edge : GLib.Object
 */
 	public double distance()
 	{
-		return Math.sqrt( Math.pow(orig.x-dest.x,2 ) + Math.pow(orig.y-dest.y, 2) );
+		return Math.sqrt (Math.pow (orig.x-dest.x, 2)
+			+ Math.pow (orig.y-dest.y, 2));
 		//return Math.sqrt( Math.exp2(orig.x-dest.x) + Math.exp2(orig.y-dest.y) );
 	}
 }

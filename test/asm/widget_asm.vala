@@ -76,9 +76,9 @@ public class widget
 
 		widget.ehex = new Entry();
 		ehex.key_release_event += (foo) => {
-			uint8 [] buffer = new uint8 [64];
+			uint8* buffer = new uint8 [64];
 			string str = widget.ehex.get_text ();
-			int len = Util.hex_str2bin(str, buffer);
+			int len = Util.hex_str2bin(str, out buffer);
 			widget.st.disassemble (out widget.aop, buffer, len);
 			widget.easm.set_text (widget.aop.buf_asm);
 			return false;

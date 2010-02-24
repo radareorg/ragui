@@ -1,0 +1,2 @@
+* Fix zoom (not focusing in center of screen)
+* Fix drag with zoom != 1

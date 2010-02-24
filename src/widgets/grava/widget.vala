@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007, 2008, 2009  pancake <youterm.com>
+ *  Copyright (C) 2007-2010  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@ using Cairo;
 using Gtk;
 using Gdk;
 
-public class Grava.Widget : GLib.Object
-{
+public class Grava.Widget : GLib.Object {
 	enum WheelAction {
 		PAN = 0,
 		ZOOM = 1,
@@ -43,8 +42,7 @@ public class Grava.Widget : GLib.Object
 	public signal void breakpoint_at(string addr);
 	public signal void run_cmd(string addr);
 
-	public Gtk.Widget get_widget()
-	{
+	public Gtk.Widget get_widget() {
 		return sw;
 	}
 
@@ -54,8 +52,7 @@ public class Grava.Widget : GLib.Object
 		create_widgets ();
 	}
 
-	public void create_widgets ()
-	{
+	public void create_widgets () {
 		da = new DrawingArea ();
 
 		/* add event listeners */
@@ -93,8 +90,7 @@ public class Grava.Widget : GLib.Object
 	}
 
 	/* capture mouse motion */
-	private bool scroll_press (Gtk.DrawingArea da, Gdk.EventScroll es)
-	{
+	private bool scroll_press (Gtk.DrawingArea da, Gdk.EventScroll es) {
 		sw.grab_focus();
 
 		switch(es.direction) {
@@ -130,12 +126,9 @@ public class Grava.Widget : GLib.Object
 		return false;
 	}
 
-	private bool key_release(Gtk.Widget w, Gdk.EventKey ek)
-	{
-		sw.grab_focus();
-
+	private bool key_release(Gtk.Widget w, Gdk.EventKey ek) {
+		sw.grab_focus ();
 //		stdout.printf("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
-
 		switch (ek.keyval) {
 		case 65507: // CONTROL KEY
 			wheel_action = WheelAction.PAN;
@@ -144,20 +137,19 @@ public class Grava.Widget : GLib.Object
 			wheel_action = WheelAction.PAN;
 			break;
 		}
-
 		return true;
 	}
 
-	private bool key_press (Gtk.Widget w, Gdk.EventKey ek)
-	{
+	/* TODO: this must be a hookable signal */
+	private bool key_press (Gtk.Widget w, Gdk.EventKey ek) {
 		bool handled = true;
 		//DrawingArea da = (DrawingArea)w;
 		sw.grab_focus();
 
 		/* */
-		stdout.printf("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
+		print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 
-		if (user_key_pressed(w, ek.keyval)) {
+		if (user_key_pressed (w, ek.keyval)) {
 			draw();
 			return true;
 		}
@@ -165,20 +157,20 @@ public class Grava.Widget : GLib.Object
 		switch (ek.keyval) {
 		case 'b':
 		case 65471: // F2 - set breakpoint
-			set_breakpoint(null, Graph.selected.get("label"));
+			set_breakpoint (null, Graph.selected.get("label"));
 			break;
 		case 'B':
 		//case 65471: // F2 - set breakpoint
-			set_breakpoint(null, "-%s".printf(Graph.selected.get("label")));
+			set_breakpoint (null, "-%s".printf(Graph.selected.get("label")));
 			break;
 		case 'S':
-			run_cmd("!stepo");
-			run_cmd(".!regs*");
-			load_graph_at("$$");
+			run_cmd ("!stepo");
+			run_cmd (".!regs*");
+			load_graph_at ("$$");
 			break;
 		case 's':
 		case 65476: // F7 - step
-			run_cmd("!step");
+			run_cmd ("!step");
 			run_cmd(".!regs*");
 			//graph.update();
 			load_graph_at("$$");
@@ -466,23 +458,20 @@ load_graph_at("$$");
 	private double offx = 0;
 	private double offy = 0;
 
-	private double abs(double x)
-	{
+	private double abs(double x) {
 		if (x>0)
 			return x;
 		return -x;
 	}
 
 	Node on = null;
-	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em)
-	{
+	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em) {
 		on = null;
 		opanx = opany = 0;
 		return true;
 	}
 
-	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em)
-	{
+	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em) {
 		Node n = graph.selected; //graph.click(em.x-graph.panx, em.y-graph.pany);
 		sw.grab_focus();
 		if (n != null) {
@@ -517,15 +506,13 @@ load_graph_at("$$");
 		return true;
 	}
 
-	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev)
-	{
+	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {
 		//DrawingArea da = (DrawingArea)w;
-		draw();
+		draw ();
 		return true;
 	}
 
-	public void draw()
-	{
+	public void draw() {
 		Context ctx = Gdk.cairo_create(da.window);
 		ctx.save();
 		if (graph.zoom < 0.05)

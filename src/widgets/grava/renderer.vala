@@ -37,26 +37,26 @@ public class Grava.Renderer
 		if (Graph.selected == edge.orig)
 			ctx.set_line_width (6);
 		else ctx.set_line_width (1);
-		set_color(ctx, edge.data);
+		set_color (ctx, edge.data);
 		ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
-		ctx.translate(dx-4, dy);
-		triangle(ctx, 8,8,true);
-		ctx.stroke();
+		ctx.translate (dx-4, dy);
+		triangle (ctx, 8,8,true);
+		ctx.stroke ();
 
-		ctx.restore();
-		ctx.save();
+		ctx.restore ();
+		ctx.save ();
 
-		set_color(ctx, edge.data);
+		set_color (ctx, edge.data);
 
 		ctx.set_line_width (2);
 		/* oxymoroon! */
 		if (edge.orig == edge.dest) {
 			/* bottom to up */
-			ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
-			ctx.move_to(0, 0);
+			ctx.translate (edge.orig.x+(edge.orig.w/2), edge.orig.y+oh);
+			ctx.move_to (0, 0);
 			  //dx = edge.dest.x-edge.orig.x;
-			  dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
-			  dy = edge.dest.y-edge.orig.y- oh; // or 80 or so depending if > or < ???
+			dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
+			dy = edge.dest.y-edge.orig.y-oh; // or 80 or so depending if > or < ???
 			double ox = dx;
 //			if (ox == 0){ ox = 150; }
 			//arrow
@@ -95,11 +95,11 @@ public class Grava.Renderer
 			//ctx.translate (edge.orig.x+(edge.orig.w/1.3),edge.orig.y+oh);
 			ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
 			ctx.move_to(0, 0);
-			  //dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
-			  dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
-			  dy = edge.dest.y-edge.orig.y - oh;
+			//dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
+			dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
+			dy = edge.dest.y-edge.orig.y - oh;
 			//ctx.move_to(30,30);
-		//ctx.set_source_rgb (0.0, 0.0, 0.0);
+			//ctx.set_source_rgb (0.0, 0.0, 0.0);
 			if (Graph.selected == edge.orig)
 				ctx.set_line_width (6);
 			line(ctx, 0,0, dx, dy);
@@ -108,8 +108,8 @@ public class Grava.Renderer
 			ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
 			ctx.move_to(0, 0);
 			  //dx = edge.dest.x-edge.orig.x;
-			  dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
-			  dy = edge.dest.y-edge.orig.y- oh; // or 80 or so depending if > or < ???
+			dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
+			dy = edge.dest.y-edge.orig.y- oh; // or 80 or so depending if > or < ???
 			double ox = dx;
 //			if (ox == 0){ ox = 150; }
 			//arrow
@@ -117,7 +117,7 @@ public class Grava.Renderer
 				ctx.set_line_width (6);
 			double _x = -(edge.orig.x-edge.dest.x)/1.5;
 			double _y = -(edge.orig.y-edge.dest.y)/3;
-			ctx.curve_to( _x, _y, _x, _y, dx,dy);
+			ctx.curve_to (_x, _y, _x, _y, dx,dy);
 
 			//ctx.stroke();
 		}
@@ -127,58 +127,61 @@ public class Grava.Renderer
 		else ctx.set_line_width (1);
 
 		/* triangle dest*/
-		ctx.translate(dx-4, dy-8);
-		triangle(ctx, 8,8,true);
-		ctx.stroke();
+		ctx.translate (dx-4, dy-8);
+		triangle (ctx, 8,8,true);
+		ctx.stroke ();
 
-		ctx.restore();
+		ctx.restore ();
 		ctx.set_source_rgba (0.6, 0.6, 0.6,1);
 
 	}
 
 	public static void set_color(Context ctx, HashTable<string,string> ht)
 	{
-		string color = ht.lookup("color");
-		set_color_str(ctx, color);
+		string color = ht.lookup ("color");
+		set_color_str (ctx, color);
 	}
 
 	public static bool set_color_str(Context ctx, string? color)
 	{
 		if (color != null) {
-			if (color == "black")
+			/* TODO: use a hashtable */
+			switch (color) {
+			case "black":
 				ctx.set_source_rgba (0.0, 0.0, 0.0, 0.7);
-			else
-			if (color == "white")
+				break;
+			case "white":
 				ctx.set_source_rgba (0.9, 0.9, 0.9, 0.8);
-			else
-			if (color == "green")
+				break;
+			case "green":
 				ctx.set_source_rgba (0.1, 0.7, 0.1, 0.8);
-			else
-			if (color == "red")
+				break;
+			case "red":
 				ctx.set_source_rgba (1.0, 0.1, 0.1, 0.9);
-			else
-			if (color == "turqoise")
+				break;
+			case "turqoise":
 				ctx.set_source_rgba (0.6, 0.9, 1.0, 0.8);
-			else
-			if (color == "blue")
+				break;
+			case "blue":
 				ctx.set_source_rgba (0.2, 0.5, 0.9, 0.8);
-			else
-			if (color == "yellow")
+				break;
+			case "yellow":
 				ctx.set_source_rgba (0.9, 0.9, 0.0, 0.6);
-			else
-			if (color == "gray")
+				break;
+			case "gray":
 				ctx.set_source_rgba (0.8, 0.8, 0.8, 0.8);
-			else
-			if (color == "beige")
+				break;
+			case "beige":
 				ctx.set_source_rgba (0.9, 0.9, 0.6, 0.7);
-			else
-			if (color == "darkgray")
+				break;
+			case "darkgray":
 				ctx.set_source_rgba (0.6, 0.6, 0.6, 0.8);
-			else
+				break;
+			default:
 				ctx.set_source_rgba (1.0, 1.0, 1.0, 0.4);
-		} else
-			ctx.set_source_rgba (1.0, 1.0, 1.0, 0.8);
-
+				break;
+			}
+		} else ctx.set_source_rgba (1.0, 1.0, 1.0, 0.8);
 		return (color!=null);
 	}
 
@@ -313,7 +316,7 @@ public class Grava.Renderer
 		ctx.close_path ();
 	}
 
-	public static void triangle (Context ctx, double w, double h, bool down) {
+	public static void triangle(Context ctx, double w, double h, bool down) {
 		ctx.move_to (0, 0);
 		//ctx.set_line_width (1);
 		if (down) {
@@ -328,7 +331,7 @@ public class Grava.Renderer
 		ctx.close_path ();
 	}
 
-	public static void square (Context ctx, double w, double h) {
+	public static void square(Context ctx, double w, double h) {
 		ctx.move_to (0, 0);
 		ctx.rel_line_to (w, 0);
 		ctx.rel_line_to (0, h);
@@ -336,9 +339,9 @@ public class Grava.Renderer
 		ctx.close_path ();
 	}
 
-	public static void line (Context ctx, double x, double y, double w, double h) {
+	public static void line(Context ctx, double x, double y, double w, double h) {
 		ctx.move_to (x,y);
 		ctx.rel_line_to (w, h);
-		ctx.stroke();
+		ctx.stroke ();
 	}
 }

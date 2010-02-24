@@ -31,8 +31,8 @@ public class Grasmwidget.Widget : VBox
 	private Entry inputasm_hex;
 	private Entry inputasm_multi_hex;
 	private Grava.Widget gw;
-	private Radare.Asm rasm;
-	private Asm.Aop op;
+	private RAsm rasm;
+	private RAsm.Aop op;
 	private static bool debug = false;
 
 	public Gtk.Widget get_widget()
@@ -116,7 +116,7 @@ public class Grasmwidget.Widget : VBox
 			n->set("body", str);
 		// TODO: inputasm.set_text("");
 		//str = inputasm_multi.buffer.get_text (tiend, tistart, false);
-		inputasm_multi.buffer =new TextBuffer(null); //tiend, tistart, false);
+		inputasm_multi.buffer = new TextBuffer(null); //tiend, tistart, false);
 		gw.graph.add_node(n);
 		gw.graph.update();
 		gw.draw();
@@ -155,9 +155,9 @@ public class Grasmwidget.Widget : VBox
 
 	public void create_widgets ()
 	{
-		rasm = new Radare.Asm();
-		rasm.set("asm_x86_olly");
-		rasm.set_syntax(Asm.Syntax.INTEL);
+		rasm = new Radare.RAsm();
+		rasm.use("x86.olly");
+		rasm.set_syntax(RAsm.Syntax.INTEL);
 		rasm.set_bits(32);
 		rasm.set_big_endian(false);
 
@@ -171,12 +171,11 @@ public class Grasmwidget.Widget : VBox
 		VBox vb = new VBox(false, 4);
 			ComboBox cb = new ComboBox.text();
 			cb.changed += (self) => {
-				string str = self.get_active_text();
-				rasm.set(str);
+				rasm.use(self.get_active_text());
 			};
-			cb.insert_text(0, "asm_x86_olly");
-			cb.insert_text(1, "asm_java");
-			cb.insert_text(2, "asm_mips");
+			cb.insert_text(0, "x86.olly");
+			cb.insert_text(1, "java");
+			cb.insert_text(2, "mips");
 			cb.set_active(0);
 			vb.pack_start(cb, false, false, 4);
 
@@ -189,7 +188,7 @@ public class Grasmwidget.Widget : VBox
 			inputasm = new Entry();
 			inputasm.activate.connect(add_node);
 			inputasm.key_release_event += (foo) => {
-				Radare.Asm.Aop aop;
+				RAsm.Aop aop;
 				string str = inputasm.get_text ();
 				rasm.massemble (out aop, str);
 				inputasm_hex.set_text (aop.buf_hex);
@@ -210,7 +209,7 @@ public class Grasmwidget.Widget : VBox
 			sw.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 			inputasm_multi = new TextView();
 			inputasm_multi.key_release_event += (foo) => {
-				Radare.Asm.Aop aop;
+				RAsm.Aop aop;
 				string str = get_multi_str();
 				rasm.massemble (out aop, str);
 				inputasm_multi_hex.set_text (aop.buf_hex);

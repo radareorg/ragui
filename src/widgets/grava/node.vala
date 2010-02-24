@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007,2008  pancake <youterm.com>
+ *  Copyright (C) 2007-2010  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
 
 using GLib;
 
-public class Grava.Node : GLib.Object
-{
+public class Grava.Node : GLib.Object {
 	public HashTable<string,string> data;
 	public uint baseaddr;
 	public SList<string> calls;
@@ -47,54 +46,47 @@ public class Grava.Node : GLib.Object
 		selected = false;
 	}
 
-	public void set (string key, string val)
-	{
+	public void set (string key, string val) {
 		data.insert (key, val);
 	}
 
-	public void set_i (string key, uint64 val)
-	{
+	public void set_i (string key, uint64 val) {
 		string str = "0x%llx".printf(val);
 		data.insert (key, str);
 	}
 
-	public string get (string key)
-	{
+	public inline string get (string key) {
 		return data.lookup(key);
 	}
 
-	public void add_call(uint64 addr)
-	{
+	public void add_call(uint64 addr) {
 		string str = "0x%08llx".printf(addr);
 		calls.append(str);
 	}
 
-	public void add_xref(uint64 addr)
-	{
+	public void add_xref(uint64 addr) {
 		string str = "0x%08llx".printf(addr);
 		xrefs.append(str);
 	}
 
-	public bool overlaps(Node n)
-	{
+	public bool overlaps(Node n) {
 		return (n.x >= x && n.x <= x+w && n.y <= y && n.y <= y+h);
 	}
 
-	public void fit()
-	{
-		string label = data.lookup("label");
-		string body  = data.lookup("body");
+	public void fit() {
+		string label = data.lookup ("label");
+		string body = data.lookup ("body");
 		double _y = 25;
 		double _w = 0;
 
 		if (label != null)
-			_w = label.len()+2;
+			_w = label.len ()+2;
 
 		if (has_body && body != null )
-		foreach( string str in body.split("\n") ) {
+		foreach( string str in body.split ("\n") ) {
 			_y += 10;
 			if ( str.len() > (long)_w )
-				_w = (double)str.len();
+				_w = (double)str.len ();
 		}
 
 		w = (_w*7);

@@ -1,8 +1,9 @@
 #include ../../config.mk
 
-SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
-	node.vala renderer.vala widget.vala shape.vala
 VALAFLAGS=--pkg gtk+-2.0 --pkg cairo -g
+
+SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
+	node.vala renderer.vala widget.vala shape.vala dot.vala
 
 grava: $(SOURCES:.vala=.o)
 	#[ "${HAVE_VALAC}" = 1 ] && valac -c -g --save-temps *.vala --pkg gtk+-2.0 --pkg cairo -o grava
@@ -18,6 +19,10 @@ c:
 novala:
 	${CC} `pkg-config gtk+-2.0 cairo --cflags --libs` -I../include -c *.c
 	-rm -f cmain.o
+
+gdot:
+	valac ${VALAFLAGS} *.vala -o gdot
+
 
 clean:
 	-mv cmain.c ___
