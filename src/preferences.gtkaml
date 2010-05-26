@@ -1,4 +1,4 @@
-<!-- ragui - copyright(C) 2009 - pancake<nopcode.org> -->
+<!-- ragui - copyright(C) 2009-2010 - pancake<nopcode.org> -->
 
 <Window xmlns:class="http://gtkaml.org/0.2"
         xmlns="Gtk"
@@ -34,13 +34,11 @@
   </VBox>
 
 <![CDATA[
-	private void OnButtonCloseClicked()
-	{
+	private void OnButtonCloseClicked() {
 		this.hide();
 	}
 
-	private bool OnWindowCloseEvent(Ragui.PreferencesWindow pw, Gdk.Event ev)
-	{
+	private bool OnWindowCloseEvent(Ragui.PreferencesWindow pw, Gdk.Event ev) {
 		pw.hide();
 		return true;
 	}

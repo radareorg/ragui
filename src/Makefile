@@ -14,6 +14,9 @@ all:
 	valac -c ${PKG} *.vala
 	${CC} `pkg-config --cflags --libs gtk+-2.0` *.o ${WIDGETS} -o ${BIN}
 
+c:
+	gtkamlc ${AML} -C ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
+
 stuff:
 	cd widgets && ${MAKE}
 

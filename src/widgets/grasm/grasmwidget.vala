@@ -1,6 +1,6 @@
 /*
  *  Grasm - Graph assembler for radare2
- *  Copyright (C) 2009  pancake <nopcode.org>
+ *  Copyright (C) 2009-2010  pancake <nopcode.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@ using Grava;
 using GLib;
 using Gtk;
 
-public class Grasmwidget.Widget : VBox
-{
+public class Grasmwidget.Widget : VBox {
 	private Button assemble;
 	private Entry outputbytes;
 	private Entry inputoff;
@@ -32,57 +31,52 @@ public class Grasmwidget.Widget : VBox
 	private Entry inputasm_multi_hex;
 	private Grava.Widget gw;
 	private RAsm rasm;
-	private RAsm.Aop op;
 	private static bool debug = false;
 
-	public Gtk.Widget get_widget()
-	{
+	private bool autogen = false;
+
+	public Gtk.Widget get_widget() {
 		return this;
 	}
 
-	construct
-	{
+	construct {
 		create_widgets ();
 	}
 
-	public void load_graph_at()
-	{
+	public void load_graph_at() {
 		stdout.printf("funk!\n");
 	}
 
-	private void error(string msg)
-	{
+	private void error(string msg) {
 		var d = new Gtk.Dialog();
 		d.title = "grasm error";
 		d.modal = true;
-		d.add_button("gtk-ok", 0);
-		d.vbox.add(new Label(msg));
-		d.show_all();
-		d.run();
-		d.destroy();
+		d.add_button ("gtk-ok", 0);
+		d.vbox.add (new Label (msg));
+		d.show_all ();
+		d.run ();
+		d.destroy ();
 		d = null;
 	}
 
-	private string? o2b(string code)
-	{
-		string b;
-		if (code == "")
-			return null;
-		rasm.set_pc(0x8048000);
-		if (rasm.massemble(out op, code) <1)
-			return null;
-		b = op.buf_hex;
-		if (debug) stdout.printf("BYTES(%s)\n", b);
-		return b;
+	private string? o2b(string code) {
+		if (code != "") {
+			rasm.set_pc (inputoff.text.to_uint64 ());
+			RAsm.Code? c = rasm.massemble (code);
+			if (c != null) {
+				if (debug)
+					stdout.printf("BYTES(%s)\n", c.buf_hex);
+				return (string)c.buf_hex;
+			}
+		}
+		return null;
 	}
 
-	private void add_node()
-	{
+	private void add_node() {
 		if (o2b(inputasm.get_text()) == null) {
 			error("Cannot assemble this opcode");
 			return;
 		}
-
 		Grava.Node *n = new Grava.Node();
 			n->set("label", inputoff.get_text());
 			n->set("color", "blue");
@@ -94,41 +88,38 @@ public class Grasmwidget.Widget : VBox
 		generate_code();
 	}
 
-	private string get_multi_str()
-	{
+	private string get_multi_str() {
 		Gtk.TextIter tiend, tistart;
 		inputasm_multi.buffer.get_start_iter(out tistart);
 		inputasm_multi.buffer.get_end_iter(out tiend);
 		return inputasm_multi.buffer.get_text (tiend, tistart, false);
 	}
 
-	private void add_node_multi()
-	{
+	private void add_node_multi() {
 		string str = get_multi_str();
 		if (o2b(str) == null) {
 			error("Cannot assemble this opcode");
 			return;
 		}
 
-		Grava.Node *n = new Grava.Node();
-			n->set("label", inputoff.get_text());
-			n->set("color", "blue");
-			n->set("body", str);
+		Grava.Node *n = new Grava.Node ();
+			n->set ("label", inputoff.get_text ());
+			n->set ("color", "blue");
+			n->set ("body", str);
 		// TODO: inputasm.set_text("");
 		//str = inputasm_multi.buffer.get_text (tiend, tistart, false);
-		inputasm_multi.buffer = new TextBuffer(null); //tiend, tistart, false);
-		gw.graph.add_node(n);
-		gw.graph.update();
-		gw.draw();
-		generate_code();
+		inputasm_multi.buffer = new TextBuffer (null); //tiend, tistart, false);
+		gw.graph.add_node (n);
+		gw.graph.update ();
+		gw.draw ();
+		generate_code ();
 	}
 
-	private void generate_code()
-	{
+	private void generate_code() {
 		outputbytes.text = "";
 		string str = "";
-		gw.graph.nodes.sort(
-			/* TODO: can I cast the arguments directly? */
+		gw.graph.nodes.sort (
+			/* TODO: bug vala here! can I cast the arguments directly? */
 			(a,b) => {
 				Grava.Node *na = a;
 				Grava.Node *nb = b;
@@ -153,8 +144,16 @@ public class Grasmwidget.Widget : VBox
 		//gw.draw();
 	}
 
-	public void create_widgets ()
-	{
+	public string? disassemble(string hex) {
+		RAsm.Aop aop;
+		uint8 buffer[128];
+		uint8 *ptr = (uint8*)buffer;
+		int len = RHex.str2bin (hex, ptr);
+		rasm.disassemble (out aop, ptr, len);
+		return aop.buf_asm;
+	}
+
+	public void create_widgets () {
 		rasm = new Radare.RAsm();
 		rasm.use("x86.olly");
 		rasm.set_syntax(RAsm.Syntax.INTEL);
@@ -166,82 +165,109 @@ public class Grasmwidget.Widget : VBox
 		gw.graph.zoom = 2;
 		gw.graph.update();
 		gw.separator = 150;
-		gw.load_graph_at.connect(load_graph_at);
-		hb0.add (gw.get_widget());
+		gw.load_graph_at.connect (load_graph_at);
+		hb0.add (gw.get_widget ());
 		VBox vb = new VBox(false, 4);
-			ComboBox cb = new ComboBox.text();
+			ComboBox cb = new ComboBox.text ();
 			cb.changed += (self) => {
-				rasm.use(self.get_active_text());
+				rasm.set_pc (inputoff.text.to_uint64 ());
+				rasm.use(self.get_active_text ());
+				inputasm.activate ();
 			};
-			cb.insert_text(0, "x86.olly");
-			cb.insert_text(1, "java");
-			cb.insert_text(2, "mips");
-			cb.set_active(0);
-			vb.pack_start(cb, false, false, 4);
+			foreach (var p in rasm.handlers)
+				cb.append_text (p.name);
+			cb.set_active (0);
+			rasm.use (cb.get_active_text ());
+			vb.pack_start (cb, false, false, 4);
 
-			vb.pack_start(new HSeparator(), false, false, 4);
-			vb.pack_start(new Label("Offset:"), false, false, 4);
-			inputoff = new Entry();
-			inputoff.set_text("0x8048000");
-			vb.pack_start(inputoff, false, false, 4);
-			vb.pack_start(new Label("Opcode"), false, false, 4);
-			inputasm = new Entry();
-			inputasm.activate.connect(add_node);
+			vb.pack_start (new HSeparator (), false, false, 1);
+			vb.pack_start (new Label ("Offset:"), false, false, 1);
+			inputoff = new Entry ();
+			inputoff.activate.connect ((x) => {
+				RAsm.Code? c = rasm.massemble (inputasm.get_text ());
+				if (c != null)
+					inputasm_hex.set_text (c.buf_hex);
+			});
+			inputoff.set_text ("0x8048000");
+			vb.pack_start (inputoff, false, false, 1);
+			vb.pack_start (new Label ("Opcode"), false, false, 1);
+			inputasm = new Entry ();
+			inputasm.activate.connect (add_node);
 			inputasm.key_release_event += (foo) => {
-				RAsm.Aop aop;
-				string str = inputasm.get_text ();
-				rasm.massemble (out aop, str);
-				inputasm_hex.set_text (aop.buf_hex);
+				RAsm.Code? c = rasm.massemble (inputasm.get_text ());
+				if (c != null)
+					inputasm_hex.set_text (c.buf_hex);
 				return false;
 			};
-			vb.pack_start(inputasm, false, false, 4);
+			vb.pack_start(inputasm, false, false, 1);
 
 			inputasm_hex = new Entry();
-			inputasm_hex.editable = false;
-			vb.pack_start(inputasm_hex, false, false, 4);
+			inputasm_hex.activate.connect ((foo) => {
+				var str = disassemble (inputasm_hex.get_text ());
+				if (str != null)
+					inputasm.set_text (str);
+			});
+			vb.pack_start (inputasm_hex, false, false, 1);
 
-			assemble = new Button.with_label("Assemble");
-			assemble.clicked.connect(add_node);
-			vb.pack_start(assemble, false, false, 4);
-			vb.pack_start(new HSeparator(), false, false, 4);
+			var _hb = new HBox (false, 2);
+			assemble = new Button.with_label ("add");
+			assemble.clicked.connect ((x)=> {
+				inputasm.activate ();
+			});
+			_hb.add (assemble);
 
-			var sw = new ScrolledWindow(null, null);
-			sw.set_policy(PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
-			inputasm_multi = new TextView();
+			assemble = new Button.with_label ("dis");
+			assemble.clicked.connect ((x)=> {
+				inputasm_hex.activate ();
+			});
+			_hb.add (assemble);
+			vb.pack_start (_hb, false, false, 4);
+			vb.pack_start (new HSeparator (), false, false, 1);
+
+			var sw = new ScrolledWindow (null, null);
+			sw.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+			inputasm_multi = new TextView ();
 			inputasm_multi.key_release_event += (foo) => {
-				RAsm.Aop aop;
-				string str = get_multi_str();
-				rasm.massemble (out aop, str);
-				inputasm_multi_hex.set_text (aop.buf_hex);
+				RAsm.Code? c = rasm.massemble (get_multi_str ());
+				if (c != null)
+					inputasm_multi_hex.set_text (c.buf_hex);
 				return false;
 			};
 			//inputasm_multi..connect(add_node_multi); // +=( (foo)=> {add_node_multi(); });
-			sw.add(inputasm_multi);
+			sw.add (inputasm_multi);
 			vb.pack_start(sw, false, false, 4);
 
-			inputasm_multi_hex = new Entry();
+			inputasm_multi_hex = new Entry ();
 			inputasm_multi_hex.editable = false;
-			vb.pack_start(inputasm_multi_hex, false, false, 4);
+			vb.pack_start (inputasm_multi_hex, false, false, 1);
 
-			assemble = new Button.with_label("Assemble");
-			assemble.clicked.connect(add_node_multi);
-			vb.pack_start(assemble, false, false, 4);
-			hb0.pack_start(vb, false, false, 3);
-		add(hb0);
-		var hb = new HBox(false, 2);
-		hb.pack_start(new Label("Output bytes:"), false, false, 2);
-		outputbytes = new Entry();
+			assemble = new Button.with_label ("Assemble");
+			assemble.clicked.connect (add_node_multi);
+			vb.pack_start (assemble, false, false, 1);
+			hb0.pack_start (vb, false, false, 3);
+		add (hb0);
+		var hb = new HBox (false, 2);
+		hb.pack_start (new Label ("Output bytes:"), false, false, 2);
+		outputbytes = new Entry ();
 		outputbytes.editable = false;
-		hb.add(outputbytes);
-		var genbut = new Button.with_label("Compile");
-		genbut.clicked.connect( (v)=>{ generate_code(); } );
-		hb.pack_start(genbut, false, false, 2);
-		pack_start(hb, false, false, 4);
+		hb.add (outputbytes);
 
-		/* XXX: SLOW Quick hack to not modify dramatically grava */
-		Timeout.add (512, () => {
-			generate_code();
-			return true;
-		} );
+		var agenbut = new CheckButton.with_label ("auto");
+		agenbut.toggled.connect ( (x)=> {
+			autogen = !autogen;
+			if (autogen) {
+				generate_code ();
+				Timeout.add (512, () => {
+					generate_code ();
+					return autogen;
+				} );
+			}
+		});
+		hb.pack_start(agenbut, false, false, 2);
+
+		var genbut = new Button.with_label ("Compile");
+		genbut.clicked.connect ((v) => { generate_code(); });
+		hb.pack_start (genbut, false, false, 2);
+		pack_start (hb, false, false, 4);
 	}
 }

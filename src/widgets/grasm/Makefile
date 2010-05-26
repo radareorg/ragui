@@ -1,4 +1,4 @@
-VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg libr --pkg grava --vapidir=../grava
+VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg r_asm --pkg r_util --pkg grava --vapidir=../grava
 
 SOURCES=grasmwidget.vala
 

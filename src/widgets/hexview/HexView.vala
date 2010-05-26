@@ -7,9 +7,9 @@ namespace Radare.Widget {
 
 		public HexView() {
 			//pack_start(new Label ("foo"), false, false, 0);
-			add(new Label("foo"));
+			add (new Label ("foo"));
 			da = new DrawingArea();	
-			add(da);
+			add (da);
 		}
 	}
 }
@@ -17,7 +17,11 @@ namespace Radare.Widget {
 void main(string[] args) {
 	Gtk.init(ref args);
 	var w = new Gtk.Window(WindowType.TOPLEVEL);
-	w.add (new  Radare.Widget.HexView());
+	var hex = new  Radare.Widget.HexView();
+	hex.buffer.update.connect ((x,y)=> {
+		print ("READING FROM 0x%08llx\n", x);
+	});
+	w.add (hex);
 	w.show_all();
 	Gtk.main();
 }

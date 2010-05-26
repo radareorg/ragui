@@ -51,8 +51,7 @@
 
   <HPaned border-width="3" expand="true">
    <VBox border-width="3">
-     <ComboBox expand="false">
-     </ComboBox>
+     <ComboBox class:public="leftbox" expand="false" text="true" />
      <ScrolledWindow can-focus="true"
          hscrollbar-policy="{PolicyType.AUTOMATIC}"
          vscrollbar-policy="{PolicyType.AUTOMATIC}" expand="true">
@@ -74,19 +73,33 @@
 
          <Label label="code-foo">
            <tab-label>
-             <Label label="code" />
+             <Label label="Assembler" />
            </tab-label>
          </Label>
 
+<!--
          <Label label="data-foo">
            <tab-label>
              <Label label="hexdump" />
            </tab-label>
          </Label>
+-->
 
          <Label label="graph-foo">
            <tab-label>
-             <Label label="graph" />
+             <Label label="Graph" />
+           </tab-label>
+         </Label>
+
+         <Label label="graph-foo">
+           <tab-label>
+             <Label label="GraphDiff" />
+           </tab-label>
+         </Label>
+
+         <Label label="graph-foo">
+           <tab-label>
+             <Label label="Preferences" />
            </tab-label>
          </Label>
        </Notebook>
@@ -118,30 +131,34 @@
 <![CDATA[
 	public signal void on_quit();
 
-	private void OnQuit()
-	{
+	private void OnQuit() {
 		on_quit();
 	}
 
-	private bool OnWindowCloseEvent(Ragui.MainWindow mw, Gdk.Event ev)
-	{
+	private bool OnWindowCloseEvent(Ragui.MainWindow mw, Gdk.Event ev) {
 		OnQuit();
 		return true;
 	}
 
-	private void OnMenuEditPreferences ()
-	{
+	private void OnMenuEditPreferences () {
 		Ragui.PreferencesWindow pw = new Ragui.PreferencesWindow();
 		pw.transient_for = this;
 		pw.show_all();
 	}
 
-	private void OnMenuHelpAbout ()
-	{
+	private void OnMenuHelpAbout () {
 		aboutdialog.transient_for = this;
 		aboutdialog.run ();
 		aboutdialog.hide();
 	}
+
+/* user defined window constructor */
+/*
+	public MainWindow() {
+		leftbox.append_text ("Hello world");
+		leftbox.append_text ("bar low");
+	}
+*/
 ]]>
 
 </Window>
