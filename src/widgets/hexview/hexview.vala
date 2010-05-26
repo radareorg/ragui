@@ -22,7 +22,7 @@ using Gtk;
 using Gdk;
 
 public class Hexview.Widget : ScrolledWindow {
-	const string FONTNAME = "Sans Serif"; //Inconsolata";
+	const string FONTNAME = ""; //Nimbus Sans L";
 	private Context ctx;
 	public Hexview.Buffer buffer;
 
@@ -60,6 +60,7 @@ public class Hexview.Widget : ScrolledWindow {
 	 */
 
 	construct {
+		this.address = (uint64)this;
 		this.buffer = new Buffer ();
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		create_widgets ();
@@ -150,12 +151,12 @@ public class Hexview.Widget : ScrolledWindow {
 			break;
 		}
 
-		refresh(da);
+		refresh (da);
 		return false;
 	}
 
 	private bool key_release(Gtk.Widget w, Gdk.EventKey ek) {
-		this.grab_focus();
+		this.grab_focus ();
 		//stdout.printf("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 		switch (ek.keyval) {
 		case 65507: // CONTROL KEY
@@ -165,7 +166,7 @@ public class Hexview.Widget : ScrolledWindow {
 			wheel_action = WheelAction.PAN;
 			break;
 		}
-		refresh(da);
+		refresh (da);
 		return true;
 	}
 
@@ -330,7 +331,7 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 	}
 
 	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {               
-		draw(true);
+		draw (true);
 		return true;
 	}
 
@@ -419,8 +420,9 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 				ctx.translate((xcursor*15)+100, y+1);
 				set_color (Color.HIGHLIGHT);
 				square (ctx, 14, lineh+1);
-				ctx.fill();
+				//ctx.fill();
 				//ctx.stroke();
+				ctx.stroke();
 				ctx.restore();
 
 				/* ascii column */
@@ -428,8 +430,8 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 				ctx.translate((xcursor*7)+350, y+1);
 				set_color (Color.HIGHLIGHT);
 				square(ctx, 7, lineh+1);
-				ctx.fill();
-				//ctx.stroke();
+				//ctx.fill();
+				ctx.stroke();
 				ctx.restore();
 //stdout.printf("xcursor=%d\n", xcursor);
 			}
@@ -442,22 +444,21 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 				//ctx.stroke();
 				ctx.restore();
 			}
-			ctx.move_to(20,y);
-			ctx.show_text("0x%08llx".printf((uint64)address+(i*16)));
-			if (buffer.get_ptr(0,0) != null) {
-				for (int j=0;j<8;j++) {
-					ctx.move_to (100+(j*30), y);
-					uint8 *ptr = buffer.get_ptr (j*2, i);
+			ctx.move_to (20, y);
+			ctx.show_text ("0x%08llx".printf((uint64)address+(i*16)));
+			uint8 *ptr = buffer.get_ptr (0, i);
+			if (ptr != null) {
+				for (int j=0;j<16;j+=2) {
+					ctx.move_to (100+(j*15), y);
 					ctx.show_text ("%02x%02x".printf (
-						ptr[0], ptr[1]));
+						ptr[j], ptr[j+1]));
 				}
 				for (int j=0;j<16;j++) {
-					uint8 *ptr = buffer.get_ptr (j, i);
-					char ch = (char)ptr[0];
-					ctx.move_to(350+(j*7), y);
+					char ch = (char)ptr[j];
+					ctx.move_to (350+(j*7), y);
 					if (ch<' '||ch>'~')
 						ch = '.';
-					ctx.show_text("%c".printf (ch));
+					ctx.show_text ("%c".printf (ch));
 				}
 			} else {
 				if (food) {
@@ -466,37 +467,27 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 				}
 			}
 		}
-		ctx.stroke();
 		ctx.restore();
 
 		/* topline */
-		ctx.save(); /* {{{ */
-		ctx.translate(0, 0);
-		ctx.set_source_rgba(0.5, 0.5, 0.5, 0.8);
-		square(ctx, w, 11*zoom);
-		ctx.fill();
-		ctx.restore(); /* }}} */
-
-		ctx.save(); /* {{{ */
+		ctx.save();
+		ctx.translate (0, 0);
+		ctx.set_source_rgba (0.5, 0.5, 0.5, 0.8);
+		square (ctx, w, 11*zoom);
+		ctx.fill ();
+		//---
 		ctx.scale (zoom, zoom);
 		ctx.move_to (100, 10);
 		ctx.select_font_face (FONTNAME, FontSlant.NORMAL, FontWeight.BOLD);
 		set_color (Color.BACKGROUND);
 		ctx.show_text (" 0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F");
-		ctx.restore (); /* }}} */
-
-		ctx.save (); /* {{{ */
-		ctx.scale (zoom, zoom);
-		ctx.move_to (100, 10);
-		ctx.select_font_face (FONTNAME, FontSlant.NORMAL, FontWeight.BOLD);
-		set_color (Color.BACKGROUND);
-
+		//----
+		//ctx.move_to (100, 10);
 		ctx.move_to (350, 10);
 		ctx.show_text ("0123456789ABCDEF");
-
 		ctx.move_to (0, 10);
 		ctx.show_text (("0x%08"+uint64.FORMAT_MODIFIER+"x").printf (offset));
-		ctx.restore (); /* }}} */
+		ctx.restore ();
 
 		set_color (Color.HIGHLIGHT);
 		/* arrows */

@@ -10,10 +10,13 @@ WIDGETS+=widgets/hexview/hexview.c
 WIDGETS+=widgets/hexview/hexviewbuffer.c
 CC?=gcc
 
-all:
+all: hexview
 	gtkamlc ${AML} -c ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
-	valac -c ${PKG} *.vala
-	${CC} `pkg-config --cflags --libs gtk+-2.0` *.o ${WIDGETS} -o ${BIN}
+	valac --Xcc=-O3 -c ${PKG} *.vala
+	${CC} -O3 `pkg-config --cflags --libs gtk+-2.0` *.o ${WIDGETS} -o ${BIN}
+
+hexview:
+	cd widgets/hexview && ${MAKE} lib
 
 c:
 	gtkamlc ${AML} -C ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
