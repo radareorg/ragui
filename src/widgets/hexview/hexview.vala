@@ -220,7 +220,7 @@ print ("PANY = %f\n", pany);
 		// XXX: most of this should be done in a tab panel or so
 		imi = new ImageMenuItem.from_stock("Copy", null);
 		imi.activate += imi => {
-			stdout.printf("foo\n");
+			stdout.printf("How many bytes?\n");
 		};
 		menu.append(imi);
 
@@ -230,30 +230,20 @@ print ("PANY = %f\n", pany);
 		};
 		menu.append(imi);
 
-		imi = new ImageMenuItem.from_stock("Overwrite", null);
+		imi = new ImageMenuItem.from_stock ("Write", null);
 		imi.activate += imi => {
-			stdout.printf("foo\n");
+			stdout.printf("TODO\n");
 		};
 		menu.append(imi);
 
-		var mi = new CheckMenuItem.with_label("Fix zoom");
-		mi.toggled += mi => {
-			stdout.printf("foo %d\n", (int)mi.get_active());
-			mi.set_active(!mi.get_active());
-			//mi.activate_item();
-		//	var active = mi.get_active();
-			//mi.active = !mi.active;
-		};
-		menu.append(mi);
-
-		imi = new ImageMenuItem.from_stock("hexwidth=16", null);
+		imi = new ImageMenuItem.from_stock ("Assemble", null);
 		imi.activate += imi => {
-			stdout.printf("foo\n");
+			stdout.printf("TODO\n");
 		};
 		menu.append(imi);
 
 		menu.show_all();
-		menu.popup(null, null, null, 0, 0);
+		menu.popup (null, null, null, 0, 0);
 	}
 
 	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb) {
@@ -314,7 +304,7 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 	}
 
 	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {               
-		draw();
+		draw(true);
 		return true;
 	}
 
@@ -343,14 +333,15 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 
 	private void sync () {
 		if (pany>0) {
-			buffer.update (offset-(16*16), 16*64);
+			buffer.update (offset-(16*16), 16*80);
 			pany -= 80;
 			address -= 16*4;
+			cursor += 4;
 		}
 		if (-pany>(80)) {
-			print ("MUST UPDATE FORWARD\n");
-			buffer.update (offset+(16*16), 16*64);
+			buffer.update (offset+(16*16), 16*80);
 			pany += 80;
+			cursor -= 4;
 			address += 16*4;
 		}
 
@@ -359,19 +350,9 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		print ("PANY = %f\n", pany);
 		offset = (uint64)(address + (((int)(py)<<4)));
 		offset_click = offset + xcursor; // TODO: add Y
-		/*
-		if (offset+99999 > buffer.end) {
-			pany = 0;
-			buffer.update ();
-		}
-		if (offset < buffer.start) {
-			pany = 0;
-			buffer.update ();
-		}
-		*/
 	}
 
-	public void draw() {
+	public void draw(bool food) {
 		int w, h;
 		da.window.get_size (out w, out h);
 
@@ -394,14 +375,14 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		//da.expose(da, null);
 		//da.queue_draw_area(0,0,1000,1000);
 		ctx.set_source_rgb (1, 1, 1);
-		for (int i=0;i<40;i++) {
+		for (int i=0;i<60;i++) {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
 				ctx.save ();
 				ctx.translate (10,y+1);
 				//ctx.set_source_rgba(0.1, 0, 0.9, 0.2);
 				ctx.set_source_rgba(1.0, 0.1, 0.1, 0.8);
-				square(ctx, 90, lineh+1);
+				square (ctx, 90, lineh+1);
 				ctx.fill();
 				//ctx.stroke();
 				ctx.restore();
@@ -410,7 +391,7 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 				ctx.save();
 				ctx.translate((xcursor*15)+100, y+1);
 				ctx.set_source_rgba(1.0, 0.1, 0.1, 0.8);
-				square(ctx, 14, lineh+1);
+				square (ctx, 14, lineh+1);
 				ctx.fill();
 				//ctx.stroke();
 				ctx.restore();
@@ -438,20 +419,25 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 			ctx.move_to(20,y);
 			ctx.show_text("0x%08llx".printf((uint64)address+(i*16)));
 			if (buffer.get_ptr(0,0) != null) {
-			for (int j=0;j<8;j++) {
-				ctx.move_to (100+(j*30), y);
-				uint8 *ptr = buffer.get_ptr (j*2, i);
-				ctx.show_text ("%02x%02x".printf (
-					ptr[0], ptr[1]));
-			}
-			for (int j=0;j<16;j++) {
-				uint8 *ptr = buffer.get_ptr (j, i);
-				char ch = (char)ptr[0];
-				ctx.move_to(350+(j*7), y);
-				if (ch<' '||ch>'~')
-					ch = '.';
-				ctx.show_text("%c".printf (ch));
-			}
+				for (int j=0;j<8;j++) {
+					ctx.move_to (100+(j*30), y);
+					uint8 *ptr = buffer.get_ptr (j*2, i);
+					ctx.show_text ("%02x%02x".printf (
+						ptr[0], ptr[1]));
+				}
+				for (int j=0;j<16;j++) {
+					uint8 *ptr = buffer.get_ptr (j, i);
+					char ch = (char)ptr[0];
+					ctx.move_to(350+(j*7), y);
+					if (ch<' '||ch>'~')
+						ch = '.';
+					ctx.show_text("%c".printf (ch));
+				}
+			} else {
+				if (food) {
+					buffer.update (offset, 16*80);
+					draw(false);
+				}
 			}
 		}
 		ctx.stroke();

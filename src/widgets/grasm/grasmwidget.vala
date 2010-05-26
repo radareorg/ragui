@@ -174,7 +174,7 @@ public class Grasmwidget.Widget : VBox {
 				rasm.use(self.get_active_text ());
 				inputasm.activate ();
 			};
-			foreach (var p in rasm.handlers)
+			foreach (var p in rasm.plugins)
 				cb.append_text (p.name);
 			cb.set_active (0);
 			rasm.use (cb.get_active_text ());

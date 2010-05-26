@@ -7,6 +7,7 @@ PKG+=--save-temps
 PKG+=--Xcc=-Iwidgets/include
 WIDGETS=widgets/codew/*.o
 WIDGETS+=widgets/hexview/hexview.c
+WIDGETS+=widgets/hexview/hexviewbuffer.c
 CC?=gcc
 
 all:
