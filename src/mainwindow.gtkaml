@@ -5,6 +5,7 @@
         xmlns:Gtk="Gtk"
         xmlns:GLib="GLib"
 	xmlns:Ragui="Ragui"
+	xmlns:Grasmwidget="Grasmwidget"
 	xmlns:Codeview="Codeview"
 	xmlns:Hexview="Hexview"
         class:name="Ragui.MainWindow"
@@ -68,13 +69,14 @@
 	   <tab-label>
 	     <Label label="Disassembly" />
 	   </tab-label>
-           <Codeview:Widget expand="true" /> 
+           <Codeview:Widget class:public="codeview" expand="true" /> 
          </VBox>
 
          <Label label="code-foo">
            <tab-label>
              <Label label="Assembler" />
            </tab-label>
+         <!-- XXX THIS LINE BREAKS GTKAMLC!!! MUST REPORT <Grasmwidget:Widget class:public="grasm" expand="true" /> -->
          </Label>
 
 <!--
@@ -107,7 +109,7 @@
 <!--
      <Ragui:Console add2="true" />
 -->
-     <Hexview:Widget add2="true" /> 
+     <Hexview:Widget class:public="hexview" add2="true" /> 
 
    </VPaned>
   </HPaned> <!-- hpaned -->

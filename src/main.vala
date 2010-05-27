@@ -1,5 +1,6 @@
 /* ragui - copyright(C) 2009 - pancake<nopcode.org> */
 
+using Hexview;
 using GLib;
 using Gtk;
 
@@ -23,6 +24,18 @@ public class Ragui.Main
 		});
 	}
 
+	public static void setup_io (Hexview.Widget hex) {
+		hex.buffer.update.connect ((x,y)=> {
+			print ("READING FROM 0x%08llx\n", x);
+			uint8 *ptr = (void *)x;
+			hex.buffer.start = x;
+			hex.buffer.end = x+y;
+			hex.buffer.size = y;
+			hex.buffer.bytes = new uint8[y];
+			Memory.copy (hex.buffer.bytes, ptr, y);
+		});
+	}
+
 	public static int main (string[] args) {
 		stdout.printf("Loading ragui...\n");
 
@@ -33,6 +46,7 @@ public class Ragui.Main
 		mw.resize(500, 400);
 		mw.show_all();
 		setup_leftbox (mw.leftbox);
+		setup_io (mw.hexview);
 		Gtk.main();
 
 		return 0;

@@ -2,10 +2,14 @@ VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg r_asm --pkg r_util --pkg grava --vapi
 
 SOURCES=grasmwidget.vala
 
-all:
+all: lib
 	valac -g -H ../include/grasmwidget.h -Cc ${VALAFLAGS} *.vala
 	${CC} -c -g `pkg-config gtk+-2.0 libr cairo --cflags` -I/usr/include/libr -I../include $(SOURCES:.vala=.c)
 	${CC} -g -I../include `pkg-config gtk+-2.0 cairo libr --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o grasm ../grava/*.o
+
+lib:
+	valac ${VALAFLAGS} -H ../include/grasmwidget.h --library grasmwidget -Cc --pkg gtk+-2.0 grasmwidget.vala
+	cp -f *.vapi ../include
 
 clean:
 	mv cmain.c __
