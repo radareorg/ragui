@@ -3,12 +3,13 @@ VALAFLAGS=--pkg gtk+-2.0 --pkg cairo
 SOURCES=codecontext.vala codejump.vala codeline.vala codeview.vala
 
 all:
-	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
+#	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
 	${CC} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o codew
 
 lib:
 	-valac -H ../include/codeview.h --library codew -Cc ${VALAFLAGS} *.vala
 	cp codew.vapi ../include
+	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
 
 clean:
 	mv cmain.c __

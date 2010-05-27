@@ -1,4 +1,5 @@
-PKG=--pkg gtk+-2.0 --pkg codew --pkg hexview --pkg grasmwidget
+PKG=--pkg gtk+-2.0 --pkg codew --pkg hexview --pkg grasmwidget --pkg r_util --pkg r_asm
+R2DEPS=r_asm r_util
 BIN=ragui
 #AML=--implicitsdir=/usr/share/gtkamlc/implicits/
 #PKG+=-C --save-temps
@@ -9,12 +10,13 @@ WIDGETS=widgets/codew/*.o
 WIDGETS+=widgets/hexview/hexview.c
 WIDGETS+=widgets/hexview/hexviewbuffer.c
 WIDGETS+=widgets/grasm/grasmwidget.c
+WIDGETS+=widgets/grava/*.o
 CC?=gcc
 
 all: libs
 	gtkamlc ${PKG} ${AML} -c console.gtkaml mainwindow.gtkaml preferences.gtkaml
 	valac --Xcc=-O3 -c ${PKG} *.vala
-	${CC} -O3 `pkg-config --cflags --libs gtk+-2.0` *.o ${WIDGETS} -o ${BIN}
+	${CC} -Iwidgets/include -O3 `pkg-config --cflags --libs gtk+-2.0 ${R2DEPS}` *.o ${WIDGETS} -o ${BIN}
 
 libs:
 	cd widgets/hexview && ${MAKE} lib

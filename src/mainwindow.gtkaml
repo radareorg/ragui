@@ -72,12 +72,12 @@
            <Codeview:Widget class:public="codeview" expand="true" /> 
          </VBox>
 
-         <Label label="code-foo">
+         <VBox>
            <tab-label>
              <Label label="Assembler" />
            </tab-label>
-         <!-- XXX THIS LINE BREAKS GTKAMLC!!! MUST REPORT <Grasmwidget:Widget class:public="grasm" expand="true" /> -->
-         </Label>
+         <Grasmwidget:Widget class:public="grasm" expand="true" />
+         </VBox>
 
 <!--
          <Label label="data-foo">
