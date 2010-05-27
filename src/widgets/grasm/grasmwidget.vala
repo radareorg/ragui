@@ -160,28 +160,56 @@ public class Grasmwidget.Widget : VBox {
 		rasm.set_bits(32);
 		rasm.set_big_endian(false);
 
-		gw = new Grava.Widget();
-		var hb0 = new HBox(false, 2);
-		gw.graph.zoom = 2;
-		gw.graph.update();
-		gw.separator = 150;
-		gw.load_graph_at.connect (load_graph_at);
-		hb0.add (gw.get_widget ());
-		VBox vb = new VBox(false, 4);
-			ComboBox cb = new ComboBox.text ();
-			cb.changed += (self) => {
-				rasm.set_pc (inputoff.text.to_uint64 ());
-				rasm.use(self.get_active_text ());
-				inputasm.activate ();
-			};
-			foreach (var p in rasm.plugins)
-				cb.append_text (p.name);
-			cb.set_active (0);
-			rasm.use (cb.get_active_text ());
-			vb.pack_start (cb, false, false, 4);
+		var hb0 = new HBox (false, 2);
+		var vb0 = new VBox (false, 2);
 
-			vb.pack_start (new HSeparator (), false, false, 1);
-			vb.pack_start (new Label ("Offset:"), false, false, 1);
+			var hb = new HBox (false, 4);
+				hb.pack_start (new Label ("Bytes:"), false, false, 2);
+				outputbytes = new Entry ();
+				outputbytes.editable = false;
+				hb.add (outputbytes);
+
+				ComboBox cb = new ComboBox.text ();
+				cb.changed += (self) => {
+					rasm.set_pc (inputoff.text.to_uint64 ());
+					rasm.use(self.get_active_text ());
+					inputasm.activate ();
+				};
+				foreach (var p in rasm.plugins)
+					cb.append_text (p.name);
+				cb.set_active (0);
+				rasm.use (cb.get_active_text ());
+				hb.pack_start (cb, false, false, 4);
+
+			vb0.pack_start (hb, false, false, 2);
+			gw = new Grava.Widget();
+			gw.graph.zoom = 2;
+			gw.graph.update();
+			gw.separator = 150;
+			gw.load_graph_at.connect (load_graph_at);
+			vb0.add (gw.get_widget ());
+		hb0.add (vb0);
+
+		VBox vb = new VBox(false, 4);
+
+			hb = new HBox (false, 2);
+				var agenbut = new CheckButton.with_label ("auto");
+				agenbut.toggled.connect ( (x)=> {
+					autogen = !autogen;
+					if (autogen) {
+						generate_code ();
+						Timeout.add (512, () => {
+							generate_code ();
+							return autogen;
+						} );
+					}
+				});
+				hb.pack_start(agenbut, false, false, 2);
+			vb.pack_start (hb, false, false, 2);
+
+			var genbut = new Button.with_label ("Compile");
+			genbut.clicked.connect ((v) => { generate_code(); });
+			hb.add (genbut);
 			inputoff = new Entry ();
 			inputoff.activate.connect ((x) => {
 				RAsm.Code? c = rasm.massemble (inputasm.get_text ());
@@ -190,8 +218,9 @@ public class Grasmwidget.Widget : VBox {
 			});
 			inputoff.set_text ("0x8048000");
 			vb.pack_start (inputoff, false, false, 1);
-			vb.pack_start (new Label ("Opcode"), false, false, 1);
+			//vb.pack_start (new Label ("Opcode"), false, false, 1);
 			inputasm = new Entry ();
+			inputasm.set_text ("mov eax, 33");
 			inputasm.activate.connect (add_node);
 			inputasm.key_release_event += (foo) => {
 				RAsm.Code? c = rasm.massemble (inputasm.get_text ());
@@ -222,7 +251,6 @@ public class Grasmwidget.Widget : VBox {
 			});
 			_hb.add (assemble);
 			vb.pack_start (_hb, false, false, 4);
-			vb.pack_start (new HSeparator (), false, false, 1);
 
 			var sw = new ScrolledWindow (null, null);
 			sw.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
@@ -235,7 +263,8 @@ public class Grasmwidget.Widget : VBox {
 			};
 			//inputasm_multi..connect(add_node_multi); // +=( (foo)=> {add_node_multi(); });
 			sw.add (inputasm_multi);
-			vb.pack_start(sw, false, false, 4);
+			//vb.pack_start(sw, false, false, 4);
+			vb.add (sw); //inputasm_multi_hex);
 
 			inputasm_multi_hex = new Entry ();
 			inputasm_multi_hex.editable = false;
@@ -244,30 +273,9 @@ public class Grasmwidget.Widget : VBox {
 			assemble = new Button.with_label ("Assemble");
 			assemble.clicked.connect (add_node_multi);
 			vb.pack_start (assemble, false, false, 1);
-			hb0.pack_start (vb, false, false, 3);
+		vb.pack_start (hb, false, false, 2);
+
+		hb0.pack_start (vb, false, false, 3);
 		add (hb0);
-		var hb = new HBox (false, 2);
-		hb.pack_start (new Label ("Output bytes:"), false, false, 2);
-		outputbytes = new Entry ();
-		outputbytes.editable = false;
-		hb.add (outputbytes);
-
-		var agenbut = new CheckButton.with_label ("auto");
-		agenbut.toggled.connect ( (x)=> {
-			autogen = !autogen;
-			if (autogen) {
-				generate_code ();
-				Timeout.add (512, () => {
-					generate_code ();
-					return autogen;
-				} );
-			}
-		});
-		hb.pack_start(agenbut, false, false, 2);
-
-		var genbut = new Button.with_label ("Compile");
-		genbut.clicked.connect ((v) => { generate_code(); });
-		hb.pack_start (genbut, false, false, 2);
-		pack_start (hb, false, false, 4);
 	}
 }

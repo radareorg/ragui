@@ -56,8 +56,9 @@
      <ScrolledWindow can-focus="true"
          hscrollbar-policy="{PolicyType.AUTOMATIC}"
          vscrollbar-policy="{PolicyType.AUTOMATIC}" expand="true">
-       <TreeView>
-       </TreeView>
+       <VBox class:public="leftvb" />
+       <!-- <TreeView class:public=>
+       </TreeView> -->
      </ScrolledWindow>
    </VBox>
 
