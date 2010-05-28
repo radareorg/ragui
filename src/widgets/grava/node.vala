@@ -33,9 +33,6 @@ public class Grava.Node : GLib.Object {
 	public double h;
 
 	construct {
-		data     = new HashTable<string,string>.full(str_hash, str_equal, g_free, Object.unref);
-		calls    = new SList<string>();
-		xrefs    = new SList<string>();
 		baseaddr = 0;
 		x        = y = 0;
 		w        = 150;
@@ -46,7 +43,13 @@ public class Grava.Node : GLib.Object {
 		selected = false;
 	}
 
-	public void set (string key, string val) {
+	public Node() {
+		data = new HashTable<string,string>.full(str_hash, str_equal, g_free, Object.unref);
+		calls = new SList<string>();
+		xrefs = new SList<string>();
+	}
+
+	public new void set (string key, string val) {
 		data.insert (key, val);
 	}
 
@@ -55,7 +58,7 @@ public class Grava.Node : GLib.Object {
 		data.insert (key, str);
 	}
 
-	public inline string get (string key) {
+	public new inline string get (string key) {
 		return data.lookup(key);
 	}
 

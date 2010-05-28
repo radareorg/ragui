@@ -11,7 +11,6 @@ public static class Grava.Dot {
 
 [Compact]
 public static class Grava.XDot {
-
 	private static bool parse_node(string node, out string node1) {
 		char *str = node.chr (-1, '"');
 		if (str == null)
@@ -189,8 +188,10 @@ public static class Grava.XDot {
 	}
 }
 
-void _main() {
+/*
+void main() {
 	Graph g = new Graph ();
 	//XDot.import (g, "file.xdot");
 	XDot.export (g, "out.xdot");
 }
+*/

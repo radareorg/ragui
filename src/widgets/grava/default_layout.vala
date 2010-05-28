@@ -18,41 +18,35 @@
 
 using GLib;
 
-public class Grava.DefaultLayout : Grava.Layout
-{
+public class Grava.DefaultLayout : Grava.Layout {
 	public double y_offset = 100;
 	public double x_offset = 50;
-	private weak Graph graph;
+	private unowned Graph graph;
 	public HashTable<string,Node> data;
-	private static bool d = false; // debug output
 
-	construct
-	{
+	construct {
 		data = new HashTable<string, Node>.full (
 			str_hash, str_equal, g_free, Object.unref);
 	}
 
-	public void reset()
-	{
+	public new void reset() {
 		print ("RESETING LAYOUT\n");
-		foreach (weak Node node in graph.nodes) {
+		foreach (unowned Node node in graph.nodes) {
 			print ("RESETING LAYOUT+++++\n");
 			setxy (node);
 		}
 	}
 
-	public void reset_real()
-	{
-		foreach (weak Node node in graph.nodes) {
+	public void reset_real() {
+		foreach (unowned Node node in graph.nodes) {
 			graph.nodes.remove (node);
 		}
 	}
 
-	private void treenodes(Node n)
-	{
+	private void treenodes(Node n) {
 		int ox = 0;
 		SList<Node> nodes = graph.outer_nodes (n);
-		foreach (weak Node node in nodes) {
+		foreach (unowned Node node in nodes) {
 			node.y = n.y+n.h+y_offset;
 			node.x += n.w+ ox;
 			ox += 50;
@@ -60,9 +54,8 @@ public class Grava.DefaultLayout : Grava.Layout
 		}
 	}
 
-	public void setxy(Node n)
-	{
-		Node m = data.lookup(n.get("offset"));
+	public void setxy(Node n) {
+		Node m = data.lookup (n.get ("offset"));
 		if (m == null) {
 			Node no = new Node ();
 			no.set ("offset", n.get ("offset"));
@@ -79,8 +72,7 @@ public class Grava.DefaultLayout : Grava.Layout
 		}
 	}
 
-	public bool getxy(ref Node n)
-	{
+	public bool getxy(ref Node n) {
 		Node m = data.lookup (n.get ("offset"));
 		if (m != null) {
 			n.x = m.x;
@@ -95,11 +87,10 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 		return false;
 	}
 
-	public void walkChild(Node node, int level)
-	{
-		if (level<1)
+	public void walkChild(Node? node, int level) {
+		if (level<1 || node == null)
 			return;
-		foreach(weak Edge edge in graph.edges) {
+		foreach(unowned Edge edge in graph.edges) {
 			if (edge.orig == node) {
 				edge.dest.y = edge.orig.y + edge.orig.h + y_offset;
 				walkChild(edge.dest, --level);
@@ -107,29 +98,25 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 		}
 	}
 
-	public weak Node? get_parent(Node node)
-	{
-		foreach(weak Edge edge in graph.edges) {
+	public unowned Node? get_parent(Node node) {
+		foreach(unowned Edge edge in graph.edges) {
 			if (edge.dest == node)
 				return edge.orig;
 		}
 		return null;
 	}
 
-	public override void set_graph(Graph graph)
-	{
+	public override void set_graph(Graph graph) {
 		this.graph = graph;
 	}
 
-	public override void run(Graph graph)
-	{
+	public override void run(Graph graph) {
 		this.graph = graph; // XXX
 		double last_y;
 		//SList<Node> paint_nodes;
 		//int i, inorig, indst ,k;
-		Node n,p, destn;
-		Edge e;
-		bool found;
+		//Node n,p, destn;
+		//Edge e;
 
 		// reset all node positions
 
@@ -137,14 +124,14 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 
 /*
 		// Tots vertical, un sota l'altr ordenats per base addr
-		foreach(weak Node node in graph.nodes) {
+		foreach(unowned Node node in graph.nodes) {
 			if (!node.visible) continue;
 			// reset node positions
 			node.x = 50;
 			node.fit();
 			node.y = last_y ;
 			last_y = node.y + node.h + 50 ;
-			if (d) stdout.printf(" at %f %s %x\n", node.y, node.get ("label" ) , node.baseaddr );
+			//stdout.printf(" at %f %s %x\n", node.y, node.get ("label" ) , node.baseaddr );
 		}
 		
 		// Per cada node. Segueixo la condiciÃ³ certa, tots els nodes que estiguin
@@ -175,7 +162,7 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 			///
 			found = false;
 			destn = null;
-			foreach(weak Edge edge in graph.edges) {
+			foreach(unowned Edge edge in graph.edges) {
 				if (edge.orig == n && edge.jmpcnd == true) {
 					if(d)stdout.printf ( "0x%x ----> 0x%x\n",edge.orig.baseaddr ,edge.dest.baseaddr );
 					destn = edge.dest;
@@ -229,26 +216,24 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 
 		walkChild (graph.selected, 5);
 		//walkChild(graph.selected); //
-		foreach (weak Node node in graph.nodes) {
+		foreach (unowned Node node in graph.nodes) {
 			walkChild (node, 5);
 		}
 
-		foreach (weak Node node in graph.nodes) {
+		foreach (unowned Node node in graph.nodes) {
 			if (!node.visible) continue;
 
-			weak Node parent = get_parent (node);
+			unowned Node parent = get_parent (node);
 			if (parent != null)
 				node.x = parent.x;
 		}
 
-		bool overlaps = false;
 		SList<Node> nodz;
-		foreach (weak Node n in graph.nodes) {
+		foreach (unowned Node n in graph.nodes) {
 			double totalx = 0;
-			int total;
 			nodz = new SList<Node> ();
 			nodz.append (n);
-			foreach (weak Node n2 in graph.nodes) {
+			foreach (unowned Node n2 in graph.nodes) {
 				if (n != n2 && n.overlaps (n2)) {
 					totalx += n2.w+x_offset;
 					n.x += n.w + n2.w + x_offset;
@@ -256,7 +241,7 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 				}
 			}
 			totalx /= 2;
-			foreach (weak Node n2 in nodz) {
+			foreach (unowned Node n2 in nodz) {
 				if (n != n2 && n.overlaps (n2)) {
 					totalx += n2.w;
 					n.x -= totalx;
@@ -265,16 +250,16 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 			nodz = null;
 		}
 
-		foreach (weak Node node in graph.nodes) {
+		foreach (unowned Node node in graph.nodes) {
 			if (!node.visible)
 				continue;
 			if (graph.overlaps(node))
 				node.x += node.w;
 		}
-		foreach (weak Node node in graph.nodes) {
+		foreach (unowned Node node in graph.nodes) {
 			if (!node.visible)
 				continue;
-			foreach (weak Edge edge in graph.edges) {
+			foreach (unowned Edge edge in graph.edges) {
 				if (edge.orig==node && edge.dest.y<node.y)
 					node.y = edge.dest.y-(node.h-y_offset)*3;
 			}

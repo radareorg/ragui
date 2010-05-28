@@ -34,16 +34,16 @@ int main(int argc, char **argv) {
 	char *_tmp1 = "mov eax, ebx\nmov ebx,ecx\n inc ecx";
 	
 	//gtk_init(&argc, &argv);
-	gtk_init(NULL, NULL);
+	gtk_init (NULL, NULL);
 
-	grava = grava_widget_new();
+	grava = grava_widget_new ();
 
-#if 0
-	node = grava_node_new();
-	grava_node_set(node, "label", "foo:");
-	grava_node_set(node, "color", "black");
-	grava_node_set(node, "body", "mov eax, 33\nxor ebx, ebx");
-	grava_graph_add_node(grava->graph, node);
+#if 1
+	node = grava_node_new ();
+	grava_node_set (node, "label", "foo:");
+	grava_node_set (node, "color", "black");
+	grava_node_set (node, "body", "mov eax, 33\nxor ebx, ebx");
+	grava_graph_add_node (grava->graph, node);
 
 	node2 = grava_node_new();
 	grava_node_set(node2, "label", "bar:");

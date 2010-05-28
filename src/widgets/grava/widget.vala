@@ -30,7 +30,6 @@ public class Grava.Widget : GLib.Object {
 
 	const int SIZE = 30;
 	const double ZOOM_FACTOR = 0.1;
-	//[Widget] public DrawingArea da;
 	public DrawingArea da;
 	public Grava.Graph graph;
 	public const double S = 96;
@@ -38,6 +37,14 @@ public class Grava.Widget : GLib.Object {
 	ScrolledWindow sw;
 	Menu menu;
 
+	/* drag nodes */
+	private double opanx = 0;
+	private double opany = 0;
+
+	private double offx = 0;
+	private double offy = 0;
+
+	/* signals */
 	public signal void load_graph_at(string addr);
 	public signal void breakpoint_at(string addr);
 	public signal void run_cmd(string addr);
@@ -143,10 +150,8 @@ public class Grava.Widget : GLib.Object {
 	/* TODO: this must be a hookable signal */
 	private bool key_press (Gtk.Widget w, Gdk.EventKey ek) {
 		bool handled = true;
-		//DrawingArea da = (DrawingArea)w;
 		sw.grab_focus();
 
-		/* */
 		print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 
 		if (user_key_pressed (w, ek.keyval)) {
@@ -306,8 +311,7 @@ load_graph_at("$$");
 		return true;
 	}
 
-	public void do_popup_generic()
-	{
+	public void do_popup_generic() {
 		ImageMenuItem imi;
  		menu = new Menu();
 
@@ -421,18 +425,16 @@ load_graph_at("$$");
 		menu.popup(null, null, null, 0, 0);
 	}
 
-	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb)
-	{
+	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb) {
 		//EventButton eb = event.button;
 		//EventMotion em = event.motion; 
-		Node n = graph.click(eb.x-graph.panx, eb.y-graph.pany);
+		Node n = graph.click (eb.x-graph.panx, eb.y-graph.pany);
 
 		sw.grab_focus();
 		graph.selected = n;
 		if (eb.button == 3) {
-			if (n != null)
-				do_popup_menu();
-			else	do_popup_generic();
+			if (n != null) do_popup_menu ();
+			else do_popup_generic ();
 		}
 		if (n != null) {
 			/* XXX this is not scaling properly */
@@ -441,27 +443,11 @@ load_graph_at("$$");
 				n.has_body = !n.has_body;
 				n.fit();
 			}
-
 			opanx = eb.x;
 			opany = eb.y;
-
 			da.queue_draw_area(0, 0, 5000, 3000);
-			
 		}
 		return true;
-	}
-
-	// drag nodes
-	private double opanx = 0;
-	private double opany = 0;
-
-	private double offx = 0;
-	private double offy = 0;
-
-	private double abs(double x) {
-		if (x>0)
-			return x;
-		return -x;
 	}
 
 	Node on = null;
@@ -522,7 +508,7 @@ load_graph_at("$$");
 		if (separator != 0) {
 			ctx.set_source_rgba (0.6, 0.6, 0.6, 0.2);
 			ctx.move_to (0, 0);
-			Renderer.square(ctx, separator, 2048);
+			Renderer.square (ctx, separator, 2048);
 			ctx.fill();
 		}
 	}

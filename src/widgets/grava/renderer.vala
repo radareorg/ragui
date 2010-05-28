@@ -20,10 +20,8 @@ using Cairo;
 using Gtk;
 using GLib;
 
-public class Grava.Renderer
-{
-	public static void draw_edge(Context ctx, Edge edge)
-	{
+public class Grava.Renderer {
+	public static void draw_edge(Context ctx, Edge edge) {
 		double dx = 0;
 		double dy = 0;
 		double oh = edge.orig.h;
@@ -57,7 +55,7 @@ public class Grava.Renderer
 			  //dx = edge.dest.x-edge.orig.x;
 			dx = edge.dest.x-edge.orig.x-(edge.orig.w/1.3) + edge.dest.w/1.3; //-edge.orig.x;
 			dy = edge.dest.y-edge.orig.y-oh; // or 80 or so depending if > or < ???
-			double ox = dx;
+			//double ox = dx;
 //			if (ox == 0){ ox = 150; }
 			//arrow
 			if (Graph.selected == edge.orig)
@@ -110,16 +108,12 @@ public class Grava.Renderer
 			  //dx = edge.dest.x-edge.orig.x;
 			dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
 			dy = edge.dest.y-edge.orig.y- oh; // or 80 or so depending if > or < ???
-			double ox = dx;
-//			if (ox == 0){ ox = 150; }
 			//arrow
 			if (Graph.selected == edge.orig)
 				ctx.set_line_width (6);
 			double _x = -(edge.orig.x-edge.dest.x)/1.5;
 			double _y = -(edge.orig.y-edge.dest.y)/3;
 			ctx.curve_to (_x, _y, _x, _y, dx,dy);
-
-			//ctx.stroke();
 		}
 		ctx.stroke();
 		if (Graph.selected == edge.orig)
@@ -136,14 +130,12 @@ public class Grava.Renderer
 
 	}
 
-	public static void set_color(Context ctx, HashTable<string,string> ht)
-	{
+	public static void set_color(Context ctx, HashTable<string,string> ht) {
 		string color = ht.lookup ("color");
 		set_color_str (ctx, color);
 	}
 
-	public static bool set_color_str(Context ctx, string? color)
-	{
+	public static bool set_color_str(Context ctx, string? color) {
 		if (color != null) {
 			/* TODO: use a hashtable */
 			switch (color) {
@@ -185,8 +177,7 @@ public class Grava.Renderer
 		return (color!=null);
 	}
 
-	public static void draw_node(Context ctx, Node node)
-	{
+	public static void draw_node(Context ctx, Node node) {
 		ctx.save ();
 
 		ctx.set_tolerance (0.1);
@@ -223,14 +214,12 @@ public class Grava.Renderer
 		/* title rectangle */
 		if (node.data.lookup("color")!=null)
 			set_color_str(ctx, node.data.lookup("color"));
-		else
-		if (node.calls.length() ==1) 
+		else if (node.calls.length() ==1) 
 			ctx.set_source_rgba (0.2, 0.2, 0.4, 0.7);
-		else
-		if (node.calls.length() >0) 
+		else if (node.calls.length() >0) 
 			ctx.set_source_rgba (0.3, 0.3, 1, 0.7);
-		else
-			ctx.set_source_rgba (0.8, 0.8, 0.8, 0.8);
+		else ctx.set_source_rgba (0.8, 0.8, 0.8, 0.8);
+
 		square (ctx, node.w, 15);
 		ctx.fill ();
 		line(ctx, 0, 15, node.w, 0);

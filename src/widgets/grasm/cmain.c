@@ -1,14 +1,12 @@
 #include "grasmwidget.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	GrasmwidgetWidget *grasm;
 	GtkWindow *w;
 	char *_tmp0 = "label";
 	char *_tmp1 = "mov eax, ebx\nmov ebx,ecx\n inc ecx";
 	
-	//gtk_init(&argc, &argv);
-	gtk_init(NULL, NULL);
+	gtk_init (&argc, &argv);
 
 	grasm = grasmwidget_widget_new();
 

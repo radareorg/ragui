@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007  pancake <youterm.com>
+ *  Copyright (C) 2007-2010  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 using GLib;
 
-public class Grava.Edge : GLib.Object
-{
-	public HashTable<string,string> data;
+public class Grava.Edge : GLib.Object {
+	public HashTable<string, string> data;
 	public Node orig;
 	public Node dest;
 	public bool visible;
@@ -33,13 +32,11 @@ public class Grava.Edge : GLib.Object
 		visible = true;
 	}
 
-	public string get(string val)
-	{
+	public new string get(string val) {
 		return data.lookup(val);
 	}
 
-	public void set(string val, string key)
-	{
+	public new void set(string val, string key) {
 		data.insert(val, key);
 	}
 
@@ -49,20 +46,15 @@ public class Grava.Edge : GLib.Object
 	}
 
 	/* workaround for netbsd's libm 
-	private double exp2(double x)
-	{
+	private double exp2(double x) {
 		return Math.exp(x * Math.log(2));
 	}
 
-	public double distance()
-	{
+	public double distance() {
 		return Math.sqrt( this.exp2(orig.x-dest.x) + this.exp2(orig.y-dest.y));
-	}
-*/
-	public double distance()
-	{
+	} */
+	public double distance() {
 		return Math.sqrt (Math.pow (orig.x-dest.x, 2)
 			+ Math.pow (orig.y-dest.y, 2));
-		//return Math.sqrt( Math.exp2(orig.x-dest.x) + Math.exp2(orig.y-dest.y) );
 	}
 }

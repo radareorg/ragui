@@ -25,7 +25,7 @@ public class Grava.Graph : GLib.Object {
 	public List<Node> nodes;
 	public SList<Edge> edges;
 	public HashTable<string,string> data;
-	public static weak Node selected = null;
+	public static unowned Node selected = null;
 	public double zoom  = 1;
 	public double panx  = 0;
 	public double pany  = 0;
@@ -52,7 +52,7 @@ public class Grava.Graph : GLib.Object {
 	}
 
 	public Node? get_node(string key, string val) {
-		foreach (weak Node node in nodes) {
+		foreach (unowned Node node in nodes) {
 			if (node.get (key) == val)
 				return node;
 		}
@@ -75,17 +75,17 @@ public class Grava.Graph : GLib.Object {
 		/* add png here */
 	}
 
-	public void set(string key, string val) {
+	public new void set(string key, string val) {
 		data.insert (key, val);
 	}
 
-	public string get(string key) {
+	public new string get(string key) {
 		return data.lookup (key);
 	}
 
 	public void select_next() {
 /*
-		foreach(weak Node node in nodes) {
+		foreach(unowned Node node in nodes) {
 			if (Graph.selected == null) {
 				selected = node;
 				Graph.selected = node;
@@ -98,7 +98,7 @@ public class Grava.Graph : GLib.Object {
 			}
 		}
 */
-		foreach (weak Node node in nodes) {
+		foreach (unowned Node node in nodes) {
 			Graph.selected = selected = node;
 			break;
 		}
@@ -108,7 +108,7 @@ public class Grava.Graph : GLib.Object {
 		if (selected == null)
 			return;
 
-		foreach (weak Edge edge in edges) {
+		foreach (Edge edge in edges) {
 			if (selected == edge.orig) {
 				if (edge.get("color") == "green") {
 					selected = edge.dest;
@@ -123,7 +123,7 @@ public class Grava.Graph : GLib.Object {
 		if (selected == null)
 			return;
 
-		foreach (weak Edge edge in edges) {
+		foreach (Edge edge in edges) {
 			if (selected == edge.orig) {
 				if (edge.get ("color") == "red") {
 					selected = edge.dest;
@@ -175,9 +175,9 @@ public class Grava.Graph : GLib.Object {
 
 	public SList<Node> unlinked_nodes() {
 		SList<Node> ret = new SList<Node> ();
-		foreach (weak Node node in nodes) {
+		foreach (unowned Node node in nodes) {
 			bool found = false;
-			foreach (weak Edge edge in edges ) {
+			foreach (unowned Edge edge in edges ) {
 				if (node == edge.orig || node == edge.dest) {
 					found = true;
 					break;
@@ -191,7 +191,7 @@ public class Grava.Graph : GLib.Object {
 
 	public SList<Node> outer_nodes (Node n) {
 		SList<Node> ret = new SList<Node> ();
-		foreach(weak Edge edge in edges) {
+		foreach(unowned Edge edge in edges) {
 			if (edge.visible && (edge.orig == n))
 				ret.append (edge.dest);
 		}
@@ -200,19 +200,19 @@ public class Grava.Graph : GLib.Object {
 
 	public SList<Node> inner_nodes (Node n) {
 		SList<Node> ret = new SList<Node> ();
-		foreach (weak Edge edge in edges) {
+		foreach (unowned Edge edge in edges) {
 			if (edge.visible && (edge.dest == n))
 				ret.append (edge.orig);
 		}
 		return ret;
 	}
 
-	public weak Node? click (double x, double y) {
+	public unowned Node? click (double x, double y) {
 		double z = zoom;
 		// XXX ULTRA INEFFICIENT
 		var sedon = nodes.copy ();
 		sedon.reverse ();
-		foreach (weak Node node in sedon) {
+		foreach (unowned Node node in sedon) {
 			if (x>= node.x*z && x <= node.x*z+node.w*z
 			&& y >= node.y*z && y <= node.y*z+node.h*z) {
 				return node;
@@ -222,7 +222,7 @@ public class Grava.Graph : GLib.Object {
 	}
 
 	public bool overlaps(Node n) {
-		foreach (weak Node node in nodes) {
+		foreach (unowned Node node in nodes) {
 			if (node != n && node.overlaps (n))
 				return true;
 		}
@@ -248,11 +248,11 @@ public class Grava.Graph : GLib.Object {
 		ctx.restore ();
 		*/
 
-		foreach (weak Edge edge in edges ) {
+		foreach (unowned Edge edge in edges ) {
 			if (edge.visible)
 				Renderer.draw_edge (ctx, edge);
 		}
-		foreach (weak Node node in nodes) {
+		foreach (unowned Node node in nodes) {
 			if (node.visible)
 				Renderer.draw_node (ctx, node);
 		}
