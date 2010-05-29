@@ -13,15 +13,17 @@ WIDGETS+=widgets/grasm/grasmwidget.c
 WIDGETS+=widgets/grava/*.o
 CC?=gcc
 
-all: libs
+all: widgets.done
 	gtkamlc ${PKG} ${AML} -c console.gtkaml mainwindow.gtkaml preferences.gtkaml
 	valac --Xcc=-O3 -c ${PKG} *.vala
 	${CC} -Iwidgets/include -O3 `pkg-config --cflags --libs gtk+-2.0 ${R2DEPS}` *.o ${WIDGETS} -o ${BIN}
 
-libs:
+widgets.done:
 	cd widgets/hexview && ${MAKE} lib
 	cd widgets/codew && ${MAKE} lib
 	cd widgets/grasm && ${MAKE} lib
+	cd widgets/grava && ${MAKE} lib
+	:> widgets.done
 
 c:
 	gtkamlc ${AML} -C ${PKG} console.gtkaml mainwindow.gtkaml preferences.gtkaml
@@ -32,3 +34,4 @@ stuff:
 clean:
 	cd widgets && ${MAKE} clean
 	rm -f ${BIN} *.c *.h mainwindow.vala *.o preferences.vala
+	rm -f widgets.done

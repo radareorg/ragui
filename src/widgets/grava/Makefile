@@ -10,6 +10,14 @@ grava: $(SOURCES:.vala=.o)
 	# only for releases (not development)
 	${CC} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o grava
 
+valadot:
+	@echo TODO: dunno how to build this stuff
+
+lib:
+	-valac -H ../include/grava.h --library grava -Cc ${VALAFLAGS} ${SOURCES}
+	cp grava.vapi ../include
+	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
+
 %.o:%.vala
 	valac -H ../include/gravawidget.h --library grava --save-temps $(VALAFLAGS) -c $(SOURCES)
 
@@ -22,7 +30,6 @@ novala:
 
 gdot:
 	valac ${VALAFLAGS} *.vala -o gdot
-
 
 clean:
 	-mv cmain.c ___

@@ -2,75 +2,84 @@
 
 [CCode (cprefix = "Grava", lower_case_cprefix = "grava_")]
 namespace Grava {
-	[CCode (cheader_filename = "default_layout.h")]
+	[CCode (cheader_filename = "grava.h")]
 	public class DefaultLayout : Grava.Layout {
 		public GLib.HashTable<string,Grava.Node> data;
 		public double x_offset;
 		public double y_offset;
+		public DefaultLayout ();
 		public unowned Grava.Node? get_parent (Grava.Node node);
 		public bool getxy (ref Grava.Node n);
-		public DefaultLayout ();
 		public void reset ();
 		public void reset_real ();
 		public override void run (Grava.Graph graph);
 		public override void set_graph (Grava.Graph graph);
 		public void setxy (Grava.Node n);
-		public void walkChild (Grava.Node node, int level);
+		public void walkChild (Grava.Node? node, int level);
 	}
-	[CCode (cheader_filename = "edge.h")]
-	public class Edge : GLib.Object {
+	[Compact]
+	[CCode (cheader_filename = "grava.h")]
+	public class Dot {
+		public Dot ();
+		public static bool import (Grava.Graph gr, string file);
+	}
+	[CCode (ref_function = "grava_edge_ref", unref_function = "grava_edge_unref", cheader_filename = "grava.h")]
+	public class Edge {
 		public GLib.HashTable<string,string> data;
 		public Grava.Node dest;
 		public bool jmpcnd;
 		public Grava.Node orig;
 		public bool visible;
+		public Edge (Grava.Node a, Grava.Node b);
 		public double distance ();
-		public string get (string val);
-		public Edge ();
-		public void set (string val, string key);
-		public Grava.Edge with (Grava.Node a, Grava.Node b);
+		public string @get (string val);
+		public void @set (string val, string key);
 	}
-	[CCode (cheader_filename = "graph.h")]
-	public class Graph : GLib.Object {
+	[CCode (ref_function = "grava_graph_ref", unref_function = "grava_graph_unref", cheader_filename = "grava.h")]
+	public class Graph {
 		public double angle;
 		public GLib.HashTable<string,string> data;
 		public GLib.SList<Grava.Edge> edges;
+		public bool inverse;
 		public Grava.Layout layout;
-		public GLib.SList<Grava.Node> nodes;
+		public GLib.List<Grava.Node> nodes;
 		public double panx;
 		public double pany;
 		public static weak Grava.Node selected;
 		public GLib.SList<Grava.Node> selhist;
 		public double zoom;
+		public Graph ();
 		public void add (Grava.Node n);
 		public void add_edge (Grava.Edge e);
 		public void add_node (Grava.Node n);
 		public unowned Grava.Node? click (double x, double y);
+		public void do_zoom (double z);
 		public void draw (Cairo.Context ctx);
-		public string get (string key);
+		public string @get (string key);
+		public Grava.Node? get_node (string key, string val);
 		public GLib.SList<Grava.Node> inner_nodes (Grava.Node n);
 		public static bool is_selected (Grava.Node n);
 		public void link (Grava.Node n, Grava.Node n2);
-		public Graph ();
 		public GLib.SList<Grava.Node> outer_nodes (Grava.Node n);
 		public bool overlaps (Grava.Node n);
 		public void reset ();
 		public void select_false ();
 		public void select_next ();
 		public void select_true ();
-		public void set (string key, string val);
+		public void @set (string key, string val);
 		public void undo_select ();
 		public GLib.SList<Grava.Node> unlinked_nodes ();
 		public void update ();
 	}
-	[CCode (cheader_filename = "layout.h")]
+	[CCode (cheader_filename = "grava.h")]
 	public abstract class Layout : GLib.Object {
+		public Layout ();
 		public virtual void reset ();
 		public virtual void run (Grava.Graph graph);
 		public virtual void set_graph (Grava.Graph graph);
 	}
-	[CCode (cheader_filename = "node.h")]
-	public class Node : GLib.Object {
+	[CCode (ref_function = "grava_node_ref", unref_function = "grava_node_unref", cheader_filename = "grava.h")]
+	public class Node {
 		public uint baseaddr;
 		public GLib.SList<string> calls;
 		public GLib.HashTable<string,string> data;
@@ -83,48 +92,55 @@ namespace Grava {
 		public double x;
 		public GLib.SList<string> xrefs;
 		public double y;
+		public Node ();
 		public void add_call (uint64 addr);
 		public void add_xref (uint64 addr);
 		public void fit ();
-		public string get (string key);
-		public Node ();
+		public string @get (string key);
 		public bool overlaps (Grava.Node n);
-		public void set (string key, string val);
+		public void @set (string key, string val);
 		public void set_i (string key, uint64 val);
 	}
-	[CCode (ref_function = "grava_renderer_ref", unref_function = "grava_renderer_unref", param_spec_function = "grava_param_spec_renderer", cheader_filename = "renderer.h")]
+	[CCode (ref_function = "grava_renderer_ref", unref_function = "grava_renderer_unref", cheader_filename = "grava.h")]
 	public class Renderer {
+		public Renderer ();
 		public static void circle (Cairo.Context ctx, double w, double h);
 		public static void draw_edge (Cairo.Context ctx, Grava.Edge edge);
 		public static void draw_node (Cairo.Context ctx, Grava.Node node);
 		public static void line (Cairo.Context ctx, double x, double y, double w, double h);
-		public Renderer ();
 		public static void set_color (Cairo.Context ctx, GLib.HashTable<string,string> ht);
 		public static bool set_color_str (Cairo.Context ctx, string? color);
 		public static void square (Cairo.Context ctx, double w, double h);
+		public static void triangle (Cairo.Context ctx, double w, double h, bool down);
 	}
-	[CCode (cheader_filename = "widget.h")]
-	public class Widget : GLib.Object {
+	[CCode (ref_function = "grava_widget_ref", unref_function = "grava_widget_unref", cheader_filename = "grava.h")]
+	public class Widget {
 		public Gtk.DrawingArea da;
 		public Grava.Graph graph;
+		public int separator;
 		public const double S;
+		public Widget ();
 		public void create_widgets ();
 		public void do_popup_generic ();
 		public void do_popup_menu ();
 		public void draw ();
-		[CCode (cname = "core_load_graph_at_label")]
-		public static void focus_at_label (void* obj, string addr);
 		public Gtk.Widget get_widget ();
-		public Widget ();
-		[CCode (cname = "mygrava_bp_at")]
-		public static void set_breakpoint (void* obj, string addr);
-		[CCode (cname = "mygrava_bp_rm_at")]
-		public static void unset_breakpoint (void* obj, string addr);
 		public signal void breakpoint_at (string addr);
+		public signal int focus_at_label (void* obj, string addr);
 		public signal void load_graph_at (string addr);
 		public signal void run_cmd (string addr);
+		public signal int set_breakpoint (void* obj, string addr);
+		public signal int unset_breakpoint (void* obj, string addr);
+		public signal bool user_key_pressed (void* obj, uint key);
 	}
-	[CCode (cprefix = "GRAVA_SHAPE_", cheader_filename = "shape.h")]
+	[Compact]
+	[CCode (cheader_filename = "grava.h")]
+	public class XDot {
+		public XDot ();
+		public static bool export (Grava.Graph gr, string file);
+		public static bool import (Grava.Graph gr, string file);
+	}
+	[CCode (cprefix = "GRAVA_SHAPE_", cheader_filename = "grava.h")]
 	public enum Shape {
 		RECTANGLE,
 		CIRCLE
