@@ -19,7 +19,7 @@
 using GLib;
 using Cairo;
 
-public class Grava.Graph : GLib.Object {
+public class Grava.Graph {
 	public Layout layout;
 	public SList<Node> selhist;
 	public List<Node> nodes;
@@ -30,14 +30,12 @@ public class Grava.Graph : GLib.Object {
 	public double panx  = 0;
 	public double pany  = 0;
 	public double angle = 0;
-	//ImageSurface s;
+	public bool inverse = false;
 
-	/* constructor */
-	construct {
-		layout = new DefaultLayout();
-		data   = new HashTable<string, string>.full(str_hash, str_equal, g_free, Object.unref);
+	public Graph () {
+		layout = new DefaultLayout ();
+		data = new HashTable<string, string> (str_hash, str_equal);
 		reset ();
-	//	s = new ImageSurface.from_png("/tmp/file.png");
 	}
 
 	public void do_zoom(double z) {
@@ -72,7 +70,6 @@ public class Grava.Graph : GLib.Object {
 		edges = new SList<Edge> ();
 		selhist = new SList<Node> ();
 		//layout = new DefaultLayout();
-		/* add png here */
 	}
 
 	public new void set(string key, string val) {
@@ -122,7 +119,6 @@ public class Grava.Graph : GLib.Object {
 	public void select_false() {
 		if (selected == null)
 			return;
-
 		foreach (Edge edge in edges) {
 			if (selected == edge.orig) {
 				if (edge.get ("color") == "red") {
@@ -214,9 +210,8 @@ public class Grava.Graph : GLib.Object {
 		sedon.reverse ();
 		foreach (unowned Node node in sedon) {
 			if (x>= node.x*z && x <= node.x*z+node.w*z
-			&& y >= node.y*z && y <= node.y*z+node.h*z) {
+			&& y >= node.y*z && y <= node.y*z+node.h*z)
 				return node;
-			}
 		}
 		return null;
 	}
@@ -229,10 +224,12 @@ public class Grava.Graph : GLib.Object {
 		return false;
 	}
 
+	/* TODO: this should be renderer independent, not cairo-specific */
 	public void draw(Context ctx) {
 		if (ctx == null)
 			return;
-		ctx.set_source_rgba (1, 1, 1, 1);
+		if (inverse) ctx.set_source_rgba (0,0,0,1);
+		else ctx.set_source_rgba (1, 1, 1, 1);
 		ctx.translate (panx, pany);
 		ctx.scale (zoom, zoom);
 		//ctx.translate( panx*zoom, pany*zoom);
@@ -247,15 +244,12 @@ public class Grava.Graph : GLib.Object {
 		ctx.paint();
 		ctx.restore ();
 		*/
-
-		foreach (unowned Edge edge in edges ) {
+		foreach (unowned Edge edge in edges)
 			if (edge.visible)
 				Renderer.draw_edge (ctx, edge);
-		}
-		foreach (unowned Node node in nodes) {
+		foreach (unowned Node node in nodes)
 			if (node.visible)
 				Renderer.draw_node (ctx, node);
-		}
 	}
 
 	public void add(Node n) {

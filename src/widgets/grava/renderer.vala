@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007-2009  pancake <youterm.com>
+ *  Copyright (C) 2007-2010  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -194,8 +194,8 @@ public class Grava.Renderer {
 		set_color(ctx, "blue");
 #endif
 */
-		set_color(ctx, node.data);
-		set_color_str(ctx, node.data.lookup("bgcolor"));
+		set_color (ctx, node.data);
+		set_color_str (ctx, node.data.lookup ("bgcolor"));
 
 		if (node.has_body) {
 			switch (node.shape) {
@@ -206,67 +206,66 @@ public class Grava.Renderer {
 			//case Shape.RECTANGLE:
 			default:
 				square (ctx, node.w, node.h);
-				ctx.fill();
+				ctx.fill ();
 				break;
 			}
 		}
 
 		/* title rectangle */
-		if (node.data.lookup("color")!=null)
-			set_color_str(ctx, node.data.lookup("color"));
-		else if (node.calls.length() ==1) 
+		if (node.data.lookup ("color")!=null)
+			set_color_str (ctx, node.data.lookup("color"));
+		else if (node.calls.length () ==1) 
 			ctx.set_source_rgba (0.2, 0.2, 0.4, 0.7);
-		else if (node.calls.length() >0) 
+		else if (node.calls.length () >0) 
 			ctx.set_source_rgba (0.3, 0.3, 1, 0.7);
 		else ctx.set_source_rgba (0.8, 0.8, 0.8, 0.8);
 
 		square (ctx, node.w, 15);
 		ctx.fill ();
-		line(ctx, 0, 15, node.w, 0);
+		line (ctx, 0, 15, node.w, 0);
 
 		/* draw minimize button */
-		ctx.save();
+		ctx.save ();
 		//ctx.set_source_rgba (0.7, 0.0, 0.0, 1);
 		//ctx.set_source_rgba (0.6, 0.6, 0.6, 0.8);
 		ctx.set_source_rgba (0, 0, 0, 0.6);
 		ctx.translate (node.w-13, 3);
 		square (ctx, 10, 10);
-		ctx.fill();
-		ctx.restore();
+		ctx.fill ();
+		ctx.restore ();
 
-		ctx.select_font_face("Sans Serif", //Courier", 
+		ctx.select_font_face ("Sans Serif", //Courier", 
 			FontSlant.NORMAL,
 			FontWeight.BOLD);
-		ctx.set_font_size(10);
+		ctx.set_font_size (10);
 		
 		/* set label */
 		ctx.set_source_rgb (0.1, 0.1, 0.1);
-		ctx.move_to(5,10);
-		ctx.show_text(node.data.lookup("label"));
+		ctx.move_to (5,10);
+		ctx.show_text (node.data.lookup("label"));
 
 		/* set body */
 		if (node.has_body) {
 			int y = 25;
-			string? body = node.data.lookup("body");
+			string? body = node.data.lookup ("body");
 			if (body != null)
-			foreach(string str in body.split("\n")) {
+			foreach (string str in body.split ("\n")) {
 				y+=10;
-				ctx.move_to(5, y);
-				if((str.str("call ") != null)
-				|| (str.str("bl ") != null)) {
-					set_color_str(ctx, "blue");
+				ctx.move_to (5, y);
+				if((str.str ("call ") != null)
+				|| (str.str ("bl ") != null)) {
+					set_color_str (ctx, "blue");
 				} else
-				if (str.str("goto") != null) {
-					set_color_str(ctx, "green");
+				if (str.str ("goto") != null) {
+					set_color_str (ctx, "green");
 				} else
-				if (str.str(" j") != null) {
-					set_color_str(ctx, "green");
+				if (str.str (" j") != null) {
+					set_color_str (ctx, "green");
 				} else
-				if (str.has_suffix(":")) {
-					set_color_str(ctx, "red");
-				} else
-					set_color_str(ctx, "black");
-				ctx.show_text(str);
+				if (str.has_suffix (":")) {
+					set_color_str (ctx, "red");
+				} else set_color_str (ctx, "black");
+				ctx.show_text (str);
 			}
 		
 			//set_color(ctx, node.data);

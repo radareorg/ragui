@@ -18,19 +18,12 @@
 
 using GLib;
 
-public class Grava.Edge : GLib.Object {
+public class Grava.Edge {
 	public HashTable<string, string> data;
 	public Node orig;
 	public Node dest;
 	public bool visible;
 	public bool jmpcnd; // verd == true , vermell == false
-
-	construct {
-		data = new HashTable<string,string>.full (
-			str_hash, str_equal, g_free, Object.unref);
-		orig = dest = null;
-		visible = true;
-	}
 
 	public new string get(string val) {
 		return data.lookup(val);
@@ -41,6 +34,10 @@ public class Grava.Edge : GLib.Object {
 	}
 
 	public Edge (Node a, Node b) {
+		data = new HashTable<string,string> (str_hash, str_equal);
+		//data = new HashTable<string,string>.full (
+		//	str_hash, str_equal, g_free, Object.unref);
+		visible = true;
 		orig = a;
 		dest = b;
 	}

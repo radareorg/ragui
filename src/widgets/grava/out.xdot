@@ -1,10 +1,10 @@
 digraph code {
-	"(null)" [label="(null)", shape="box" pos="50.000000,0.000000" ];
-	"(null)" [label="(null)", shape="box" pos="50.000000,135.000000" ];
-	"(null)" [label="(null)", shape="box" pos="50.000000,135.000000" ];
-	"(null)" [label="(null)", shape="box" pos="0.000000,0.000000" ];
-	"(null)" -> "(null)" [color="(null)"];
-	"(null)" -> "(null)" [color="(null)"];
-	"(null)" -> "(null)" [color="(null)"];
-	"(null)" -> "(null)" [color="(null)"];
+	"miau:" [label="xor eax, eax\lxor ebx, ebx", shape="box" pos="218.000000,0.000000" ];
+	"cow:" [label="xor eax, eax\lxor ebx, ebx", shape="box" pos="323.000000,155.000000" ];
+	"bar:" [label="mov eax, 33\lpush 0x80484800\lcall 0x8049320\lxor ebx, ebx", shape="box" pos="239.000000,155.000000" ];
+	"foo:" [label="mov eax, 33\lxor ebx, ebx", shape="box" pos="0.000000,0.000000" ];
+	"foo:" -> "bar:" [color="red"];
+	"foo:" -> "cow:" [color="red"];
+	"miau:" -> "cow:" [color="blue"];
+	"bar:" -> "cow:" [color="blue"];
 }

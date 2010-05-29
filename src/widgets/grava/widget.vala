@@ -21,7 +21,7 @@ using Cairo;
 using Gtk;
 using Gdk;
 
-public class Grava.Widget : GLib.Object {
+public class Grava.Widget {
 	enum WheelAction {
 		PAN = 0,
 		ZOOM = 1,
@@ -53,7 +53,7 @@ public class Grava.Widget : GLib.Object {
 		return sw;
 	}
 
-	construct {
+	public Widget() {
 		graph = new Graph();
 		graph.update();
 		create_widgets ();
@@ -75,21 +75,21 @@ public class Grava.Widget : GLib.Object {
 		da.button_press_event += button_press;
 		da.scroll_event += scroll_press;
 
-		sw = new ScrolledWindow(
-			new Adjustment(0, 10, 1000, 2, 100, 1000),
-			new Adjustment(0, 10, 1000, 2, 100, 1000));
-		sw.set_policy(PolicyType.NEVER, PolicyType.NEVER);
+		sw = new ScrolledWindow (
+			new Adjustment (0, 10, 1000, 2, 100, 1000),
+			new Adjustment (0, 10, 1000, 2, 100, 1000));
+		sw.set_policy (PolicyType.NEVER, PolicyType.NEVER);
 
-		Viewport vp = new Viewport(
-			new Adjustment(0, 10, 1000, 2, 100, 1000),
-			new Adjustment(0, 10, 1000, 2, 100, 1000));
-		vp.add(da);
+		Viewport vp = new Viewport (
+			new Adjustment (0, 10, 1000, 2, 100, 1000),
+			new Adjustment (0, 10, 1000, 2, 100, 1000));
+		vp.add (da);
 
-		sw.add_events(  Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
+		sw.add_events (Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
 		sw.key_press_event += key_press;
 		sw.key_release_event += key_release;
 
-		sw.add_with_viewport(vp);
+		sw.add_with_viewport (vp);
 
 		load_graph_at += (obj, addr) => {
 //			stdout.printf("HOWHOWHOW "+addr);
@@ -100,14 +100,15 @@ public class Grava.Widget : GLib.Object {
 	private bool scroll_press (Gtk.DrawingArea da, Gdk.EventScroll es) {
 		sw.grab_focus();
 
-		switch(es.direction) {
+		switch (es.direction) {
 		case ScrollDirection.UP:
 			switch(wheel_action) {
 			case WheelAction.PAN:
 				graph.pany += 64;
 				break;
 			case WheelAction.ZOOM:
-				graph.zoom += ZOOM_FACTOR;
+			//	graph.zoom += ZOOM_FACTOR;
+			graph.do_zoom(+ZOOM_FACTOR);
 				break;
 			case WheelAction.ROTATE:
 				graph.angle-=0.04;
@@ -120,7 +121,8 @@ public class Grava.Widget : GLib.Object {
 				graph.pany -= 64;
 				break;
 			case WheelAction.ZOOM:
-				graph.zoom -= ZOOM_FACTOR;
+			//	graph.zoom -= ZOOM_FACTOR;
+			graph.do_zoom(-ZOOM_FACTOR);
 				break;
 			case WheelAction.ROTATE:
 				graph.angle+=0.04;
@@ -167,6 +169,12 @@ public class Grava.Widget : GLib.Object {
 		case 'B':
 		//case 65471: // F2 - set breakpoint
 			set_breakpoint (null, "-%s".printf(Graph.selected.get("label")));
+			break;
+		case 'i':
+			graph.inverse = !graph.inverse;
+			break;
+		case 'r':
+			graph.update ();
 			break;
 		case 'S':
 			run_cmd ("!stepo");
@@ -287,10 +295,14 @@ load_graph_at("$$");
 			graph.select_false();
 			break;
 		case '+':
+			graph.panx -= 50;
+			graph.pany -= 50;
 			graph.do_zoom(+ZOOM_FACTOR);
 			//graph.zoom+=ZOOM_FACTOR;
 			break;
 		case '-':
+			graph.panx += 50;
+			graph.pany += 50;
 			graph.do_zoom(-ZOOM_FACTOR);
 			//graph.zoom-=ZOOM_FACTOR;
 			break;

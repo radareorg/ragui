@@ -24,9 +24,8 @@ public class Grava.DefaultLayout : Grava.Layout {
 	private unowned Graph graph;
 	public HashTable<string,Node> data;
 
-	construct {
-		data = new HashTable<string, Node>.full (
-			str_hash, str_equal, g_free, Object.unref);
+	public DefaultLayout() {
+		data = new HashTable<string, Node> (str_hash, str_equal);
 	}
 
 	public new void reset() {

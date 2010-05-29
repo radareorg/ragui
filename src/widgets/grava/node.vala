@@ -18,7 +18,7 @@
 
 using GLib;
 
-public class Grava.Node : GLib.Object {
+public class Grava.Node {
 	public HashTable<string,string> data;
 	public uint baseaddr;
 	public SList<string> calls;
@@ -32,7 +32,10 @@ public class Grava.Node : GLib.Object {
 	public double w;
 	public double h;
 
-	construct {
+	public Node() {
+		this.data = new HashTable<string,string>(str_hash, str_equal); //.full(str_hash, str_equal, g_free, Object.unref);
+		calls = new SList<string>();
+		xrefs = new SList<string>();
 		baseaddr = 0;
 		x        = y = 0;
 		w        = 150;
@@ -43,18 +46,12 @@ public class Grava.Node : GLib.Object {
 		selected = false;
 	}
 
-	public Node() {
-		data = new HashTable<string,string>.full(str_hash, str_equal, g_free, Object.unref);
-		calls = new SList<string>();
-		xrefs = new SList<string>();
-	}
-
 	public new void set (string key, string val) {
 		data.insert (key, val);
 	}
 
 	public void set_i (string key, uint64 val) {
-		string str = "0x%llx".printf(val);
+		string str = "0x%llx".printf (val);
 		data.insert (key, str);
 	}
 
@@ -63,12 +60,12 @@ public class Grava.Node : GLib.Object {
 	}
 
 	public void add_call(uint64 addr) {
-		string str = "0x%08llx".printf(addr);
+		string str = "0x%08llx".printf (addr);
 		calls.append(str);
 	}
 
 	public void add_xref(uint64 addr) {
-		string str = "0x%08llx".printf(addr);
+		string str = "0x%08llx".printf (addr);
 		xrefs.append(str);
 	}
 
@@ -85,10 +82,10 @@ public class Grava.Node : GLib.Object {
 		if (label != null)
 			_w = label.len ()+2;
 
-		if (has_body && body != null )
-		foreach( string str in body.split ("\n") ) {
+		if (has_body && body != null)
+		foreach (string str in body.split ("\n")) {
 			_y += 10;
-			if ( str.len() > (long)_w )
+			if (str.len() > (long)_w)
 				_w = (double)str.len ();
 		}
 
