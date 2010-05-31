@@ -20,7 +20,6 @@ using GLib;
 using Cairo;
 using Gtk;
 using Gdk;
-//using RaguiWidget.CodeView;
 
 public class Codeview.Widget : ScrolledWindow {
 	enum WheelAction {
@@ -51,22 +50,14 @@ public class Codeview.Widget : ScrolledWindow {
 	 */
 
 	construct {
-/*
-		super(	new Adjustment(0, 10, 1000, 2, 100, 1000),
-			new Adjustment(0, 10, 1000, 2, 100, 1000));
-*/
-
-		//sw = new ScrolledWindow(
-		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		create_widgets ();
 	}
 
-	public void create_widgets ()
-	{
+	public void create_widgets () {
 		da = new DrawingArea ();
 
 		/* add event listeners */
-		da.add_events(  Gdk.EventMask.BUTTON1_MOTION_MASK |
+		da.add_events ( Gdk.EventMask.BUTTON1_MOTION_MASK |
 				Gdk.EventMask.SCROLL_MASK         |
 				Gdk.EventMask.BUTTON_PRESS_MASK   |
 				Gdk.EventMask.BUTTON_RELEASE_MASK );
@@ -78,11 +69,6 @@ public class Codeview.Widget : ScrolledWindow {
 		da.button_press_event += button_press;
 		da.scroll_event += scroll_press;
 
-/*
-		sw = new ScrolledWindow(
-				new Adjustment(0, 10, 1000, 2, 100, 1000),
-				new Adjustment(0, 10, 1000, 2, 100, 1000));
-*/
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 
 		Viewport vp = new Viewport(
@@ -133,12 +119,9 @@ public class Codeview.Widget : ScrolledWindow {
 		return false;
 	}
 
-	private bool key_release(Gtk.Widget w, Gdk.EventKey ek)
-	{
+	private bool key_release(Gtk.Widget w, Gdk.EventKey ek) {
 		this.grab_focus();
-
-		//		stdout.printf("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
-
+		//stdout.printf("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 		switch (ek.keyval) {
 		case 65507: // CONTROL KEY
 			wheel_action = WheelAction.PAN;
@@ -152,15 +135,12 @@ public class Codeview.Widget : ScrolledWindow {
 		return true;
 	}
 
-	private bool key_press (Gtk.Widget w, Gdk.EventKey ek)
-	{
+	private bool key_press (Gtk.Widget w, Gdk.EventKey ek) {
 		bool handled = true;
 		//DrawingArea da = (DrawingArea)w;
 		this.grab_focus();
 
-		/* */
 		//stdout.printf("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
-
 		switch (ek.keyval) {
 			case '+':
 				zoom+=ZOOM_FACTOR;
@@ -204,8 +184,7 @@ public class Codeview.Widget : ScrolledWindow {
 		return true;
 	}
 
-	public void do_popup_generic()
-	{
+	public void do_popup_generic() {
 		ImageMenuItem imi;
 		menu = new Menu();
 
@@ -256,12 +235,9 @@ public class Codeview.Widget : ScrolledWindow {
 		menu.popup(null, null, null, 0, 0);
 	}
 
-	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb)
-	{
-		if (eb.button == 3) {
+	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb) {
+		if (eb.button == 3)
 			do_popup_generic();
-		}
-		
 		if (eb.x < 50)
 			breakpoint = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 		int w, h;
@@ -270,8 +246,7 @@ public class Codeview.Widget : ScrolledWindow {
 			if (eb.y <50)
 				pany+=20;
 			else pany-=20;
-		} else
-			cursor = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
+		} else cursor = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 
 		refresh(da);
 		return true;
@@ -287,15 +262,13 @@ public class Codeview.Widget : ScrolledWindow {
 */
 
 	Node on = null;
-	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em)
-	{
+	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em) {
 		on = null;
 		opanx = opany = 0;
 		return true;
 	}
 
-	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em)
-	{
+	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em) {
 		this.grab_focus();
 		/* pan view */
 		if ((opanx!=0) && (opany!=0)) {
@@ -309,8 +282,7 @@ public class Codeview.Widget : ScrolledWindow {
 		return true;
 	}
 
-	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev)
-	{               
+	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {               
 		draw();
 		return true;
 	}
@@ -338,8 +310,8 @@ public class Codeview.Widget : ScrolledWindow {
 		ctx.close_path ();
 	}
 
-	public void draw()
-	{
+	public void draw() {
+		/* TODO: remove as much save/restore() calls here */
 		Context ctx = Gdk.cairo_create(da.window);
 		//ctx.save();
 		ctx.save();
@@ -359,9 +331,9 @@ public class Codeview.Widget : ScrolledWindow {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
 				ctx.save();
-				ctx.translate(10,y+1);
-				ctx.set_source_rgba(0.1, 0, 0.9, 0.2);
-				square(ctx, 300, lineh+1);
+				ctx.translate (10,y+1);
+				ctx.set_source_rgba (0.1, 0, 0.9, 0.2);
+				square (ctx, 800, lineh+1);
 				ctx.fill();
 				//ctx.stroke();
 				ctx.restore();
@@ -388,7 +360,15 @@ public class Codeview.Widget : ScrolledWindow {
 		/* arrows */
 		int w, h;
 		da.window.get_size(out w, out h);
-	//stdout.printf("%d %d\n", w, h);
+		//stdout.printf("%d %d\n", w, h);
+			// white rabbit
+			ctx.save ();
+			ctx.translate (w-25, 5);
+			ctx.set_source_rgba (1,1,1,1);
+			square (ctx, 25, h);
+			ctx.fill ();
+			ctx.restore ();
+
 			/* upper arrow */
 			ctx.save();
 			ctx.translate(w-20, 5);
@@ -417,24 +397,23 @@ public class Codeview.Widget : ScrolledWindow {
 			ctx.translate(w-17, h-17);
 			ctx.set_source_rgba(1,1,1,1);
 			triangle(ctx, 9,9, true);
-			ctx.fill();
+			ctx.fill ();
 			//ctx.stroke();
-			ctx.restore();
+			ctx.restore ();
 
 			/* navigation bar */
-			ctx.save();
-			ctx.translate(w-20, 25);
-			ctx.set_source_rgba(0.7, 0.7, 0.7, 0.3);
-			square(ctx, 15, h-50);
-			ctx.set_line_width(1);
-			ctx.fill();
-			ctx.restore();
+			ctx.save ();
+			ctx.translate (w-20, 25);
+			ctx.set_source_rgba (0.7, 0.7, 0.7, 0.3);
+			square (ctx, 15, h-50);
+			ctx.set_line_width (1);
+			ctx.fill ();
+			ctx.restore ();
 	}
 
-	public void refresh(DrawingArea da)
-	{
+	public void refresh(DrawingArea da) {
 		int w, h;
-		da.window.get_size(out w, out h);
-		da.queue_draw_area(0, 0, w+200, h+200);
+		da.window.get_size (out w, out h);
+		da.queue_draw_area (0, 0, w+200, h+200);
 	}
 }

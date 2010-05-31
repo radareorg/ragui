@@ -5,10 +5,6 @@ RADARE GUI
 * Written in Vala
 * Using GTK
 
-Uses threads
-  r_core_thread
-
-
 Widgets we need to do:
 
 * Hexadecimal viewer

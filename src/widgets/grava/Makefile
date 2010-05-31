@@ -3,7 +3,8 @@
 VALAFLAGS=--pkg gtk+-2.0 --pkg cairo -g
 
 SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
-	node.vala renderer.vala widget.vala shape.vala dot.vala
+	node.vala renderer.vala widget.vala shape.vala dot.vala \
+	tree_layout.vala noderow.vala
 
 grava: $(SOURCES:.vala=.o)
 	#[ "${HAVE_VALAC}" = 1 ] && valac -c -g --save-temps *.vala --pkg gtk+-2.0 --pkg cairo -o grava

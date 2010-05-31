@@ -27,6 +27,7 @@ public class Grava.Node {
 	public bool selected;
 	public bool has_body;
 	public int shape;
+	public int layer;
 	public double x;
 	public double y;
 	public double w;

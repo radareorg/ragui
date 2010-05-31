@@ -33,9 +33,14 @@ public class Grava.Graph {
 	public bool inverse = false;
 
 	public Graph () {
-		layout = new DefaultLayout ();
-		data = new HashTable<string, string> (str_hash, str_equal);
-		reset ();
+		//layout = new DefaultLayout ();
+		layout = new TreeLayout ();
+		init ();
+	}
+
+	public Graph.with_layout (Layout layout) {
+		init ();
+		this.layout = layout;
 	}
 
 	public void do_zoom(double z) {
@@ -64,12 +69,12 @@ public class Grava.Graph {
 	}
 
 	/* TODO: Add boolean argument to reset layout too */
-	public void reset() {
+	public void init () {
 		layout.reset();
+		data = new HashTable<string, string> (str_hash, str_equal);
 		nodes = new List<Node> ();
 		edges = new SList<Edge> ();
 		selhist = new SList<Node> ();
-		//layout = new DefaultLayout();
 	}
 
 	public new void set(string key, string val) {
