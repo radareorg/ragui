@@ -60,7 +60,7 @@ public class Hexview.Widget : ScrolledWindow {
 	 */
 
 	construct {
-		this.address = (uint64)this;
+		this.address = (uint64)(size_t)this; // HACK :)
 		this.buffer = new Buffer ();
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		create_widgets ();
@@ -105,11 +105,11 @@ public class Hexview.Widget : ScrolledWindow {
 				Gdk.EventMask.SCROLL_MASK         |
 				Gdk.EventMask.BUTTON_PRESS_MASK   |
 				Gdk.EventMask.BUTTON_RELEASE_MASK );
-		da.expose_event += expose;
-		da.motion_notify_event += motion;
-		da.button_release_event += button_release;
-		da.button_press_event += button_press;
-		da.scroll_event += scroll_press;
+		da.expose_event.connect (expose);
+		da.motion_notify_event.connect (motion);
+		da.button_release_event.connect (button_release);
+		da.button_press_event.connect (button_press);
+		da.scroll_event.connect (scroll_press);
 		this.set_policy (PolicyType.NEVER, PolicyType.NEVER);
 
 		Viewport vp = new Viewport (
@@ -118,14 +118,14 @@ public class Hexview.Widget : ScrolledWindow {
 		vp.add(da);
 
 		this.add_events (Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
-		this.key_press_event += key_press;
-		this.key_release_event += key_release;
+		this.key_press_event.connect (key_press);
+		this.key_release_event.connect (key_release);
 
 		this.add_with_viewport(vp);
 	}
 
 	/* capture mouse motion */
-	private bool scroll_press (Gtk.DrawingArea da, Gdk.EventScroll es) {
+	private bool scroll_press (Gtk.Widget da, Gdk.EventScroll es) {
 		this.grab_focus();
 
 		switch(es.direction) {
@@ -151,7 +151,7 @@ public class Hexview.Widget : ScrolledWindow {
 			break;
 		}
 
-		refresh (da);
+		refresh ((DrawingArea)da);
 		return false;
 	}
 
@@ -183,7 +183,7 @@ public class Hexview.Widget : ScrolledWindow {
 			inverse = !inverse;
 			break;
 		case '+':
-			zoom+=ZOOM_FACTOR;
+			zoom += ZOOM_FACTOR;
 			break;
 		case '-':
 			zoom-=ZOOM_FACTOR;
@@ -245,34 +245,34 @@ public class Hexview.Widget : ScrolledWindow {
 
 		// XXX: most of this should be done in a tab panel or so
 		imi = new ImageMenuItem.from_stock("Copy", null);
-		imi.activate += imi => {
+		imi.activate.connect ( (imi) => {
 			stdout.printf("How many bytes?\n");
-		};
-		menu.append(imi);
+		});
+		menu.append (imi);
 
 		imi = new ImageMenuItem.from_stock("Paste", null);
-		imi.activate += imi => {
+		imi.activate.connect ( (imi) => {
 			stdout.printf("foo\n");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock ("Write", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			stdout.printf("TODO\n");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock ("Assemble", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			stdout.printf("TODO\n");
-		};
+		});
 		menu.append(imi);
 
 		menu.show_all();
 		menu.popup (null, null, null, 0, 0);
 	}
 
-	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb) {
+	private bool button_press (Gtk.Widget da, Gdk.EventButton eb) {
 		int w, h;
 		da.window.get_size(out w, out h);
 
@@ -296,7 +296,7 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 			xcursor = (int)(x/7);
 		}
 
-		refresh (da);
+		refresh ((DrawingArea)da);
 		return true;
 	}
 
@@ -310,27 +310,27 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 */
 
 	Node on = null;
-	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em) {
+	private bool button_release(Gtk.Widget da, Gdk.EventButton em) {
 		on = null;
 		opanx = opany = 0;
 		return true;
 	}
 
-	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em) {
+	private bool motion (Gtk.Widget da, Gdk.EventMotion em) {
 		this.grab_focus();
 		/* pan view */
 		if ((opanx!=0) && (opany!=0)) {
 		//	double x = em.x-opanx;
 		//	double y = em.y-opany;
 			pany += (em.y-opany);
-			refresh(da);
+			refresh( (DrawingArea)da);
 		}
 		opanx = em.x;
 		opany = em.y;
 		return true;
 	}
 
-	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {               
+	private bool expose (Gtk.Widget w, Gdk.EventExpose ev) {               
 		draw (true);
 		return true;
 	}

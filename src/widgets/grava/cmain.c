@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
 	grava = grava_widget_new ();
 
-#if 1
+#if 0
 	node = grava_node_new ();
 	grava_node_set (node, "label", "foo:");
 	grava_node_set (node, "color", "black");
