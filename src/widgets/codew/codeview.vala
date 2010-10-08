@@ -63,22 +63,22 @@ public class Codeview.Widget : ScrolledWindow {
 				Gdk.EventMask.BUTTON_RELEASE_MASK );
 		//da.set_events(  Gdk.EventMask.BUTTON1_MOTION_MASK );
 		// Gdk.EventMask.POINTER_MOTION_MASK );
-		da.expose_event += expose;
-		da.motion_notify_event += motion;
-		da.button_release_event += button_release;
-		da.button_press_event += button_press;
-		da.scroll_event += scroll_press;
+		da.expose_event.connect (expose);
+		da.motion_notify_event.connect (motion);
+		da.button_release_event.connect (button_release);
+		da.button_press_event.connect (button_press);
+		da.scroll_event.connect (scroll_press);
 
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 
 		Viewport vp = new Viewport(
 				new Adjustment(0, 10, 1000, 2, 100, 1000),
 				new Adjustment(0, 10, 1000, 2, 100, 1000));
-		vp.add(da);
+		vp.add (da);
 
-		this.add_events(  Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
-		this.key_press_event += key_press;
-		this.key_release_event += key_release;
+		this.add_events (Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
+		this.key_press_event.connect (key_press);
+		this.key_release_event.connect (key_release);
 
 		this.add_with_viewport(vp);
 
@@ -88,8 +88,8 @@ public class Codeview.Widget : ScrolledWindow {
 	}
 
 	/* capture mouse motion */
-	private bool scroll_press (Gtk.DrawingArea da, Gdk.EventScroll es)
-	{
+	private bool scroll_press (Gtk.Widget w, Gdk.EventScroll es) {
+		var da = (DrawingArea)w;
 		this.grab_focus();
 
 		switch(es.direction) {
@@ -143,10 +143,10 @@ public class Codeview.Widget : ScrolledWindow {
 		//stdout.printf("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 		switch (ek.keyval) {
 			case '+':
-				zoom+=ZOOM_FACTOR;
+				zoom += ZOOM_FACTOR;
 				break;
 			case '-':
-				zoom-=ZOOM_FACTOR;
+				zoom -= ZOOM_FACTOR;
 				break;
 			case 'J':
 				pany-=20*zoom;
@@ -190,52 +190,52 @@ public class Codeview.Widget : ScrolledWindow {
 
 		// XXX: most of this should be done in a tab panel or so
 		imi = new ImageMenuItem.from_stock("Set breakpoint", null);
-		imi.activate += imi => {
+		imi.activate.connect ( (imi) => {
 			stdout.printf("foo\n");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock("Change opcode", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			stdout.printf("redo\n");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock("Nop instruction", null);
-		imi.activate += imi => {
+		imi.activate.connect ( (imi) => {
 			stdout.printf("redo\n");
-		};
+		});
 		menu.append(imi);
 
 		menu.append(new SeparatorMenuItem());
 
 		imi = new ImageMenuItem.from_stock("View in hex", null);
-		imi.activate += imi => {
+		imi.activate.connect ( (imi) => {
 			stdout.printf("redo\n");
-		};
+		});
 		menu.append(imi);
 		imi = new ImageMenuItem.from_stock("View in graph", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			stdout.printf("redo\n");
-		};
+		});
 		menu.append(imi);
 
 		menu.append(new SeparatorMenuItem());
 
 		imi = new ImageMenuItem.from_stock("Continue until here", null);
-		imi.activate += imi => {
+		imi.activate.connect ( (imi) => {
 			//run_cmd("!step");
 			//run_cmd(".!regs*");
 			stdout.printf("redo\n");
 			//load_codew_at("$$");
-		};
+		});
 		menu.append(imi);
 
 		menu.show_all();
 		menu.popup(null, null, null, 0, 0);
 	}
 
-	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb) {
+	private bool button_press (Gtk.Widget widget, Gdk.EventButton eb) {
 		if (eb.button == 3)
 			do_popup_generic();
 		if (eb.x < 50)
@@ -262,13 +262,14 @@ public class Codeview.Widget : ScrolledWindow {
 */
 
 	Node on = null;
-	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em) {
+	private bool button_release(Gtk.Widget w, Gdk.EventButton em) {
 		on = null;
 		opanx = opany = 0;
 		return true;
 	}
 
-	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em) {
+	private bool motion (Gtk.Widget w, Gdk.EventMotion em) {
+		var da = (DrawingArea)w;
 		this.grab_focus();
 		/* pan view */
 		if ((opanx!=0) && (opany!=0)) {
@@ -282,7 +283,7 @@ public class Codeview.Widget : ScrolledWindow {
 		return true;
 	}
 
-	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {               
+	private bool expose (Gtk.Widget w, Gdk.EventExpose ev) {               
 		draw();
 		return true;
 	}

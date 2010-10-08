@@ -150,13 +150,13 @@ public class Grasmwidget.Widget : VBox {
 				hb.add (outputbytes);
 
 				ComboBox cb = new ComboBox.text ();
-				cb.changed += (self) => {
+				cb.changed.connect ( (self) => {
 					if (inputoff != null) {
 						rasm.set_pc (inputoff.text.to_uint64 ());
 						rasm.use(self.get_active_text ());
 						inputasm.activate ();
 					}
-				};
+				});
 				foreach (var p in rasm.plugins)
 					cb.append_text (p.name);
 				cb.set_active (0);
@@ -203,12 +203,12 @@ public class Grasmwidget.Widget : VBox {
 			inputasm = new Entry ();
 				inputasm.set_text ("mov eax, 33");
 				inputasm.activate.connect (add_node);
-				inputasm.key_release_event += (foo) => {
+				inputasm.key_release_event.connect ( (foo) => {
 					RAsm.Code? c = rasm.massemble (inputasm.get_text ());
 					if (c != null)
 						inputasm_hex.set_text (c.buf_hex);
 					return false;
-				};
+				});
 				vb.pack_start(inputasm, false, false, 1);
 
 			inputasm_hex = new Entry();
@@ -236,12 +236,12 @@ public class Grasmwidget.Widget : VBox {
 			var sw = new ScrolledWindow (null, null);
 				sw.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 				inputasm_multi = new TextView ();
-				inputasm_multi.key_release_event += (foo) => {
+				inputasm_multi.key_release_event.connect ( (foo) => {
 					RAsm.Code? c = rasm.massemble (get_multi_str ());
 					if (c != null)
 						inputasm_multi_hex.set_text (c.buf_hex);
 					return false;
-				};
+				});
 				sw.add (inputasm_multi);
 			vb.add (sw);
 

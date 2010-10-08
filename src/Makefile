@@ -19,7 +19,7 @@ all: widgets.done
 	${CC} -Iwidgets/include -O3 `pkg-config --cflags --libs gtk+-2.0 ${R2DEPS}` *.o ${WIDGETS} -o ${BIN}
 
 widgets.done:
-	cd widgets/hexview && ${MAKE} lib
+	#cd widgets/hexview && ${MAKE} lib
 	cd widgets/codew && ${MAKE} lib
 	cd widgets/grasm && ${MAKE} lib
 	cd widgets/grava && ${MAKE} lib

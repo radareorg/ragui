@@ -1,11 +1,10 @@
-/* ragui - copyright(C) 2009 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
 using Hexview;
 using GLib;
 using Gtk;
 
-public class Ragui.Main
-{
+public class Ragui.Main {
 	public static void quit_program () {
 		stdout.printf("Thanks for watching :)\n");
 
@@ -23,7 +22,7 @@ public class Ragui.Main
 		leftbox.set_active (0);
 		leftbox.changed.connect ( (x)=> {
 			print ("I CAN HAZ CHANGES (%s)\n", x.get_active_text ());
-mw.leftvb.add (new Gtk.Label ("jejej"));
+			mw.leftvb.add (new Gtk.Label ("jejej"));
 		});
 	}
 
@@ -31,7 +30,7 @@ mw.leftvb.add (new Gtk.Label ("jejej"));
 		var hex = mw.hexview;
 		hex.buffer.update.connect ((x,y)=> {
 			print ("READING FROM 0x%08llx\n", x);
-			uint8 *ptr = (void *)x;
+			uint8 *ptr = (void *)(size_t)x;
 			hex.buffer.start = x;
 			hex.buffer.end = x+y;
 			hex.buffer.size = y;
@@ -45,8 +44,8 @@ mw.leftvb.add (new Gtk.Label ("jejej"));
 
 		Gtk.init(ref args);
 		MainWindow mw = new MainWindow();
-//print ("==> %s\n", typeof (mw.leftbox));
-		mw.on_quit += quit_program;
+		//print ("==> %s\n", typeof (mw.leftbox));
+		mw.on_quit.connect (quit_program);
 		mw.resize(500, 400);
 		mw.show_all();
 		setup_leftbox (mw);

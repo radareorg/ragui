@@ -81,13 +81,13 @@ public class Grava.Node {
 		double _w = 0;
 
 		if (label != null)
-			_w = label.len ()+2;
+			_w = label.length+2;
 
 		if (has_body && body != null)
 		foreach (string str in body.split ("\n")) {
 			_y += 10;
-			if (str.len() > (long)_w)
-				_w = (double)str.len ();
+			if (str.length > (long)_w)
+				_w = (double)str.length;
 		}
 
 		w = (_w*7);

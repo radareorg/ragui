@@ -138,7 +138,7 @@
 		on_quit();
 	}
 
-	private bool OnWindowCloseEvent(Ragui.MainWindow mw, Gdk.Event ev) {
+	private bool OnWindowCloseEvent(Gdk.Event ev) {
 		OnQuit();
 		return true;
 	}

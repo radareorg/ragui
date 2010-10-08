@@ -6,8 +6,8 @@
         xmlns:GLib="GLib"
 	xmlns:Ragui="Ragui"
 	modal="true"
+	destroy-event="{OnWindowCloseEvent}"
         class:name="Ragui.PreferencesWindow"
-	delete-event="{OnWindowCloseEvent}"
         title="ragui preferences">
 
   <VBox border-width="1">
@@ -38,8 +38,8 @@
 		this.hide();
 	}
 
-	private bool OnWindowCloseEvent(Ragui.PreferencesWindow pw, Gdk.Event ev) {
-		pw.hide();
+	private bool OnWindowCloseEvent(Gdk.Event ev) {
+		this.hide();
 		return true;
 	}
 ]]>

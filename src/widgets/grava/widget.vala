@@ -69,11 +69,11 @@ public class Grava.Widget {
 				Gdk.EventMask.BUTTON_RELEASE_MASK );
 		//da.set_events(  Gdk.EventMask.BUTTON1_MOTION_MASK );
 				// Gdk.EventMask.POINTER_MOTION_MASK );
-		da.expose_event += expose;
-		da.motion_notify_event += motion;
-		da.button_release_event += button_release;
-		da.button_press_event += button_press;
-		da.scroll_event += scroll_press;
+		da.expose_event.connect (expose);
+		da.motion_notify_event.connect (motion);
+		da.button_release_event.connect (button_release);
+		da.button_press_event.connect (button_press);
+		da.scroll_event.connect (scroll_press);
 
 		sw = new ScrolledWindow (
 			new Adjustment (0, 10, 1000, 2, 100, 1000),
@@ -86,18 +86,19 @@ public class Grava.Widget {
 		vp.add (da);
 
 		sw.add_events (Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
-		sw.key_press_event += key_press;
-		sw.key_release_event += key_release;
+		sw.key_press_event.connect (key_press);
+		sw.key_release_event.connect (key_release);
 
 		sw.add_with_viewport (vp);
 
-		load_graph_at += (obj, addr) => {
+		load_graph_at.connect ((obj, addr) => {
 //			stdout.printf("HOWHOWHOW "+addr);
-		};
+		});
 	}
 
 	/* capture mouse motion */
-	private bool scroll_press (Gtk.DrawingArea da, Gdk.EventScroll es) {
+	private bool scroll_press (Gtk.Widget _w, Gdk.EventScroll es) {
+		var da = (DrawingArea)_w;
 		sw.grab_focus();
 
 		switch (es.direction) {
@@ -107,8 +108,8 @@ public class Grava.Widget {
 				graph.pany += 64;
 				break;
 			case WheelAction.ZOOM:
-			//	graph.zoom += ZOOM_FACTOR;
-			graph.do_zoom(+ZOOM_FACTOR);
+				//	graph.zoom += ZOOM_FACTOR;
+				graph.do_zoom (+ZOOM_FACTOR);
 				break;
 			case WheelAction.ROTATE:
 				graph.angle-=0.04;
@@ -121,7 +122,7 @@ public class Grava.Widget {
 				graph.pany -= 64;
 				break;
 			case WheelAction.ZOOM:
-			//	graph.zoom -= ZOOM_FACTOR;
+				//	graph.zoom -= ZOOM_FACTOR;
 			graph.do_zoom(-ZOOM_FACTOR);
 				break;
 			case WheelAction.ROTATE:
@@ -329,106 +330,104 @@ load_graph_at("$$");
 
 		/* XXX: most of this should be done in a tab panel or so */
 		imi = new ImageMenuItem.from_stock("undo seek", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			/* foo */
 			run_cmd("s-");
 			load_graph_at("$$");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock("redo seek", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			/* foo */
 			run_cmd("s+");
 			load_graph_at("$$");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock("Seek to eip", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			/* foo */
 			run_cmd("s eip");
 			load_graph_at("$$");
-		};
+		});
 		menu.append(imi);
 
 		menu.append(new SeparatorMenuItem());
 
 		imi = new ImageMenuItem.from_stock("Step", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			/* foo */
 			run_cmd("!step");
 			run_cmd(".!regs*");
 			load_graph_at("$$");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.from_stock("Continue", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			/* foo */
-			run_cmd("!continue");
-			run_cmd(".!regs*");
-			load_graph_at("$$");
-		};
-		menu.append(imi);
-		menu.show_all();
-		menu.popup(null, null, null, 0, 0);
+			run_cmd ("!continue");
+			run_cmd (".!regs*");
+			load_graph_at ("$$");
+		});
+		menu.append (imi);
+		menu.show_all ();
+		menu.popup (null, null, null, 0, 0);
 	}
 
-	public void do_popup_menu()
-	{
+	public void do_popup_menu() {
 		ImageMenuItem imi;
  		menu = new Menu();
 
 		//imi = new ImageMenuItem.with_label("Focus");
 		imi = new ImageMenuItem.from_stock("gtk-zoom-in", null);
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 	//		stdout.printf("go in!\n");
 			focus_at_label(null, Graph.selected.get("label"));
 			//MenuItem mi = menu.get_active();
 			//load_graph_at(((Label)imi.child).get_text()); //"0x400");
 			//stdout.printf(" cocococo "+ menu.);
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.with_label("Breakpoint here");
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 	//		stdout.printf("add bp!\n");
 			set_breakpoint(null, Graph.selected.get("label"));
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.with_label("Remove breakpoint");
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 			unset_breakpoint(null, Graph.selected.get("label"));
-		};
+		});
 		menu.append(imi);
 
 		// TODO: add continue until here
 /*
 		imi = new ImageMenuItem.with_label("Remove true branch");
-		imi.activate += imi => {
+		imi.activate.connect ((imi) => {
 ///			stdout.printf("Focus!\n");
-		};
+		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.with_label("Remove false branch");
-		imi.activate += imi => {
-	//		stdout.printf("Focus!\n");
-		};
+		imi.activate.connect ((imi) => {
+	//		print ("Focus!\n");
+		});
 		menu.append(imi);
 */
-
 		if (graph.selected != null) {
 			menu.append(new SeparatorMenuItem());
 
 			foreach(string str in graph.selected.calls) {
-				imi = new ImageMenuItem.with_label(str);
-				imi.activate += imi => {
+				imi = new ImageMenuItem.with_label (str);
+				imi.activate.connect ((imi) => {
 					//stdout.printf("FUCKME: \n"+imi.submenu_placement());
 					load_graph_at(((Label)imi.child).get_text()); //"0x400");
-				};
-				menu.append(imi);
+				});
+				menu.append (imi);
 			}
 		}
 
@@ -437,7 +436,8 @@ load_graph_at("$$");
 		menu.popup(null, null, null, 0, 0);
 	}
 
-	private bool button_press (Gtk.DrawingArea da, Gdk.EventButton eb) {
+	private bool button_press (Gtk.Widget _w, Gdk.EventButton eb) {
+		var da = (DrawingArea)_w;
 		//EventButton eb = event.button;
 		//EventMotion em = event.motion; 
 		Node n = graph.click (eb.x-graph.panx, eb.y-graph.pany);
@@ -463,13 +463,14 @@ load_graph_at("$$");
 	}
 
 	Node on = null;
-	private bool button_release(Gtk.DrawingArea da, Gdk.EventButton em) {
+	private bool button_release(Gtk.Widget w, Gdk.EventButton em) {
 		on = null;
 		opanx = opany = 0;
 		return true;
 	}
 
-	private bool motion (Gtk.DrawingArea da, Gdk.EventMotion em) {
+	private bool motion (Gtk.Widget _w, Gdk.EventMotion em) {
+		var da = (DrawingArea)_w;
 		Node n = graph.selected; //graph.click(em.x-graph.panx, em.y-graph.pany);
 		sw.grab_focus();
 		if (n != null) {
@@ -504,8 +505,7 @@ load_graph_at("$$");
 		return true;
 	}
 
-	private bool expose (Gtk.DrawingArea w, Gdk.EventExpose ev) {
-		//DrawingArea da = (DrawingArea)w;
+	private bool expose (Gtk.Widget w, Gdk.EventExpose ev) {
 		draw ();
 		return true;
 	}
