@@ -1,11 +1,17 @@
-VALAFILES=hexview.vala main.vala hexviewbuffer.vala
+VALAFILES=hexview.vala hexviewbuffer.vala main.vala
 VALAFLAGS=--pkg gtk+-2.0
 OUT_BIN=hexview
 OUT_HFILE=../include/hexview.h
 
-foo: lib all
+.PHONY: main lib
 
-include parvala.mk
+main: lib all
+
+lib: ../include/hexview.h
+	@cp -f hexview.vapi ../include
+
+include ../parvala.mk
+
 
 # VALAFILES=hexview.vala main.vala hexviewbuffer.vala
 # 
@@ -15,8 +21,12 @@ include parvala.mk
 # c:
 # 	valac -C --Xcc=-O3 --pkg gtk+-2.0 hexview.vala main.vala hexviewbuffer.vala
 # 
-lib:
-	valac -H ../include/hexview.h --library hexview -Cc --pkg gtk+-2.0 hexview.vala hexviewbuffer.vala
-	-cp hexview.vapi ../include
+
+#foola:
+#	@if [ hexview.vala -nt ../include/hexview.h ]; then \
+#	echo "  HDR    ../include/hexview.h" ; \
+#	valac -H ../include/hexview.h --library hexview -Cc --pkg gtk+-2.0 hexview.vala hexviewbuffer.vala ; \
+#	cp hexview.vapi ../include ; \
+#	fi
 # 	#${CC} -c `pkg-config gtk+-2.0 cairo --cflags` hexview.c
 # #	valac --save-temps --pkg gtk+-2.0 HexView.vala

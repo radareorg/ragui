@@ -38,5 +38,5 @@ endif
 
 ifdef OUT_BIN
 $(OUT_BIN) $(addsuffix .vapi,$(OUT_VAPI)): $(VALA_FASTVAPI_FILES) | $(VALA_FASTVAPI_STAMPS)
-	@echo '  BIN    '$(OUT_BIN) $(addsuffix .vapi,$(OUT_VAPI)); $(VALAC) $(VALAFLAGS) -o $(OUT_BIN) $(subst .vala,.c,$(VALAFILES))
+	@echo '  BIN    '$(OUT_BIN) $(addsuffix .vapi,$(OUT_VAPI)); $(VALAC) $(VALAFLAGS) -o $(OUT_BIN) $(subst .vala,.c,$(VALAFILES)) $(CFILES)
 endif

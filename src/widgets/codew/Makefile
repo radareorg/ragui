@@ -1,18 +1,33 @@
-VALAFLAGS=--pkg gtk+-2.0 --pkg cairo
+VALAFILES=codecontext.vala codejump.vala codeline.vala codeview.vala
+CFILES=cmain.c
+VALAFLAGS=--pkg gtk+-2.0 --Xcc=-I../include
+OUT_BIN=codew
+OUT_HFILE=../include/codew.h
 
-SOURCES=codecontext.vala codejump.vala codeline.vala codeview.vala
+.PHONY: main lib
 
-all: lib
-	valac --Xcc=-I../include ${VALAFLAGS} ${SOURCES} cmain.c -o codew
-#	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
-	#${CC} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o codew
+main: lib all
 
-lib:
-	-valac -H ../include/codeview.h --library codew -Cc ${VALAFLAGS} *.vala
-	cp codew.vapi ../include
-	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
+lib: ../include/codew.h
+	@cp -f codew.vapi ../include
 
-clean:
-	mv cmain.c __
-	rm -f *.c *.h *.o a.out codew
-	mv __ cmain.c
+include ../parvala.mk
+
+
+# VALAFILES=codew.vala main.vala codewbuffer.vala
+# 
+# all:
+# 	valac --Xcc=-O3 --pkg gtk+-2.0 codew.vala main.vala codewbuffer.vala
+# 
+# c:
+# 	valac -C --Xcc=-O3 --pkg gtk+-2.0 codew.vala main.vala codewbuffer.vala
+# 
+
+#foola:
+#	@if [ codew.vala -nt ../include/codew.h ]; then \
+#	echo "  HDR    ../include/codew.h" ; \
+#	valac -H ../include/codew.h --library codew -Cc --pkg gtk+-2.0 codew.vala codewbuffer.vala ; \
+#	cp codew.vapi ../include ; \
+#	fi
+# 	#${CC} -c `pkg-config gtk+-2.0 cairo --cflags` codew.c
+# #	valac --save-temps --pkg gtk+-2.0 HexView.vala

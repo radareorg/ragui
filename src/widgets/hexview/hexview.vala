@@ -60,7 +60,7 @@ public class Hexview.Widget : ScrolledWindow {
 	 */
 
 	construct {
-		this.address = (uint64)(size_t)this; // HACK :)
+		//this.address = (uint64)(size_t)this; // HACK :)
 		this.buffer = new Buffer ();
 		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
 		create_widgets ();
@@ -360,17 +360,18 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 
 	private void sync () {
 		/* TODO: handle multipliers here!! */
+		int n164 = 16*4;
 		if (pany>0) {
-			buffer.update (offset-(16*16), 16*80);
-			pany -= 80;
-			address -= 16*4;
+			address -= n164;
+			buffer.update (address, 16*80); //offset-n164, 16*80);
+			pany -= 64;
 			cursor += 4;
 		}
-		if (-pany>(80)) {
-			buffer.update (offset+(16*16), 16*80);
-			pany += 80;
+		if (-pany>64) {
+			address += n164;
+			buffer.update (address, 16*80);
+			pany += 64;
 			cursor -= 4;
-			address += 16*4;
 		}
 
 		/* set offset */
@@ -403,7 +404,8 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		//da.expose(da, null);
 		//da.queue_draw_area(0,0,1000,1000);
 		set_color (Color.FOREGROUND);
-		for (int i=0;i<60;i++) {
+		int rows = h;
+		for (int i=0;i<rows;i++) {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
 				ctx.save ();

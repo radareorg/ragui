@@ -1,17 +1,14 @@
-VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg r_asm --pkg r_util --pkg grava --vapidir=../grava
+VALAFILES=grasmwidget.vala
+EXTRA_OBJS=../grava/*.o
+VALAFLAGS=--pkg gtk+-2.0 --pkg r_asm --pkg r_util --pkg grava --vapidir=../grava --Xcc=-I../include
+OUT_BIN=grasm
+OUT_HFILE=../include/grasmwidget.h
 
-SOURCES=grasmwidget.vala
+.PHONY: main lib
 
-all: lib
-	valac -g -H ../include/grasmwidget.h -Cc ${VALAFLAGS} *.vala
-	${CC} -c -g `pkg-config gtk+-2.0 libr cairo --cflags` -I/usr/include/libr -I../include $(SOURCES:.vala=.c)
-	${CC} -g -I../include `pkg-config gtk+-2.0 cairo libr --cflags --libs` cmain.c $(SOURCES:.vala=.o) -o grasm ../grava/*.o
+main: lib all
 
-lib:
-	valac ${VALAFLAGS} -H ../include/grasmwidget.h --library grasmwidget -Cc --pkg gtk+-2.0 grasmwidget.vala
-	cp -f *.vapi ../include
+lib: ${OUT_HFILE}
+	@cp -f grasmwidget.vapi ../include
 
-clean:
-	mv cmain.c __
-	rm -f *.c *.h *.o a.out
-	mv __ cmain.c
+include ../parvala.mk

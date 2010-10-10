@@ -283,9 +283,7 @@ public class Grava.Renderer {
 				circle(ctx, node.w, node.h);
 			else square (ctx, node.w, node.h);
 		}
-
 		ctx.stroke();
-
 		ctx.restore();
 	}
 
