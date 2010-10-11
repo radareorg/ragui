@@ -1,14 +1,16 @@
 VALAFILES=hexview.vala hexviewbuffer.vala main.vala
 VALAFLAGS=--pkg gtk+-2.0
 OUT_BIN=hexview
-OUT_HFILE=../include/hexview.h
+OUT_HFILE=../include/hexviewbuffer.h
 
 .PHONY: main lib
 
 main: lib all
 
-lib: ../include/hexview.h
-	@cp -f hexview.vapi ../include
+lib: $(OUT_HFILE)
+	#@cp .vala-aux/hexview*.vapi ../include/
+	valac --vapi ../include/hexview.vapi --library hexview -Cc --pkg gtk+-2.0 hexviewbuffer.vala hexview.vala
+	#cp hexview.vapi ../include
 
 include ../parvala.mk
 

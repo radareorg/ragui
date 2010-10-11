@@ -1,4 +1,5 @@
-PKG=--pkg gtk+-2.0 --pkg codew --pkg hexview --pkg grasmwidget --pkg r_util --pkg r_asm
+PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview
+PKG+= --pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
 R2DEPS=r_asm r_util
 BIN=ragui
 #AML=--implicitsdir=/usr/share/gtkamlc/implicits/
@@ -6,7 +7,7 @@ BIN=ragui
 PKG+=--vapidir=widgets/include
 PKG+=--save-temps
 PKG+=--Xcc=-Iwidgets/include
-WIDGETS=widgets/codew/*.o
+WIDGETS=`ls widgets/codew/*.c| grep -v main`
 WIDGETS+=widgets/hexview/hexview.c
 WIDGETS+=widgets/hexview/hexviewbuffer.c
 WIDGETS+=widgets/grasm/grasmwidget.c

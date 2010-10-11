@@ -9,7 +9,7 @@ OUT_HFILE=../include/codeview.h
 main: lib all
 
 lib: ../include/codeview.h
-	@cp -f .vala-aux/codeview.vapi ../include
+	valac --vapi ../include/codeview.vapi --library codeview -Cc --pkg gtk+-2.0 $(VALAFILES)
 
 include ../parvala.mk
 

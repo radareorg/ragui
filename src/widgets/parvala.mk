@@ -9,7 +9,7 @@ VALA_FASTVAPI_FILES = $(foreach f, $(BASENAMES), $(VALA_AUX)$(f).vapi)
 VALA_FASTVAPI_STAMPS = $(foreach f, $(BASENAMES), $(VALA_AUX)$(f).vapi.stamp)
 VALA_DEPS = $(foreach f, $(BASENAMES), $(VALA_AUX)$(f).dep)
 
-all: $(VALA_DEPS) $(OUT_HFILE) $(OUT_BIN)
+all: $(VALA_DEPS) $(OUT_HFILE) $(OUT_BIN) $(OUT_VLIB)
 
 .PRECIOUS: $(VALA_AUX)%.vapi.stamp $(VALA_AUX)%.dep
 
@@ -26,7 +26,7 @@ $(VALA_AUX):
 	@mkdir -p $(VALA_AUX)
 
 clean:
-	rm -f $(OUT_BIN) $(OUT_HFILE) $(VALACFILES)
+	rm -f $(OUT_BIN) $(OUT_HFILE) $(VALACFILES) $(OUT_VLIB)
 	rm -rf $(VALA_AUX)
 
 include $(wildcard $(VALA_AUX)/*.dep)
