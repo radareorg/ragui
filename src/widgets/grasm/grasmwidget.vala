@@ -53,7 +53,7 @@ public class Grasmwidget.Widget : VBox {
 			RAsm.Code? c = rasm.massemble (code);
 			if (c != null) {
 				if (debug)
-					stdout.printf("BYTES(%s)\n", c.buf_hex);
+					print ("BYTES(%s)\n", c.buf_hex);
 				return (string)c.buf_hex;
 			}
 		}
@@ -63,21 +63,21 @@ public class Grasmwidget.Widget : VBox {
 	private void add_node() {
 		if (o2b(inputasm.get_text()) != null) {
 			Grava.Node *n = new Grava.Node();
-				n->set("label", inputoff.get_text());
-				n->set("color", "blue");
-				n->set("body", inputasm.get_text());
-			inputasm.set_text("");
-			gw.graph.add_node(n);
-			gw.graph.update();
-			gw.draw();
-			generate_code();
+				n->set ("label", inputoff.get_text());
+				n->set ("color", "blue");
+				n->set ("body", inputasm.get_text());
+			inputasm.set_text ("");
+			gw.graph.add_node (n);
+			gw.graph.update ();
+			gw.draw ();
+			generate_code ();
 		}
 	}
 
 	private string get_multi_str() {
 		Gtk.TextIter tiend, tistart;
-		inputasm_multi.buffer.get_start_iter(out tistart);
-		inputasm_multi.buffer.get_end_iter(out tiend);
+		inputasm_multi.buffer.get_start_iter (out tistart);
+		inputasm_multi.buffer.get_end_iter (out tiend);
 		return inputasm_multi.buffer.get_text (tiend, tistart, false);
 	}
 
@@ -115,9 +115,9 @@ public class Grasmwidget.Widget : VBox {
 			double posx = (node.x+gw.graph.panx)*gw.graph.zoom;
 			string body = node.get("body");
 			if (posx < 100) {
-				if (debug) stdout.printf("IGNORE (%s)\n", body);
+				if (debug) print ("IGNORE (%s)\n", body);
 			} else {
-				if (debug) stdout.printf("ASSEMBLE (%s)\n", body);
+				if (debug) print ("ASSEMBLE (%s)\n", body);
 				str += o2b (body);
 			}
 		}
@@ -131,6 +131,12 @@ public class Grasmwidget.Widget : VBox {
 		int len = RHex.str2bin (hex, ptr);
 		rasm.disassemble (out aop, ptr, len);
 		return aop.buf_asm;
+	}
+
+	private void updatebytes() {
+		RAsm.Code? c = rasm.massemble (inputasm.get_text ());
+		if (c != null)
+			inputasm_hex.set_text (c.buf_hex);
 	}
 
 	public void create_widgets () {
@@ -149,12 +155,13 @@ public class Grasmwidget.Widget : VBox {
 				outputbytes.editable = false;
 				hb.add (outputbytes);
 
-				ComboBox cb = new ComboBox.text ();
+				var cb = new ComboBox.text ();
 				cb.changed.connect ( (self) => {
 					if (inputoff != null) {
 						rasm.set_pc (inputoff.text.to_uint64 ());
 						rasm.use(self.get_active_text ());
-						inputasm.activate ();
+						updatebytes ();
+						//inputasm.activate ();
 					}
 				});
 				foreach (var p in rasm.plugins)
@@ -162,6 +169,22 @@ public class Grasmwidget.Widget : VBox {
 				cb.set_active (0);
 				rasm.use (cb.get_active_text ());
 				hb.pack_start (cb, false, false, 4);
+
+				/* bits */
+				var cbb = new ComboBox.text ();
+				cbb.changed.connect ( (self) => {
+					if (inputoff != null) {
+						rasm.set_pc (inputoff.text.to_uint64 ());
+						rasm.set_bits(self.get_active_text ().to_int ());
+						updatebytes ();
+						//inputasm.activate ();
+					}
+				});
+				cbb.append_text ("16");
+				cbb.append_text ("32");
+				cbb.append_text ("64");
+				cbb.set_active (1);
+				hb.pack_start (cbb, false, false, 4);
 
 			vb0.pack_start (hb, false, false, 2);
 			gw = new Grava.Widget();
@@ -204,18 +227,18 @@ public class Grasmwidget.Widget : VBox {
 				inputasm.set_text ("mov eax, 33");
 				inputasm.activate.connect (add_node);
 				inputasm.key_release_event.connect ( (foo) => {
-					RAsm.Code? c = rasm.massemble (inputasm.get_text ());
-					if (c != null)
-						inputasm_hex.set_text (c.buf_hex);
+					updatebytes ();
 					return false;
 				});
 				vb.pack_start(inputasm, false, false, 1);
 
 			inputasm_hex = new Entry();
-				inputasm_hex.activate.connect ((foo) => {
+				//inputasm_hex.activate.connect ((foo) => {
+				inputasm_hex.key_release_event.connect ((foo) => {
 					var str = disassemble (inputasm_hex.get_text ());
 					if (str != null)
 						inputasm.set_text (str);
+					return false;
 				});
 			vb.pack_start (inputasm_hex, false, false, 1);
 
