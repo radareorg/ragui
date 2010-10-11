@@ -9,7 +9,7 @@ OUT_HFILE=../include/codeview.h
 main: lib all
 
 lib: ../include/codeview.h
-	@cp -f codew.vapi ../include
+	@cp -f .vala-aux/codeview.vapi ../include
 
 include ../parvala.mk
 
