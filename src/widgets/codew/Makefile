@@ -2,13 +2,13 @@ VALAFILES=codecontext.vala codejump.vala codeline.vala codeview.vala
 CFILES=cmain.c
 VALAFLAGS=--pkg gtk+-2.0 --Xcc=-I../include
 OUT_BIN=codew
-OUT_HFILE=../include/codew.h
+OUT_HFILE=../include/codeview.h
 
 .PHONY: main lib
 
 main: lib all
 
-lib: ../include/codew.h
+lib: ../include/codeview.h
 	@cp -f codew.vapi ../include
 
 include ../parvala.mk
