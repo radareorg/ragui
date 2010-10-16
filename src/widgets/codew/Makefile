@@ -9,7 +9,9 @@ OUT_HFILE=../include/codeview.h
 main: lib all
 
 lib: ../include/codeview.h
-	@cp -f .vala-aux/codeview.vapi ../include
+	valac -C --library codeview --vapi=../include/codeview.vapi ${VALAFLAGS} ${VALAFILES} -H ../include/codeview.h
+	cp *.h
+	#@cp -f .vala-aux/codeview.vapi ../include
 
 include ../parvala.mk
 
