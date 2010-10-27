@@ -317,7 +317,7 @@ public class Codeview.Widget : ScrolledWindow {
 		//ctx.save();
 		ctx.save();
 		// Sans Serif
-		ctx.select_font_face("Sans Serif", FontSlant.NORMAL, FontWeight.BOLD);
+		ctx.select_font_face("mono", FontSlant.NORMAL, FontWeight.BOLD);
 		ctx.set_font_size(10);
 		ctx.translate(0, pany);
 		ctx.scale(zoom, zoom);

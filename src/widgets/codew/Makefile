@@ -10,7 +10,7 @@ main: lib all
 
 lib: ../include/codeview.h
 	valac -C --library codeview --vapi=../include/codeview.vapi ${VALAFLAGS} ${VALAFILES} -H ../include/codeview.h
-	cp *.h
+	#cp *.h
 	#@cp -f .vala-aux/codeview.vapi ../include
 
 include ../parvala.mk

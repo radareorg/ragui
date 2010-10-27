@@ -22,7 +22,7 @@ using Gtk;
 using Gdk;
 
 public class Hexview.Widget : ScrolledWindow {
-	const string FONTNAME = ""; //Nimbus Sans L";
+	const string FONTNAME = "mono";
 	private Context ctx;
 	public Hexview.Buffer buffer;
 
@@ -53,16 +53,10 @@ public class Hexview.Widget : ScrolledWindow {
 	public uint64 selfrom = -1LL;
 	public uint64 selto = -1LL;
 
-	/*
-	   public signal void load_codew_at(string addr);
-	   public signal void breakpoint_at(string addr);
-	   public signal void run_cmd(string addr);
-	 */
-
 	construct {
 		//this.address = (uint64)(size_t)this; // HACK :)
 		this.buffer = new Buffer ();
-		this.set_policy(PolicyType.NEVER, PolicyType.NEVER);
+		this.set_policy (PolicyType.NEVER, PolicyType.NEVER);
 		create_widgets ();
 	}
 
@@ -101,7 +95,7 @@ public class Hexview.Widget : ScrolledWindow {
 
 	public void create_widgets () {
 		da = new DrawingArea ();
-		da.add_events(  Gdk.EventMask.BUTTON1_MOTION_MASK |
+		da.add_events ( Gdk.EventMask.BUTTON1_MOTION_MASK |
 				Gdk.EventMask.SCROLL_MASK         |
 				Gdk.EventMask.BUTTON_PRESS_MASK   |
 				Gdk.EventMask.BUTTON_RELEASE_MASK );
@@ -112,25 +106,20 @@ public class Hexview.Widget : ScrolledWindow {
 		da.scroll_event.connect (scroll_press);
 		this.set_policy (PolicyType.NEVER, PolicyType.NEVER);
 
-		Viewport vp = new Viewport (
-			new Adjustment (0, 10, 1000, 2, 100, 1000),
-			new Adjustment (0, 10, 1000, 2, 100, 1000));
-		vp.add(da);
-
 		this.add_events (Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.KEY_RELEASE_MASK);
 		this.key_press_event.connect (key_press);
 		this.key_release_event.connect (key_release);
 
-		this.add_with_viewport(vp);
+		this.add_with_viewport(da);
 	}
 
 	/* capture mouse motion */
-	private bool scroll_press (Gtk.Widget da, Gdk.EventScroll es) {
+	private bool scroll_press (Gtk.Widget w, Gdk.EventScroll es) {
 		this.grab_focus();
 
-		switch(es.direction) {
+		switch (es.direction) {
 		case ScrollDirection.UP:
-			switch(wheel_action) {
+			switch (wheel_action) {
 			case WheelAction.PAN:
 				pany += 300*ZOOM_FACTOR;
 				break;
@@ -140,7 +129,7 @@ public class Hexview.Widget : ScrolledWindow {
 			}
 			break;
 		case ScrollDirection.DOWN:
-			switch(wheel_action) {
+			switch (wheel_action) {
 			case WheelAction.PAN:
 				pany -= 300*ZOOM_FACTOR;
 				break;
@@ -151,13 +140,13 @@ public class Hexview.Widget : ScrolledWindow {
 			break;
 		}
 
-		refresh ((DrawingArea)da);
+		refresh (da);
 		return false;
 	}
 
 	private bool key_release(Gtk.Widget w, Gdk.EventKey ek) {
 		this.grab_focus ();
-		//stdout.printf("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
+		//print ("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 		switch (ek.keyval) {
 		case 65507: // CONTROL KEY
 			wheel_action = WheelAction.PAN;
@@ -175,8 +164,7 @@ public class Hexview.Widget : ScrolledWindow {
 		//DrawingArea da = (DrawingArea)w;
 		this.grab_focus();
 
-		/* */
-		//stdout.printf("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
+		//print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 
 		switch (ek.keyval) {
 		case 'i': // inverse colors
@@ -186,19 +174,20 @@ public class Hexview.Widget : ScrolledWindow {
 			zoom += ZOOM_FACTOR;
 			break;
 		case '-':
-			zoom-=ZOOM_FACTOR;
+			zoom -= ZOOM_FACTOR;
 			break;
 		case 'J':
-			pany-=20*zoom;
+			pany -= 20*zoom;
 			break;
 		case 'K':
-			pany+=20*zoom;
+			pany += 20*zoom;
 			break;
 		case 65365: // re.pag
-			pany+=100*zoom;
+print ("HEIGHT %d\n", (int)h);
+			pany += 100*zoom;
 			break;
 		case 65366: // av.pag
-			pany-=100*zoom;
+			pany -= 100*zoom;
 			break;
 		case 65364:
 		case 'j':
@@ -211,14 +200,14 @@ public class Hexview.Widget : ScrolledWindow {
 		case 'l':
 			xcursor++;
 			if (xcursor>15) {
-				xcursor=0;
+				xcursor = 0;
 				cursor++;
 			}
 			break;
 		case 'h':
 			xcursor--;
 			if (xcursor<0) {
-				xcursor=15;
+				xcursor = 15;
 				cursor--;
 			}
 			break;
@@ -246,38 +235,35 @@ public class Hexview.Widget : ScrolledWindow {
 		// XXX: most of this should be done in a tab panel or so
 		imi = new ImageMenuItem.from_stock("Copy", null);
 		imi.activate.connect ( (imi) => {
-			stdout.printf("How many bytes?\n");
+			print ("How many bytes?\n");
 		});
 		menu.append (imi);
 
 		imi = new ImageMenuItem.from_stock("Paste", null);
 		imi.activate.connect ( (imi) => {
-			stdout.printf("foo\n");
+			print ("foo\n");
 		});
-		menu.append(imi);
+		menu.append (imi);
 
 		imi = new ImageMenuItem.from_stock ("Write", null);
 		imi.activate.connect ((imi) => {
-			stdout.printf("TODO\n");
+			print ("TODO\n");
 		});
-		menu.append(imi);
+		menu.append (imi);
 
 		imi = new ImageMenuItem.from_stock ("Assemble", null);
 		imi.activate.connect ((imi) => {
-			stdout.printf("TODO\n");
+			print ("TODO\n");
 		});
-		menu.append(imi);
+		menu.append (imi);
 
-		menu.show_all();
+		menu.show_all ();
 		menu.popup (null, null, null, 0, 0);
 	}
 
-	private bool button_press (Gtk.Widget da, Gdk.EventButton eb) {
-		int w, h;
-		da.window.get_size(out w, out h);
-
+	private bool button_press (Gtk.Widget widget, Gdk.EventButton eb) {
 		if (eb.button == 3)
-			do_popup_generic();
+			do_popup_generic ();
 		if (eb.x < 50)
 			breakpoint = address+16*(int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 		if (eb.x > w-30) {
@@ -286,7 +272,7 @@ public class Hexview.Widget : ScrolledWindow {
 			else pany-=40;
 		} else cursor = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 
-stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
+		//print  ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		if ((eb.x/zoom)>100 && ((eb.x/zoom)<340)) {
 			double x = (eb.x/zoom)-100;
 			xcursor = (int)(x/15);
@@ -296,7 +282,7 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 			xcursor = (int)(x/7);
 		}
 
-		refresh ((DrawingArea)da);
+		refresh (da);
 		return true;
 	}
 
@@ -323,15 +309,18 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		//	double x = em.x-opanx;
 		//	double y = em.y-opany;
 			pany += (em.y-opany);
-			refresh( (DrawingArea)da);
+			refresh ((DrawingArea)da);
 		}
 		opanx = em.x;
 		opany = em.y;
 		return true;
 	}
 
-	private bool expose (Gtk.Widget w, Gdk.EventExpose ev) {               
-		draw (true);
+	int w;
+	int h;
+	private bool expose (Gtk.Widget widget, Gdk.EventExpose ev) {
+		da.window.get_size (out w, out h);
+		draw ();
 		return true;
 	}
 
@@ -359,39 +348,44 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 	}
 
 	private void sync () {
+		const int K = 16;
+	print ("PANY IS %d\n", (int)pany);
 		/* TODO: handle multipliers here!! */
-		int n164 = 16*4;
-		if (pany>0) {
-			address -= n164;
-			buffer.update (address, 16*80); //offset-n164, 16*80);
-			pany -= 64;
-			cursor += 4;
-		}
-		if (-pany>64) {
-			address += n164;
+		int foo = K*((int)((pany/zoom)/K));
+		if (pany>K) {
+			address -= (int)foo;
+			buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
+			pany = 0;
+			cursor += 1;
+		} else
+		if (-pany>K) {
+			address-=(int)foo;
 			buffer.update (address, 16*80);
-			pany += 64;
-			cursor -= 4;
+			pany = 0;
+			cursor -= 1; // TODO move mult
 		}
 
+#if 0
 		/* set offset */
-		double py = (-pany/zoom)/10;
 		//print ("PANY = %f\n", pany);
-		offset = (uint64)(address + (((int)(py)<<4)));
+#endif
+		int py = 0; //foo/2; //(-pany/zoom)/10;
+		print ("----- foo %d\n", foo);
+		offset = (uint64)(address + py);
 		offset_click = offset + xcursor; // TODO: add Y
+		print ("click : %llx\n", offset_click);
 	}
 
-	public void draw(bool food) {
-		int w, h;
+	public void draw() {
 		da.window.get_size (out w, out h);
 
 		sync ();
 		/* adapt zoom to size */
 		zoom = ((double)w)/500.0;
 
-		ctx = Gdk.cairo_create(da.window);
+		ctx = Gdk.cairo_create (da.window);
 		//ctx.save();
-		ctx.save();
+		ctx.save ();
 		// Sans Serif
 		ctx.select_font_face (FONTNAME, FontSlant.NORMAL, FontWeight.BOLD);
 		ctx.set_font_size (10);
@@ -400,11 +394,12 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		set_color (Color.BACKGROUND);
 		ctx.paint ();
 		//		codew.draw(ctx);
-		//stdout.printf("widget.draw\n");
+		//print ("widget.draw\n");
 		//da.expose(da, null);
 		//da.queue_draw_area(0,0,1000,1000);
 		set_color (Color.FOREGROUND);
-		int rows = h;
+		int rows = (int)((h/zoom)/10);
+print ("ROWS = %d\n", rows);
 		for (int i=0;i<rows;i++) {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
@@ -413,38 +408,36 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 				//ctx.set_source_rgba(0.1, 0, 0.9, 0.2);
 				set_color (Color.HIGHLIGHT);
 				square (ctx, 90, lineh+1);
-				ctx.fill();
+				ctx.fill ();
 				//ctx.stroke();
-				ctx.restore();
+				ctx.restore ();
 
 				/* draw xcursor */
-				ctx.save();
-				ctx.translate((xcursor*15)+100, y+1);
+				ctx.save ();
+				ctx.translate ((xcursor*15)+100, y+1);
 				set_color (Color.HIGHLIGHT);
 				square (ctx, 14, lineh+1);
 				//ctx.fill();
-				//ctx.stroke();
-				ctx.stroke();
-				ctx.restore();
+				ctx.stroke ();
+				ctx.restore ();
 
 				/* ascii column */
-				ctx.save();
-				ctx.translate((xcursor*7)+350, y+1);
+				ctx.save ();
+				ctx.translate ((xcursor*7)+350, y+1);
 				set_color (Color.HIGHLIGHT);
-				square(ctx, 7, lineh+1);
+				square (ctx, 7, lineh+1);
 				//ctx.fill();
-				ctx.stroke();
-				ctx.restore();
-//stdout.printf("xcursor=%d\n", xcursor);
+				ctx.stroke ();
+				ctx.restore ();
 			}
 			if ((address+(i*16))==breakpoint) {
-				ctx.save();
+				ctx.save ();
 				ctx.translate (5,y+4);
 				set_color (Color.HIGHLIGHT);
-				square(ctx, 5, 5);
-				ctx.fill();
+				square (ctx, 5, 5);
+				ctx.fill ();
 				//ctx.stroke();
-				ctx.restore();
+				ctx.restore ();
 			}
 			ctx.move_to (20, y);
 			ctx.show_text ("0x%08llx".printf((uint64)address+(i*16)));
@@ -462,17 +455,17 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 						ch = '.';
 					ctx.show_text ("%c".printf (ch));
 				}
-			} else {
+			} /*else {
 				if (food) {
 					buffer.update (offset, 16*80);
-					draw(false);
+					draw ();
 				}
-			}
+			} */
 		}
-		ctx.restore();
+		ctx.restore ();
 
 		/* topline */
-		ctx.save();
+		ctx.save ();
 		ctx.translate (0, 0);
 		ctx.set_source_rgba (0.5, 0.5, 0.5, 0.8);
 		square (ctx, w, 11*zoom);
@@ -482,35 +475,39 @@ stdout.printf ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		ctx.move_to (100, 10);
 		ctx.select_font_face (FONTNAME, FontSlant.NORMAL, FontWeight.BOLD);
 		set_color (Color.BACKGROUND);
-		ctx.show_text (" 0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F");
+		for (int j=0;j<16;j++) {
+			ctx.move_to (100+(j*15), 10);
+			ctx.show_text ("%x".printf (j));
+		}
 		//----
-		//ctx.move_to (100, 10);
 		ctx.move_to (350, 10);
-		ctx.show_text ("0123456789ABCDEF");
-		ctx.move_to (0, 10);
+		for (int j=0;j<16;j++) {
+			ctx.move_to (350+(j*7), 10);
+			ctx.show_text ("%x".printf (j));
+		}
+		ctx.move_to (20, 10);
 		ctx.show_text (("0x%08"+uint64.FORMAT_MODIFIER+"x").printf (offset));
 		ctx.restore ();
 
 		set_color (Color.HIGHLIGHT);
 		/* arrows */
 		ctx.save ();
-		ctx.translate (w-(zoom*17), h-(16*zoom));
-		triangle (ctx, 9*zoom, 9*zoom, true);
-		ctx.fill();
-		//ctx.stroke ();
+		ctx.translate (w-(zoom*15), h-(15*zoom));
+		triangle (ctx, 8*zoom, 8*zoom, true);
+		//ctx.fill();
+		ctx.stroke ();
 		ctx.restore ();
 		/*--*/
-		ctx.save();
-		ctx.translate (w-(17*zoom), zoom*16);
-		triangle (ctx, 9*zoom, 9*zoom, false);
-		ctx.fill();
-		//ctx.stroke();
-		ctx.restore();
+		ctx.save ();
+		ctx.translate (w-(15*zoom), zoom*15);
+		triangle (ctx, 8*zoom, 8*zoom, false);
+		ctx.stroke ();
+		ctx.restore ();
 	}
 
 	public void refresh(DrawingArea da) {
 		int w, h;
-		da.window.get_size(out w, out h);
-		da.queue_draw_area(0, 0, w+200, h+200);
+		da.window.get_size (out w, out h);
+		da.queue_draw_area (0, 0, w+200, h+200);
 	}
 }
