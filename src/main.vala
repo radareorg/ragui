@@ -35,8 +35,8 @@ public class Ragui.Main {
 			hex.buffer.end = x+y;
 			hex.buffer.size = y;
 			hex.buffer.bytes = new uint8[y];
-			if (x>0x8048000)
-			Memory.copy (hex.buffer.bytes, ptr, y);
+			if (x>=0x8048000)
+				Memory.copy (hex.buffer.bytes, ptr, y);
 		});
 	}
 

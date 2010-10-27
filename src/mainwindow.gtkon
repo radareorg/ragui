@@ -1,0 +1,126 @@
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+
+Window xmlns:class="http://gtkaml.org/0.2"
+		xmlns:gtkaml="http://gtkaml.org/0.2"
+		title="ragui" class:name="Ragui.MainWindow"
+		delete-event="{OnWindowCloseEvent}"
+		xmlns=Gtk
+		xmlns:Ragui=Ragui
+		xmlns:Codeview=Codeview
+		xmlns:Hexview=Hexview
+		xmlns:Grasmwidget=Grasmwidget {
+	VBox border-width=1 {
+		MenuBar expand=false {
+			MenuItem label="_File" with-mnemonic=true {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="gtk-new";
+						ImageMenuItem stock-id="gtk-open";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}";
+					}
+				}
+			}
+			MenuItem label="_Edit" with-mnemonic=true {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="gtk-cut";
+						ImageMenuItem stock-id="gtk-copy";
+						ImageMenuItem stock-id="gtk-paste";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="gtk-preferences" activate="{OnMenuEditPreferences}";
+					}
+				}
+			}
+			MenuItem label="_Help" with-mnemonic=true {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="gtk-help";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="gtk-about" activate="{OnMenuHelpAbout}";
+					}
+				}
+			}
+		}
+		Toolbar expand=true {
+			Button use-stock=true label="gtk-new";
+			Button use-stock=true label="gtk-open";
+		}
+
+		HPaned border-width=3 expand=true {
+			VBox border-width=3 {
+				ComboBox $leftbox expand=false text=true;
+				ScrolledWindow can-focus=true expand=true
+						vscrollbar-policy="{PolicyType.AUTOMATIC}"
+						hscrollbar-policy="{PolicyType.AUTOMATIC}" {
+					VBox $leftvb;
+				}
+			}
+		}
+
+		VPaned position=600 add2=true {
+			VBox {
+				Notebook expand=true tab-vborder=1 {
+					VBox {
+						tab-label { Label label="Disassembly"; }
+						Codeview:Widget $codeview expand=true;
+					}
+					VBox {
+						tab-label { Label label="Assembler"; }
+						Grasmwidget:Widget $grasm expand=true;
+					}
+					Label label="graph-foo" {
+						tab-label { Label label="Graph"; }
+					}
+					Label label="graph-foo" {
+						tab-label { Label label="GraphDiff"; }
+					}
+					Label label="graph-foo" {
+						tab-label { Label label="Preferences"; }
+					}
+				}
+			}
+			Hexview:Widget $hexview add2=true;
+		}
+		HBox expand=false {
+			ProgressBar expand=false;
+			Statusbar expand=true;
+		}
+	}
+
+	/* Standalone about dialog */
+	AboutDialog class:standalone=true class:private="aboutdialog"
+		delete-event="{aboutdialog.hide_on_delete}"
+		border-width=5 title="About ragui" resizable=false modal=true
+		window-position="{WindowPosition.CENTER_ON_PARENT}" has-separator=false
+		program-name="ragui" version="0.1" copyright="Copyright (c) 2009 pancake"
+		comments="Graphical hexeditor, disassembler and debugger"
+		website="http://www.radare.org/"
+		authors="{new string[] {\"pancake (pancake@nopcode.org)\", \"nibble (nibble.ds@gmail.com)\", null}}" {
+	}
+	
+	-{
+		public signal void on_quit();
+
+		private void OnQuit() {
+			on_quit();
+		}
+
+		private bool OnWindowCloseEvent(Gdk.Event ev) {
+			OnQuit();
+			return true;
+		}
+
+		private void OnMenuEditPreferences () {
+			Ragui.PreferencesWindow pw = new Ragui.PreferencesWindow();
+			pw.transient_for = this;
+			pw.show_all();
+		}
+
+		private void OnMenuHelpAbout () {
+			aboutdialog.transient_for = this;
+			aboutdialog.run ();
+			aboutdialog.hide();
+		}
+	}-
+}

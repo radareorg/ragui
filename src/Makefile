@@ -17,7 +17,7 @@ CC?=gcc
 CFILES=*.c
 
 all: widgets.done
-	#gtkamlc ${PKG} ${AML} -c console.gtkaml mainwindow.gtkaml preferences.gtkaml
+	gtkamlc ${PKG} ${AML} -c console.gtkaml mainwindow.gtkaml preferences.gtkaml
 	valac --Xcc=-O3 -C ${PKG} *.vala
 	${CC} -Iwidgets/include -O3 `pkg-config --cflags --libs gtk+-2.0 ${R2DEPS}` ${CFILES} ${WIDGETS} -o ${BIN}
 
