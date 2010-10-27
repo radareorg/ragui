@@ -8,7 +8,8 @@ OUT_HFILE=../include/grasmwidget.h
 
 main: lib all
 
-lib: ${OUT_HFILE}
-	@cp -f grasmwidget.vapi ../include
+lib: $(OUT_HFILE)
+	valac --vapi ../include/grasmwidget.vapi --library grasm -Cc --pkg gtk+-2.0 grasmwidget.vala $(VALAFLAGS)
+	#@cp -f .vala-aux/grasmwidget.vapi ../include
 
 include ../parvala.mk

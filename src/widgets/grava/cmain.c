@@ -3,7 +3,7 @@
 #include "node.h"
 #include "edge.h"
 #endif
-#include "gravawidget.h"
+#include "grava.h"
 
 void load_graph_at() {
 	printf("Punkt!\n");

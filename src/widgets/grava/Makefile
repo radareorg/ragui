@@ -20,7 +20,7 @@ lib:
 	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
 
 %.o:%.vala
-	valac -H ../include/gravawidget.h --library grava --save-temps $(VALAFLAGS) -c $(SOURCES)
+	valac -H ../include/grava.h --library grava --save-temps $(VALAFLAGS) -c $(SOURCES)
 
 c:
 	valac --save-temps *.c --pkg gtk+-2.0 --pkg cairo -o grava
