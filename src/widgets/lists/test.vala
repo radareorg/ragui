@@ -46,19 +46,67 @@ public class ListWidget : ScrolledWindow {
 		return false;
 	}
 
-	public ListWidget (string col0, string col1) {
+	enum Column {
+		OFFSET,
+		NAME
+	}
+
+	private int sort_offset(TreeModel model, TreeIter a, TreeIter b) {
+		uint64 num0, num1;
+		string str0, str1;
+		model.get (a, Column.OFFSET, out str0);
+		model.get (b, Column.OFFSET, out str1);
+		str0.scanf ("0x%08llx", out num0);
+		str1.scanf ("0x%08llx", out num1);
+		var ret = num0-num1;
+		return (int)(ret); 
+		//XXX return ret>0?1:ret<0?-1:0;
+	}
+
+	private int sort_name(TreeModel model, TreeIter a, TreeIter b) {
+		string str0, str1;
+		model.get (a, Column.NAME, out str0);
+		model.get (b, Column.NAME, out str1);
+		return strcmp (str0, str1);
+	}
+
+	public ListWidget (string str0, string str1) {
 		this.rows = new SList <ListWidgetData?> ();
 		this.actions = new SList<string> ();
 		set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		view = new TreeView ();
-		//view.set_reorderable (true); // reorder rows ?
 		model = new ListStore (2, typeof (string), typeof (string));
 		view.set_model (model);
-		view.insert_column_with_attributes (-1, col0,
+		model.set_sort_func (Column.OFFSET, sort_offset);
+		model.set_sort_func (Column.NAME, sort_name);
+		view.insert_column_with_attributes (Column.OFFSET, str0,
 			new CellRendererText (), "text", 0);
-		view.insert_column_with_attributes (-1, col1,
+		view.insert_column_with_attributes (Column.NAME, str1,
 			new CellRendererText (), "text", 1);
-		//view.button_press_event.connect (button_press);
+		var col0 = view.get_column (Column.OFFSET);
+		col0.set_clickable (true);
+		col0.set_sort_indicator (true);
+		col0.clicked.connect ((x)=> {
+			var order = x.get_sort_order ();
+			if (order == SortType.ASCENDING)
+				order = SortType.DESCENDING;
+			else order = SortType.ASCENDING;
+			x.sort_order = order;
+			model.set_sort_column_id (Column.OFFSET, order);
+			});
+		var col1 = view.get_column (Column.NAME);
+		col1.set_clickable (true);
+		col1.set_sort_indicator (true);
+		col1.clicked.connect ((x)=> {
+			var order = x.get_sort_order ();
+			if (order == SortType.ASCENDING)
+				order = SortType.DESCENDING;
+			else order = SortType.ASCENDING;
+			x.sort_order = order;
+			model.set_sort_column_id (Column.NAME, order);
+			});
+		model.set_sort_column_id (Column.OFFSET, SortType.ASCENDING);
+
 		view.button_release_event.connect (button_press);
 		add (view);
 	}
