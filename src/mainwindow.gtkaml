@@ -16,7 +16,7 @@
     <MenuItem label="_File" with-mnemonic="true">
       <submenu>
         <Menu>
-          <ImageMenuItem stock-id="gtk-new" />
+          <ImageMenuItem stock-id="New project" />
           <ImageMenuItem stock-id="gtk-open" />
           <SeparatorMenuItem />
           <ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}" />
@@ -124,7 +124,7 @@
 <AboutDialog class:standalone="true" class:private="aboutdialog" delete-event="{aboutdialog.hide_on_delete}"
   border-width="5" title="About ragui" resizable="false" modal="true"
   window-position="{WindowPosition.CENTER_ON_PARENT}" has-separator="false"
-  program-name="ragui" version="0.1" copyright="Copyright (c) 2009 pancake"
+  program-name="ragui" version="0.1" copyright="Copyright (c) 2009-2010 pancake/nibble"
   comments="Graphical hexeditor, disassembler and debugger"
   website="http://www.radare.org/"
   authors='{new string[] {"pancake (pancake@nopcode.com)", "nibble (nibble.ds@gmail.com)", null}}'>

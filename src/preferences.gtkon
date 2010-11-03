@@ -1,0 +1,33 @@
+<!-- ragui - copyright(C) 2009-2010 - pancake<nopcode.org> -->
+
+Window using=Gtk modal title="Ragui preferences" name="Ragui.PreferencesWindow"
+	destroy-event={OnWindowCloseEvent}
+{
+	VBox border-width=1 {
+		Notebook {
+			VBox {
+				tab-label { Label label="Disassembly"; }
+				CheckButton label="Hide bytes";
+				CheckButton label="Hide comments";
+				HSeparator;
+				CheckButton label="Hide metadata";
+			}
+			Label label=todo { tab-label {
+				Label label="Analysis";
+			} }
+		}
+		HButtonBox !expand border-width=3 layout-style={ButtonBoxStyle.END} {
+			Button label=gtk-ok use-stock clicked={OnButtonCloseClicked};
+		}
+	}
+-{
+	private void OnButtonCloseClicked() {
+		this.hide();
+	}
+
+	private bool OnWindowCloseEvent(Gdk.Event ev) {
+		this.hide();
+		return true;
+	}
+}-
+}

@@ -4,6 +4,8 @@ using Hexview;
 using GLib;
 using Gtk;
 
+GuiCore gc;
+
 public class Ragui.Main {
 	public static void quit_program () {
 		stdout.printf("Thanks for watching :)\n");
@@ -41,9 +43,8 @@ public class Ragui.Main {
 	}
 
 	public static int main (string[] args) {
-		stdout.printf("Loading ragui...\n");
-
 		Gtk.init(ref args);
+		gc = new GuiCore ();
 		MainWindow mw = new MainWindow();
 		//print ("==> %s\n", typeof (mw.leftbox));
 		mw.on_quit.connect (quit_program);
