@@ -8,38 +8,36 @@ using GLib;
 using Gtk;
 using Radare;
 
-public class widget 
-{
+public class widget {
 	public static Entry easm;
 	public static Entry ehex;
 	public static Entry eoff;
-	public static Asm st;
-	public static Asm.Aop aop;
+	public static RAsm st;
+	public static RAsm.Aop aop;
 
-	public static void set_arch(string arch)
-	{
-		st.set(arch);
+	public static void set_arch(string arch) {
+		st.use(arch);
 		st.set_bits(32);
-		st.set_syntax(Asm.Syntax.INTEL);
+		st.set_syntax(RAsm.Syntax.INTEL);
 		st.set_pc(0x8048000);
 		st.set_big_endian(false);
-		st.list();
+		//st.list();
+		//foreach (var a in st
 	}
 
-	public static Widget get_label_hbox(string label, Widget child)
-	{
+	public static Widget get_label_hbox(string label, Widget child) {
 		var v = new HBox(false, 3);
 		v.pack_start(new Label(label), false, false, 3);
 		v.add(child);
 		return v;
 	}
 
-	public static int main(string[] args)
-	{
+	public static int main(string[] args) {
 		Gtk.init(ref args);
-		st = new Asm();
+		st = new RAsm();
+		var num = new RNum ();
 
-		set_arch("asm_x86_olly");
+		set_arch("x86.olly");
 
 		/* test code */
 		st.assemble(out widget.aop, "nop");
@@ -57,7 +55,7 @@ public class widget
 		widget.eoff.key_release_event += (foo) => {
 			uint8 [] buffer = new uint8 [64];
 			string str = widget.eoff.get_text ();
-			widget.st.set_pc(Util.num_get(null, str));
+			widget.st.set_pc(num.get (str));
 
 			str = widget.easm.get_text ();
 			widget.st.assemble (out widget.aop, str);
@@ -78,7 +76,7 @@ public class widget
 		ehex.key_release_event += (foo) => {
 			uint8* buffer = new uint8 [64];
 			string str = widget.ehex.get_text ();
-			int len = Util.hex_str2bin(str, out buffer);
+			int len = RHex.str2bin(str, buffer);
 			widget.st.disassemble (out widget.aop, buffer, len);
 			widget.easm.set_text (widget.aop.buf_asm);
 			return false;
@@ -89,9 +87,9 @@ public class widget
 			string str = self.get_active_text();
 			set_arch(str);
 		};
-		cb.insert_text(0, "asm_x86_olly");
-		cb.insert_text(1, "asm_java");
-		cb.insert_text(2, "asm_mips");
+		cb.insert_text(0, "x86.olly");
+		cb.insert_text(1, "java");
+		cb.insert_text(2, "mips");
 		cb.set_active(0);
 		
 		vb.pack_start(get_label_hbox("Architecture", cb), false, false, 3);
