@@ -83,3 +83,8 @@ clean-widgets:
 	rm -f widgets.done
 
 mrproper: clean clean-widgets
+
+test:
+	#gtkaml --define=MAIN openproject.gtkon
+	gtkaml --define=MAIN openfile.gtkon
+	#gtkaml --define=MAIN newproject.gtkon

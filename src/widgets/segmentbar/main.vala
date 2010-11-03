@@ -18,7 +18,11 @@ public static void main (string[] args) {
 	segbarHD.AddSegmentRgb (".data", 0.80, 0x3465a4);
 	segbarHD.AddSegmentRgb (".got", 0.05, 0x73d216);
 	segbarHD.ShowReflection = true;
-	w.add (segbarHD);
+
+	var vb = new VBox (false, 10);
+	vb.add(new Label("Memory map"));
+	vb.add(segbarHD);
+	w.add (vb);
 	w.destroy.connect (Gtk.main_quit);
 	w.show_all ();
 

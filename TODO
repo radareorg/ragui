@@ -2,4 +2,6 @@
 * Implement sort by column (name, off) in lists
 * Create RaguiCore (RCore+more info)
   - global instance
-* Add commandline shell
+
+
+* Add commandline shell widget

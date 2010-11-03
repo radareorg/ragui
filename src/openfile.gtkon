@@ -1,0 +1,86 @@
+/* Dialogs to open files */
+
+VBox using=Gtk gtkon:version=0.2 name=OpenFile border_width=5 spacing=5 {
+	HBox !expand spacing=5 {
+		Label fill !expand label="Select file";
+		FileChooserButton expand title="Select file" action={FileChooserAction.OPEN} $fc;
+	}
+	HBox !expand spacing=5 {
+		Label fill !expand label="Virtual base address";
+		Entry text="0";
+	}
+	HBox !expand spacing=5 {
+		Label fill !expand label="Architecture";
+		ComboBox text $endian;
+		ComboBox text $arch;
+		ComboBox text $bits;
+	}
+	HBox {
+		VBox {
+			CheckButton !expand label="Load headers" active;
+			CheckButton !expand label="Load sections" active;
+			CheckButton !expand label="Load symbols" active;
+		}
+		VBox {
+			CheckButton !expand label="Find strings" active;
+			CheckButton !expand label="Analyze code";
+			CheckButton !expand label="Find signatures";
+		}
+	}
+
+	Image from_file filename="x.png";
+
+	Label label='' expand; // hack
+	HButtonBox layout_style={ButtonBoxStyle.END} !expand spacing=3 {
+		Button label=Autodetect clicked={onClickAutodetect};
+		Button label=gtk-cancel use-stock clicked={onClickCancel};
+		Button label=gtk-open use-stock clicked={onClickOpen};
+	}
+
+	-{
+		public OpenFile () {
+			endian.append_text ("default endian");
+			endian.append_text ("little endian");
+			endian.append_text ("big endian");
+			endian.set_active (0);
+
+			arch.append_text ("default arch");
+			arch.append_text ("x86");
+			arch.append_text ("x86.olly");
+			arch.append_text ("ppc");
+			arch.append_text ("mips");
+			arch.append_text ("arm");
+			arch.set_active (0);
+
+			bits.append_text ("default bits");
+			bits.append_text ("16");
+			bits.append_text ("32");
+			bits.append_text ("64");
+			bits.set_active (0);
+		}
+
+		public void onClickAutodetect() {
+			/* open file with RBin() get info and set toggles */
+		}
+
+		public void onClickCancel() {
+			this.hide_all ();
+			Gtk.main_quit ();
+		}
+
+		public void onClickOpen() {
+			print ("Filename: %s\n", fc.get_filename ());
+		}
+#if MAIN
+		public static void main (string[] args) {
+			Gtk.init (ref args);
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "Open file";
+			var of = new OpenFile();
+			w.add (of);
+			w.show_all ();
+			Gtk.main ();
+		}
+#endif
+	}-
+}

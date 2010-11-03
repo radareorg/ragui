@@ -1,0 +1,43 @@
+/* Dialogs to open files */
+
+VBox using=Gtk gtkon:version=0.2 name=OpenProject border_width=5 spacing=5 {
+	Label fill !expand label="Select radare project file";
+	FileChooserWidget expand action={FileChooserAction.OPEN} $fc;
+
+	HButtonBox layout_style={ButtonBoxStyle.END} !expand spacing=3 {
+		Button label=gtk-cancel use-stock clicked={onClickCancel};
+		Button label=gtk-open use-stock clicked={onClickOpen};
+	}
+
+	-{
+		public string file;
+
+		public OpenProject (string prjdir) {
+			fc.set_current_folder (prjdir);
+			//var f = new FileFilter ();
+			//f.add_mime_type ("*.rdb");
+			//fc.add_filter (f);
+		}
+
+		public void onClickCancel() {
+			this.hide_all ();
+			Gtk.main_quit ();
+		}
+
+		public void onClickOpen() {
+			this.file = fc.get_filename ();
+			print ("Filename: %s\n", file);
+		}
+#if MAIN
+		public static void main (string[] args) {
+			Gtk.init (ref args);
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "Open project";
+			var of = new OpenProject ("/home/pancake/.radare2/rdb");
+			w.add (of);
+			w.show_all ();
+			Gtk.main ();
+		}
+#endif
+	}-
+}

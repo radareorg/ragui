@@ -1,6 +1,5 @@
 using Gtk;
 
-[Compact]
 public struct ListWidgetData {
 	public uint64 offset;
 	public string name;

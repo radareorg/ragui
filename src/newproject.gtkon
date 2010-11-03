@@ -1,0 +1,49 @@
+/* ragui -- pancake 2010 */
+VBox using=Gtk gtkon:version=0.2 name=NewProject border_width=5 spacing=5 {
+	Label fill !expand label="Give me a name for the project file";
+	FileChooserWidget expand action={FileChooserAction.SAVE} $fc;
+
+	HButtonBox layout_style={ButtonBoxStyle.END} !expand spacing=3 {
+		Button label=gtk-cancel use-stock clicked={onClickCancel};
+		Button label=gtk-open use-stock clicked={onClickOpen};
+	}
+
+	-{
+		public string file;
+
+		public NewProject (string prjdir) {
+			fc.set_do_overwrite_confirmation (true);
+			fc.set_current_folder (prjdir);
+			// TODO: cannot close the 'browse' expander?
+			try {
+				fc.add_shortcut_folder (prjdir);
+			} catch (Error e) {
+				print ("%s\n", e.message);
+			}
+			//var f = new FileFilter ();
+			//f.add_mime_type ("*.rdb");
+			//fc.add_filter (f);
+		}
+
+		public void onClickCancel() {
+			this.hide_all ();
+			Gtk.main_quit ();
+		}
+
+		public void onClickOpen() {
+			this.file = fc.get_filename ();
+			print ("Filename: %s\n", file);
+		}
+#if MAIN
+		public static void main (string[] args) {
+			Gtk.init (ref args);
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "Open project";
+			var of = new NewProject ("/home/pancake/.radare2/rdb");
+			w.add (of);
+			w.show_all ();
+			Gtk.main ();
+		}
+#endif
+	}-
+}
