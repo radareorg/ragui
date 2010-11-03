@@ -69,13 +69,16 @@ Window xmlns:class="http://gtkaml.org/0.2"
 						tab-label { Label label="Assembler"; }
 						Grasmwidget:Widget $grasm expand=true;
 					}
-					Label label="graph-foo" {
+					Label {
+						tab-label { Label label="Scripting"; }
+					}
+					Label {
 						tab-label { Label label="Graph"; }
 					}
-					Label label="graph-foo" {
+					Label {
 						tab-label { Label label="GraphDiff"; }
 					}
-					Label label="graph-foo" {
+					Label {
 						tab-label { Label label="Preferences"; }
 					}
 				}
