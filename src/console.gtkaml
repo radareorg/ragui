@@ -4,7 +4,8 @@
       xmlns:Glib="GLib" 
       xmlns:Gtk="Gtk" 
       xmlns="Gtk"
-      class:name="Ragui.Console">
+      class:name="Ragui.Console"
+	  class:construct="setup_signals()">
 
   <ScrolledWindow can-focus="true" hscrollbar-policy="{PolicyType.AUTOMATIC}">
     <TextView can-focus="true" editable="false" class:private="console" />
@@ -27,7 +28,7 @@
 	public void set_text(string str) {
 		Gtk.TextIter ei; 
 		console.buffer.get_end_iter(out ei); 
-		console.buffer.insert(ei, str+"\n", -1);
+		console.buffer.insert(ei, str, -1);
 	}
 ]]>
 </VBox>
