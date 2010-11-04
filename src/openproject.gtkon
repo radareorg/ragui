@@ -1,4 +1,4 @@
-/* Dialogs to open files */
+/* Dialogs to open project file */
 
 VBox using=Gtk gtkon:version=0.2 name=OpenProject border_width=5 spacing=5 {
 	Label fill !expand label="Select radare project file";

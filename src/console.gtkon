@@ -5,7 +5,13 @@ VBox gtkon:version=0.2 using=Gtk name=Ragui.Console {
 		TextView can-focus !editable $.console;
 	}
 	HBox !expand {
-		Entry expand;
-		Button label=">" !expand;
+		Entry expand $line activated={runCommand();};
+		Button label=">" !expand clicked={runCommand();};
 	}
+
+	-{
+		public void runCommand () {
+			print ("RUnning command (%s)\n", line.text);
+		}
+	}-
 }

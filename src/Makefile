@@ -21,14 +21,18 @@ WIDGETS+=widgets/grava/*.o
 
 all: widgets.done
 	@${MAKE} gtkaml
+	@${MAKE} gtkon
 	@${MAKE} vala
 	@${MAKE} link
 
-.PHONY: gtkaml vala
+.PHONY: gtkaml gtkon vala link
 
+GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon
 GTKAMLFILES=console.gtkaml mainwindow.gtkaml preferences.gtkaml
 VALAFILES=guicore.vala main.vala
 RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))
+GTKAML_C_FILES+=$(subst .gtkaml,.c,$(GTKAMLFILES))
+GTKON_C_FILES+=$(subst .gtkon,.c,$(GTKONFILES))
 VALAFILES+=${RMVALAFILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
 
@@ -47,9 +51,20 @@ vala:
 	@for a in ${VALAFILES}; do \
 		c=`echo $$a | sed -e s,vala,c,g` ; \
 		if [ ! -e $$c -o $$a -nt $$c ]; then \
-			rm -f ${CFILES} ; \
+			rm -f ${BIN} ${CFILES} ; \
 			echo "  VALAC  ${VALAFILES}" ; \
 			${VALAC} -C ${VALAFLAGS} ${VALAFILES} ; \
+			break ; \
+		fi ; \
+	done
+
+gtkon:
+	@for a in ${GTKONFILES}; do \
+		vala=`echo $$a | sed -e s,gtkon,vala,g` ; \
+		if [ ! -e $$vala -o $$a -nt $$vala ]; then \
+			echo "  GTKAMLC  ${GTKONFILES}" ; \
+			rm -f ${BIN} ${GTKON_C_FILES} ; \
+			${GTKAMLC} --save-temps ${PKG} ${GTKAMLFLAGS} -c ${GTKONFILES} ; \
 			break ; \
 		fi ; \
 	done
