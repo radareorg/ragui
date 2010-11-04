@@ -8,6 +8,7 @@
 	xmlns:Grasmwidget="Grasmwidget"
 	xmlns:Codeview="Codeview"
 	xmlns:Hexview="Hexview"
+	xmlns:Listview="Listview"
         class:name="Ragui.MainWindow"
 	delete-event="{OnWindowCloseEvent}"
         title="ragui">
@@ -56,9 +57,8 @@
      <ScrolledWindow can-focus="true"
          hscrollbar-policy="{PolicyType.AUTOMATIC}"
          vscrollbar-policy="{PolicyType.AUTOMATIC}" expand="true">
+	   <Listview:Widget class:public="listview" /> 
        <VBox class:public="leftvb" />
-       <!-- <TreeView class:public=>
-       </TreeView> -->
      </ScrolledWindow>
    </VBox>
 

@@ -1,28 +1,31 @@
 using Gtk;
 
-public struct ListWidgetData {
+public struct ListviewData {
 	public uint64 offset;
 	public string name;
 
-	public ListWidgetData(uint64 offset, string name) {
+	public ListviewData(uint64 offset, string name) {
 		this.offset = offset;
 		this.name = name;
 	}
 }
 
-public class ListWidget : ScrolledWindow {
+public class Listview.Widget : ScrolledWindow {
 	TreeView view;
 	ListStore model;
-	SList<ListWidgetData?> rows;
+	SList<ListviewData?> rows;
+	[Widget]
 	public SList<string> actions;
+	public string colname1 = "";
+	public string colname0 = "";
 
-	public signal void menu_handler(ListWidget me, string action, ListWidgetData row);
+	public signal void menu_handler(string action, ListviewData row);
 
 	private bool button_press (Gtk.Widget _w, Gdk.EventButton eb) {
 		if (eb.button != 3)
 			return false;
 
-		ListWidgetData? data = null;
+		ListviewData? data = null;
 		var sel = view.get_selection ();
 		if (sel.count_selected_rows () == 1) {
 			TreeModel m;
@@ -36,7 +39,7 @@ public class ListWidget : ScrolledWindow {
 		var menu = new Menu();
 		foreach (var str in this.actions) {
 			var imi = new ImageMenuItem.with_label (str);
-			imi.activate.connect ((x)=> { menu_handler (this, x.label, data); });
+			imi.activate.connect ((x)=> { menu_handler (x.label, data); });
 			//imi.activate.connect ((x)=> { menu_handler (str, data); }); // XXX vala bug
 			menu.append (imi);
 		}
@@ -48,6 +51,10 @@ public class ListWidget : ScrolledWindow {
 	enum Column {
 		OFFSET,
 		NAME
+	}
+
+	construct {
+		create_widgets ();
 	}
 
 	private int sort_offset(TreeModel model, TreeIter a, TreeIter b) {
@@ -69,8 +76,8 @@ public class ListWidget : ScrolledWindow {
 		return strcmp (str0, str1);
 	}
 
-	public ListWidget (string str0, string str1) {
-		this.rows = new SList <ListWidgetData?> ();
+	public void create_widgets () {
+		this.rows = new SList <ListviewData?> ();
 		this.actions = new SList<string> ();
 		set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		view = new TreeView ();
@@ -78,9 +85,9 @@ public class ListWidget : ScrolledWindow {
 		view.set_model (model);
 		model.set_sort_func (Column.OFFSET, sort_offset);
 		model.set_sort_func (Column.NAME, sort_name);
-		view.insert_column_with_attributes (Column.OFFSET, str0,
+		view.insert_column_with_attributes (Column.OFFSET, "0ffset",
 			new CellRendererText (), "text", 0);
-		view.insert_column_with_attributes (Column.NAME, str1,
+		view.insert_column_with_attributes (Column.NAME, "Name",
 			new CellRendererText (), "text", 1);
 		var col0 = view.get_column (Column.OFFSET);
 		col0.set_clickable (true);
@@ -127,41 +134,11 @@ public class ListWidget : ScrolledWindow {
 		model.append (out iter);
 		model.set (iter, 0, off.to_string
 			("0x%"+uint64.FORMAT_MODIFIER+"x"), 1, name);
-		rows.append (ListWidgetData (off, name));
+		rows.append (ListviewData (off, name));
 	}
 
 	public inline void clear () {
 		model.clear ();
-		rows = new SList <ListWidgetData?> ();
+		rows = new SList <ListviewData?> ();
 	}
-}
-
-public static int main (string[] args) {     
-	Gtk.init (ref args);
-
-	var w = new Window ();
-	w.title = "treeview sample";
-
-	var lw = new ListWidget ("offset", "name");
-
-	lw.add_row (0x8048000, "main");
-	lw.add_row (0x8048230, "wait");
-	lw.add_row (0x8048480, "system");
-	lw.add_row (0x8049350, "patata");
-
-	lw.set_actions ("seek", "breakpoint", "continue until", "inspect");
-	lw.menu_handler.connect ((me, m, d) => {
-		print ("clicked "+m.to_string ()+": "+
-			d.name+"at addr"+d.offset.to_string ()+"\n");
-//		me.clear();
-//		lw.add_row (0, "hello world");
-	});
-
-	w.add (lw);
-	w.destroy.connect (Gtk.main_quit);
-
-	w.show_all ();
-	Gtk.main ();
-
-	return 0;
 }
