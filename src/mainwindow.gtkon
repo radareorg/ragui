@@ -1,80 +1,112 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-Window gtkon:version=0.2 title="ragui" name="Ragui.MainWindow" delete-event="{OnWindowCloseEvent}"
-		using=Gtk
-		using:Ragui=Ragui
-		using:Codeview=Codeview
-		using:Hexview=Hexview
-		using:Grasmwidget=Grasmwidget {
-	VBox border-width=1 {
-		MenuBar expand=false {
-			MenuItem label="_File" with-mnemonic=true {
-				submenu { Menu {
-					ImageMenuItem stock-id="gtk-new";
-					ImageMenuItem stock-id="gtk-open";
-					SeparatorMenuItem;
-					ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}";
-				} }
+Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
+	delete-event="{OnWindowCloseEvent}"
+	using:Ragui="Ragui"
+	using:Grasmwidget="Grasmwidget"
+	using:Codeview="Codeview"
+	using:Hexview="Hexview"
+	using:Listview="Listview"
+{
+	VBox border-width="1" {
+		MenuBar !expand {
+			MenuItem label="_File" with-mnemonic {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="New project";
+						ImageMenuItem stock-id="gtk-open";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}";
+					}
+				}
 			}
-			MenuItem label="_Edit" with-mnemonic=true {
-				submenu { Menu {
-					ImageMenuItem stock-id="gtk-cut";
-					ImageMenuItem stock-id="gtk-copy";
-					ImageMenuItem stock-id="gtk-paste";
-					SeparatorMenuItem;
-					ImageMenuItem stock-id="gtk-preferences" activate="{OnMenuEditPreferences}";
-				} }
+			MenuItem label="_Edit" with-mnemonic {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="gtk-cut";
+						ImageMenuItem stock-id="gtk-copy";
+						ImageMenuItem stock-id="gtk-paste";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="gtk-preferences" activate="{OnMenuEditPreferences}";
+					}
+				}
 			}
-			MenuItem label="_Help" with-mnemonic=true {
-				submenu { Menu {
-					ImageMenuItem stock-id="gtk-help";
-					SeparatorMenuItem;
-					ImageMenuItem stock-id="gtk-about" activate="{OnMenuHelpAbout}";
-				} }
-			}
-		}
-		Toolbar expand=true {
-			Button use-stock=true label="gtk-new";
-			Button use-stock=true label="gtk-open";
-		}
-
-		HPaned border-width=3 expand=true {
-			VBox border-width=3 {
-				ComboBox $leftbox expand=false text=true;
-				ScrolledWindow can-focus=true expand=true
-						vscrollbar-policy="{PolicyType.AUTOMATIC}"
-						hscrollbar-policy="{PolicyType.AUTOMATIC}" {
-					VBox $leftvb;
+			MenuItem label="_Help" with-mnemonic {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="gtk-help";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="gtk-about" activate="{OnMenuHelpAbout}";
+					}
 				}
 			}
 		}
 
-		VPaned position=600 add2 {
-			VBox {
-				Notebook expand=true tab-vborder=1 {
-					VBox {
-						tab-label { Label label="Disassembly"; }
-						Codeview:Widget $codeview expand=true;
-					}
-					Label {
-						tab-label { Label label="Graph"; }
-					}
-					VBox {
-						tab-label { Label label="Assembler"; }
-						Grasmwidget:Widget $grasm expand=true;
-					}
-					Label {
-						tab-label { Label label="Scripting"; }
-					}
-					Label {
-						tab-label { Label label="GraphDiff"; }
-					}
-					Label {
-						tab-label { Label label="Preferences"; }
+		Toolbar !expand {
+			Button use-stock label="gtk-new";
+			Button use-stock label="gtk-open";
+		}
+
+		VPaned position="600" {
+			HPaned border-width="3" {
+				VBox border-width="3" {
+					ComboBox text !expand $leftbox;
+					ScrolledWindow can-focus expand
+						hscrollbar-policy="{PolicyType.AUTOMATIC}"
+						vscrollbar-policy="{PolicyType.AUTOMATIC}" {
+
+						Listview:Widget $listview;
+						VBox $leftvb;
 					}
 				}
+
+				VBox add2 {
+					Notebook expand tab-vborder=1 {
+						VBox {
+							tab-label {
+								Label label="Disassembly";
+							}
+							Codeview:Widget $codeview expand;
+							Hexview:Widget $hexview expand;
+						}
+
+						VBox {
+							tab-label {
+								Label label="Assembler";
+							}
+							Grasmwidget:Widget $grasm expand;
+						}
+
+						/*
+						   <Label label="data-foo">
+						   <tab-label>
+						   <Label label="hexdump" />
+						   </tab-label>
+						   </Label>
+						 */
+
+						Label label="graph-foo" {
+							tab-label {
+								Label label="Graph";
+							}
+						}
+
+						Label label="graph-foo" {
+							tab-label {
+								Label label="GraphDiff";
+							}
+						}
+
+						Label label="graph-foo" {
+							tab-label {
+								Label label="Preferences";
+							}
+						}
+					}
+
+				}
 			}
-			Hexview:Widget $hexview add2;
+			Ragui:Console $console add2;
 		}
 		HBox !expand {
 			ProgressBar !expand;
@@ -82,17 +114,15 @@ Window gtkon:version=0.2 title="ragui" name="Ragui.MainWindow" delete-event="{On
 		}
 	}
 
-	/* Standalone about dialog */
-	AboutDialog class:standalone=true class:private="aboutdialog"
-		delete-event="{aboutdialog.hide_on_delete}"
-		border-width=5 title="About ragui" !resizable modal
-		window-position="{WindowPosition.CENTER_ON_PARENT}" !has-separator
-		program-name="ragui" version="0.1" copyright="Copyright (c) 2009-2010 pancake/nibble"
+	AboutDialog gtkaml:standalone $.aboutdialog delete-event="{aboutdialog.hide_on_delete}"
+		border-width=5 title="About ragui" !resizable modal !has-separator
+		window-position="{WindowPosition.CENTER_ON_PARENT}"
+		program-name="ragui" version="0.1"
+		copyright="Copyright (c) 2009-2010 pancake/nibble"
 		comments="Graphical hexeditor, disassembler and debugger"
 		website="http://www.radare.org/"
-		authors="{new string[] {\"pancake (pancake@nopcode.org)\", \"nibble (nibble.ds@gmail.com)\", null}}" {
-	}
-	
+		authors='{new string[] {"pancake (pancake@nopcode.com)", "nibble (nibble.ds@gmail.com)", null}}';
+
 	-{
 		public signal void on_quit();
 
@@ -116,5 +146,13 @@ Window gtkon:version=0.2 title="ragui" name="Ragui.MainWindow" delete-event="{On
 			aboutdialog.run ();
 			aboutdialog.hide();
 		}
+
+		/* user defined window constructor */
+		/*
+		   public MainWindow() {
+		   leftbox.append_text ("Hello world");
+		   leftbox.append_text ("bar low");
+		   }
+		 */
 	}-
 }

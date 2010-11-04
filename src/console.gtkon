@@ -1,17 +1,36 @@
 /*-- ragui - copyright(C) 2009-2010 - pancake<nopcode.org> --*/
 
-VBox gtkon:version=0.2 using=Gtk name=Ragui.Console {
-	ScrolledWindow can-focus hscrollbar-policy={PolicyType.AUTOMATIC} {
-		TextView can-focus !editable $.console;
-	}
-	HBox !expand {
-		Entry expand $line activated={runCommand();};
-		Button label=">" !expand clicked={runCommand();};
+VBox gtkon:version=0.2 using=Gtk name=Ragui.Console { //class:construct="setup_signals()" {
+  ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" {
+    TextView can-focus !editable $.console;
+  }
+  HBox !expand {
+    Entry expand $.line;
+    Button label=">" !expand $.button;
+  }
+-{
+	public signal void cmd_handler(string cmd);
+
+	public Console() {
+		button.released.connect (send_cmd);
+		line.activate.connect (send_cmd);
 	}
 
-	-{
-		public void runCommand () {
-			print ("RUnning command (%s)\n", line.text);
-		}
-	}-
+	private void send_cmd() {
+		cmd_handler (line.text);
+		line.set_text ("");
+	}
+
+	public void set_text(string str) {
+		Gtk.TextIter ei; 
+		Gtk.TextMark im;
+		console.buffer.get_end_iter (out ei); 
+		console.buffer.insert (ei, str, -1);
+		/* Autoscroll */
+		console.buffer.get_end_iter (out ei); 
+		im = console.buffer.get_insert (); 
+		console.buffer.place_cursor (ei); 
+		console.scroll_to_mark (im, 0.0, true, 0.0, 1.0);
+	}
+}-
 }

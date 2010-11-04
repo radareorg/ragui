@@ -21,20 +21,22 @@ WIDGETS+=widgets/grava/*.o
 WIDGETS+=widgets/listw/listview.c
 
 all: widgets.done
-	@${MAKE} gtkaml
 	@${MAKE} gtkon
+	@${MAKE} gtkaml
 	@${MAKE} vala
 	@${MAKE} link
 
 .PHONY: gtkaml gtkon vala link
 
-GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon
-GTKAMLFILES=console.gtkaml preferences.gtkaml mainwindow.gtkaml
+GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon mainwindow.gtkon
+GTKAMLFILES=
 VALAFILES=guicore.vala main.vala
 RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))
+RMGTKON_FILES+=$(subst .gtkon,.vala,$(GTKONFILES))
 GTKAML_C_FILES+=$(subst .gtkaml,.c,$(GTKAMLFILES))
 GTKON_C_FILES+=$(subst .gtkon,.c,$(GTKONFILES))
 VALAFILES+=${RMVALAFILES}
+VALAFILES+=${RMGTKON_FILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
 
 link:
@@ -93,7 +95,7 @@ stuff:
 	cd widgets && ${MAKE}
 
 clean:
-	rm -f ${BIN} *.c *.h ${RMVALAFILES}
+	rm -f ${BIN} *.c *.h ${RMVALAFILES} ${RMGTKON_FILES}
 
 clean-widgets:
 	cd widgets && ${MAKE} clean

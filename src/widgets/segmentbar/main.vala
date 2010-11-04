@@ -15,13 +15,21 @@ public static void main (string[] args) {
 	segbarHD.AddSegmentRgb ("/swap", 0.05, 0x73d216);
 */
 	segbarHD.AddSegmentRgb (".text", 0.15, 0xf57900);
-	segbarHD.AddSegmentRgb (".data", 0.80, 0x3465a4);
+	segbarHD.AddSegmentRgb (".data", 0.60, 0x3465a4);
 	segbarHD.AddSegmentRgb (".got", 0.05, 0x73d216);
+	segbarHD.AddSegmentRgb (".rodata", 0.25, 0x232286);
 	segbarHD.ShowReflection = true;
 
 	var vb = new VBox (false, 10);
-	vb.add(new Label("Memory map"));
+	var cb = new ComboBox.text ();
+	cb.append_text ("/bin/ls");
+	cb.append_text ("maps");
+	cb.append_text ("sections");
+	//
+	vb.pack_start (cb, false, false, 3);
+	//vb.add(new Label("Memory map"));
 	vb.add(segbarHD);
+	// TODO: add disassembly and hexdump tabs
 	w.add (vb);
 	w.destroy.connect (Gtk.main_quit);
 	w.show_all ();
