@@ -87,8 +87,8 @@ public class Ragui.Main {
 		var cons = mw.console;
 
 		cons.cmd_handler.connect ((x) => {
-			var cmd = gc.core.cmd_str (x);
 			var prompt = ("[0x%08"+uint64.FORMAT_MODIFIER+"x] ").printf (gc.core.offset);
+			var cmd = gc.core.cmd_str (x);
 			cons.set_text (prompt+x+"\n"+cmd);
 		});
 	}
