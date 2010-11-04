@@ -8,7 +8,6 @@ public static int main (string[] args) {
 
 	var lw = new Listview.Widget ();
 
-	lw.colname1 = "aaa";
 	lw.add_row (0x8048000, "main");
 	lw.add_row (0x8048230, "wait");
 	lw.add_row (0x8048480, "system");
