@@ -83,11 +83,23 @@ public class Ragui.Main {
 		});
 	}
 
+	public static void setup_console (MainWindow mw) {
+		var cons = mw.console;
+
+		cons.setup_signals ();
+		cons.cmd_handler.connect ((x) => {
+			var cmd = gc.core.cmd_str (x);
+			var prompt = ("[0x%08"+uint64.FORMAT_MODIFIER+"x] ").printf (gc.core.offset);
+			cons.set_text (prompt+x+"\n"+cmd);
+		});
+	}
+
 	public static int main (string[] args) {
 		Gtk.init(ref args);
 		gc = new GuiCore ();
 		gc.core.file_open ("/bin/ls", 0);
 		gc.core.config.set ("io.va", "true");
+		gc.core.config.set ("scr.color", "false");
 		MainWindow mw = new MainWindow();
 		//print ("==> %s\n", typeof (mw.leftbox));
 		mw.on_quit.connect (quit_program);
@@ -96,6 +108,7 @@ public class Ragui.Main {
 		setup_leftbox (mw);
 		setup_leftlist (mw);
 		setup_io (mw);
+		setup_console (mw);
 		Gtk.main();
 
 		return 0;

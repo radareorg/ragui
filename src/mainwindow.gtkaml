@@ -109,7 +109,7 @@
         </Notebook>
       </VBox>
    </HPaned> <!-- hpaned -->
-   <Ragui:Console add2="true" />
+   <Ragui:Console add2="true" class:public="console" />
   </VPaned>
   <HBox expand="false">
     <ProgressBar expand="false" />

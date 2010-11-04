@@ -11,7 +11,23 @@
   </ScrolledWindow>
 
   <HBox expand="false">
-    <Entry expand="true" />
-    <Button label=">" expand="false" />
+    <Entry expand="true" class:private="line" />
+    <Button label=">" expand="false" class:private="button" />
   </HBox>
+<![CDATA[
+	public signal void cmd_handler(string cmd);
+
+	public void setup_signals() {
+		button.released.connect (() => {
+				cmd_handler (line.text);
+				line.set_text ("");
+			});
+	}
+
+	public void set_text(string str) {
+		Gtk.TextIter ei; 
+		console.buffer.get_end_iter(out ei); 
+		console.buffer.insert(ei, str+"\n", -1);
+	}
+]]>
 </VBox>
