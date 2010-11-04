@@ -4,15 +4,15 @@
         xmlns="Gtk"
         xmlns:Gtk="Gtk"
         xmlns:GLib="GLib"
-	xmlns:Ragui="Ragui"
-	xmlns:Grasmwidget="Grasmwidget"
-	xmlns:Codeview="Codeview"
-	xmlns:Hexview="Hexview"
-	xmlns:Listview="Listview"
+        xmlns:Ragui="Ragui"
+        xmlns:Grasmwidget="Grasmwidget"
+        xmlns:Codeview="Codeview"
+        xmlns:Hexview="Hexview"
+        xmlns:Listview="Listview"
         class:name="Ragui.MainWindow"
-	delete-event="{OnWindowCloseEvent}"
+        delete-event="{OnWindowCloseEvent}"
         title="ragui">
-<VBox border-width="1">
+ <VBox border-width="1">
   <MenuBar expand="false">
     <MenuItem label="_File" with-mnemonic="true">
       <submenu>
@@ -51,84 +51,81 @@
     <Button use-stock="true" label="gtk-open" />
   </Toolbar>
 
-  <HPaned border-width="3" expand="true">
-   <VBox border-width="3">
-     <ComboBox class:public="leftbox" expand="false" text="true" />
-     <ScrolledWindow can-focus="true"
-         hscrollbar-policy="{PolicyType.AUTOMATIC}"
-         vscrollbar-policy="{PolicyType.AUTOMATIC}" expand="true">
-	   <Listview:Widget class:public="listview" /> 
-       <VBox class:public="leftvb" />
-     </ScrolledWindow>
-   </VBox>
-
-   <VPaned position="600" add2="true">
-     <VBox>
-       <!-- this is probably wrong -->
-       <Notebook expand="true" tab-vborder="1">
-         <VBox>
-	   <tab-label>
-	     <Label label="Disassembly" />
-	   </tab-label>
+  <VPaned position="600">
+   <HPaned border-width="3">
+    <VBox border-width="3">
+      <ComboBox class:public="leftbox" expand="false" text="true" />
+      <ScrolledWindow can-focus="true"
+          hscrollbar-policy="{PolicyType.AUTOMATIC}"
+          vscrollbar-policy="{PolicyType.AUTOMATIC}" expand="true">
+        <Listview:Widget class:public="listview" /> 
+        <VBox class:public="leftvb" />
+      </ScrolledWindow>
+    </VBox>
+ 
+      <VBox add2="true">
+        <!-- this is probably wrong -->
+        <Notebook expand="true" tab-vborder="1">
+          <VBox>
+           <tab-label>
+            <Label label="Disassembly" />
+           </tab-label>
            <Codeview:Widget class:public="codeview" expand="true" /> 
-         </VBox>
-
-         <VBox>
-           <tab-label>
-             <Label label="Assembler" />
-           </tab-label>
-         <Grasmwidget:Widget class:public="grasm" expand="true" />
-         </VBox>
-
-<!--
-         <Label label="data-foo">
-           <tab-label>
-             <Label label="hexdump" />
-           </tab-label>
-         </Label>
--->
-
-         <Label label="graph-foo">
-           <tab-label>
-             <Label label="Graph" />
-           </tab-label>
-         </Label>
-
-         <Label label="graph-foo">
-           <tab-label>
-             <Label label="GraphDiff" />
-           </tab-label>
-         </Label>
-
-         <Label label="graph-foo">
-           <tab-label>
-             <Label label="Preferences" />
-           </tab-label>
-         </Label>
-       </Notebook>
-     </VBox>
-<!--
-     <Ragui:Console add2="true" />
--->
-     <Hexview:Widget class:public="hexview" add2="true" /> 
-
-   </VPaned>
-  </HPaned> <!-- hpaned -->
+           <Hexview:Widget class:public="hexview" expand="true" /> 
+          </VBox>
+ 
+          <VBox>
+            <tab-label>
+              <Label label="Assembler" />
+            </tab-label>
+          <Grasmwidget:Widget class:public="grasm" expand="true" />
+          </VBox>
+ 
+ <!--
+          <Label label="data-foo">
+            <tab-label>
+              <Label label="hexdump" />
+            </tab-label>
+          </Label>
+ -->
+ 
+          <Label label="graph-foo">
+            <tab-label>
+              <Label label="Graph" />
+            </tab-label>
+          </Label>
+ 
+          <Label label="graph-foo">
+            <tab-label>
+              <Label label="GraphDiff" />
+            </tab-label>
+          </Label>
+ 
+          <Label label="graph-foo">
+            <tab-label>
+              <Label label="Preferences" />
+            </tab-label>
+          </Label>
+        </Notebook>
+      </VBox>
+   </HPaned> <!-- hpaned -->
+   <Ragui:Console add2="true" />
+  </VPaned>
   <HBox expand="false">
     <ProgressBar expand="false" />
     <Statusbar expand="true" />
   </HBox>
-</VBox>
+ </VBox>
 
 <!-- about dialog -->
-<AboutDialog class:standalone="true" class:private="aboutdialog" delete-event="{aboutdialog.hide_on_delete}"
+ <AboutDialog class:standalone="true" class:private="aboutdialog" delete-event="{aboutdialog.hide_on_delete}"
   border-width="5" title="About ragui" resizable="false" modal="true"
   window-position="{WindowPosition.CENTER_ON_PARENT}" has-separator="false"
   program-name="ragui" version="0.1" copyright="Copyright (c) 2009-2010 pancake/nibble"
   comments="Graphical hexeditor, disassembler and debugger"
   website="http://www.radare.org/"
   authors='{new string[] {"pancake (pancake@nopcode.com)", "nibble (nibble.ds@gmail.com)", null}}'>
-</AboutDialog>
+ </AboutDialog>
 
 
 <![CDATA[

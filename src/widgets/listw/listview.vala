@@ -16,8 +16,6 @@ public class Listview.Widget : ScrolledWindow {
 	SList<ListviewData?> rows;
 	[Widget]
 	public SList<string> actions;
-	public string colname1 = "";
-	public string colname0 = "";
 
 	public signal void menu_handler(string action, ListviewData row);
 

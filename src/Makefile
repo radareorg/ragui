@@ -29,7 +29,7 @@ all: widgets.done
 .PHONY: gtkaml gtkon vala link
 
 GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon
-GTKAMLFILES=console.gtkaml mainwindow.gtkaml preferences.gtkaml
+GTKAMLFILES=console.gtkaml preferences.gtkaml mainwindow.gtkaml
 VALAFILES=guicore.vala main.vala
 RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))
 GTKAML_C_FILES+=$(subst .gtkaml,.c,$(GTKAMLFILES))
