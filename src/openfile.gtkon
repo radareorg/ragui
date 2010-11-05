@@ -32,9 +32,9 @@ VBox using=Gtk gtkon:version=0.2 name=OpenFile border_width=5 spacing=5 {
 
 	Label label='' expand; // hack
 	HButtonBox layout_style={ButtonBoxStyle.END} !expand spacing=3 {
-		Button label=Autodetect clicked={onClickAutodetect};
-		Button label=gtk-cancel use-stock clicked={onClickCancel};
-		Button label=gtk-open use-stock clicked={onClickOpen};
+		Button label=Autodetect clicked=onClickAutodetect;
+		Button label=gtk-cancel use-stock clicked=onClickCancel;
+		Button label=gtk-open use-stock clicked=onClickOpen;
 	}
 
 	-{

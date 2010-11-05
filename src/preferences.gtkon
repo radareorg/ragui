@@ -1,7 +1,7 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
 Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
-	modal title="Ragui preferences" destroy-event={OnWindowCloseEvent}
+	modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
 {
 	VBox border-width=1 {
 		Notebook {
@@ -16,8 +16,8 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
 				Label label="Analysis";
 			} }
 		}
-		HButtonBox !expand border-width=3 layout-style={ButtonBoxStyle.END} {
-			Button label=gtk-ok use-stock clicked={OnButtonCloseClicked};
+		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
+			Button label=gtk-ok use-stock clicked=OnButtonCloseClicked;
 		}
 	}
 -{
