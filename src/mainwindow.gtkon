@@ -36,7 +36,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 				submenu {
 					Menu {
 						ImageMenuItem stock-id="Calculator";
-						ImageMenuItem stock-id="Assembler";
+						ImageMenuItem stock-id="Assembler" activate="{menuToolsAssembler}";
 						ImageMenuItem stock-id="Scripting";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
@@ -56,11 +56,14 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 		}
 
 		Toolbar !expand {
-			Button use-stock label="gtk-new";
-			Button use-stock label="gtk-open";
+			Button use-stock label="preferences";
+			VSeparator;
+			Button use-stock label="breakpoint";
+			Button use-stock label="step";
+			Button use-stock label="continue";
 		}
 
-		VPaned position=700 {
+		VPaned position=500 {
 			HPaned position=250 border-width=3 {
 				VBox border-width=3 spacing=3 {
 					ComboBox text !expand $leftbox;
@@ -78,7 +81,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					Notebook expand tab-vborder=1 {
 						VBox {
 							tab-label {
-								Label label="Disassembler";
+								Label label="code/data";
 							}
 							VPaned position=300 {
 								Codeview:Widget $codeview;
@@ -86,12 +89,14 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 							}
 						}
 
+/*
 						VBox {
 							tab-label {
 								Label label="Assembler";
 							}
 							Grasmwidget:Widget $grasm expand;
 						}
+*/
 
 						/*
 						   <Label label="data-foo">
@@ -103,7 +108,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 
 						Label label="graph-foo" {
 							tab-label {
-								Label label="Graph";
+								Label label="graph";
 							}
 						}
 					}
@@ -112,10 +117,12 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			}
 			Ragui:Console $console add2;
 		}
+/*
 		HBox !expand {
 			ProgressBar !expand;
 			Statusbar expand;
 		}
+*/
 	}
 
 	AboutDialog gtkaml:standalone $.aboutdialog delete-event="{aboutdialog.hide_on_delete}"
@@ -132,6 +139,14 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 
 		private void OnQuit() {
 			on_quit();
+		}
+
+		private void menuToolsAssembler() {
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "ragui: Assembler";
+			var grasm = new Grasmwidget.Widget ();
+			w.add (grasm);
+			w.show_all ();
 		}
 
 		private bool OnWindowCloseEvent(Gdk.Event ev) {

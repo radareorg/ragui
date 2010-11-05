@@ -15,7 +15,8 @@ VBox gtkon:version=0.2 using=Gtk name=Ragui.Console {
 		button.released.connect (send_cmd);
 		line.activate.connect (send_cmd);
 
-		fixedtag = console.buffer.create_tag ("font", "font", "fixed", null);
+//		fixedtag = console.buffer.create_tag ("font", "font", "fixed", null);
+		fixedtag = console.buffer.create_tag ("font", "font", "courier", null);
 	}
 
 	private void send_cmd() {
