@@ -379,6 +379,8 @@ print ("HEIGHT %d\n", (int)h);
 	public void draw() {
 		da.window.get_size (out w, out h);
 
+		if (w<128)
+			return;
 		sync ();
 		/* adapt zoom to size */
 		zoom = ((double)w)/500.0;

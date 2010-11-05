@@ -33,6 +33,19 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					}
 				}
 			}
+			MenuItem label="_View" with-mnemonic {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="left panel";
+						ImageMenuItem stock-id="console";
+						ImageMenuItem stock-id="graph";
+						ImageMenuItem stock-id="code";
+						ImageMenuItem stock-id="hexdump";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="reset";
+					}
+				}
+			}
 			MenuItem label="_Tools" with-mnemonic {
 				submenu {
 					Menu {
