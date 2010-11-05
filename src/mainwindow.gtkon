@@ -13,8 +13,9 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			MenuItem label="_File" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="New project";
-						ImageMenuItem stock-id="gtk-open";
+						ImageMenuItem stock-id="New session";
+						ImageMenuItem stock-id="Open session";
+						ImageMenuItem stock-id="Close session";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}";
 					}
@@ -31,9 +32,21 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					}
 				}
 			}
+			MenuItem label="_Tools" with-mnemonic {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="Calculator";
+						ImageMenuItem stock-id="Assembler";
+						ImageMenuItem stock-id="Scripting";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="Plugin manager";
+					}
+				}
+			}
 			MenuItem label="_Help" with-mnemonic {
 				submenu {
 					Menu {
+						ImageMenuItem stock-id="API documentation";
 						ImageMenuItem stock-id="gtk-help";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-about" activate="{OnMenuHelpAbout}";
@@ -47,8 +60,8 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			Button use-stock label="gtk-open";
 		}
 
-		VPaned position=600 {
-			HPaned border-width=3 {
+		VPaned position=700 {
+			HPaned position=250 border-width=3 {
 				VBox border-width=3 spacing=3 {
 					ComboBox text !expand $leftbox;
 					ScrolledWindow can-focus expand
@@ -65,10 +78,12 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					Notebook expand tab-vborder=1 {
 						VBox {
 							tab-label {
-								Label label="Disassembly";
+								Label label="Disassembler";
 							}
-							Codeview:Widget $codeview expand;
-							Hexview:Widget $hexview expand;
+							VPaned position=300 {
+								Codeview:Widget $codeview;
+								Hexview:Widget $hexview add2;
+							}
 						}
 
 						VBox {
@@ -89,18 +104,6 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 						Label label="graph-foo" {
 							tab-label {
 								Label label="Graph";
-							}
-						}
-
-						Label label="graph-foo" {
-							tab-label {
-								Label label="GraphDiff";
-							}
-						}
-
-						Label label="graph-foo" {
-							tab-label {
-								Label label="Preferences";
 							}
 						}
 					}
