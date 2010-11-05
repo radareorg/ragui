@@ -15,13 +15,15 @@ public class Ragui.Main {
 
 	public static void setup_leftbox (MainWindow mw) {
 		var leftbox = mw.leftbox;
+		leftbox.append_text ("Information");
 		leftbox.append_text ("Sections");
 		leftbox.append_text ("Imports");
 		leftbox.append_text ("Symbols");
 		leftbox.append_text ("Relocations");
 		leftbox.append_text ("Entry Points");
 		leftbox.append_text ("Registers");
-		leftbox.set_active (0);
+		leftbox.append_text ("Breakpoints");
+		leftbox.set_active (1);
 		leftbox.changed.connect ( (x)=> {
 			change_leftlist (mw, x.get_active_text ());
 		});
@@ -30,6 +32,7 @@ public class Ragui.Main {
 
 	public static void setup_leftlist (MainWindow mw) {
 		var lv = mw.listview;
+		// TODO:get leftbox option
 		lv.set_actions ("seek", "breakpoint", "continue until", "inspect");
 		lv.menu_handler.connect ((m, d) => {
 			print ("clicked "+m.to_string ()+": "+
@@ -41,7 +44,23 @@ public class Ragui.Main {
 		var lv = mw.listview;
 		var baddr = gc.core.bin.get_baddr();
 		lv.clear ();
+		lv.show ();
+		mw.vb0.show_all ();
+		mw.vb1.hide ();
 		switch (type) {
+			case "Information":
+				var info = gc.core.bin.get_info ();
+				mw.itype.label = info.type;
+				mw.os.label = info.os;
+				mw.arch.label = info.arch;
+				mw.machine.label = info.machine;
+				mw.subsystem.label = info.subsystem;
+				mw.bits.label = info.bits.to_string ();
+				mw.endian.label = info.big_endian?"big":"little";
+				mw.vb0.hide ();
+				mw.vb1.show_all ();
+				lv.hide ();
+				break;
 			case "Sections":
 				foreach (var scn in gc.core.bin.get_sections ())
 					lv.add_row (baddr+scn.rva, scn.name);

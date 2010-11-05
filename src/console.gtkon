@@ -15,8 +15,8 @@ VBox gtkon:version=0.2 using=Gtk name=Ragui.Console {
 		button.released.connect (send_cmd);
 		line.activate.connect (send_cmd);
 
-		fixedtag = console.buffer.create_tag ("font", "font", "fixed", null);
-		couriertag = console.buffer.create_tag ("font", "font", "courier", null);
+		fixedtag = console.buffer.create_tag ("fixedfont", "font", "fixed");
+		couriertag = console.buffer.create_tag ("courierfont", "font", "courier");
 	}
 
 	private void send_cmd() {
@@ -31,7 +31,7 @@ VBox gtkon:version=0.2 using=Gtk name=Ragui.Console {
 		Gtk.TextMark im;
 		console.buffer.get_end_iter (out ei); 
 		//console.buffer.insert (ei, str, -1);
-		console.buffer.insert_with_tags (ei, str, -1, fixedtag, couriertag, null);
+		console.buffer.insert_with_tags (ei, str, -1, fixedtag, couriertag);
 		/* Autoscroll */
 		console.buffer.get_end_iter (out ei); 
 		im = console.buffer.get_insert (); 

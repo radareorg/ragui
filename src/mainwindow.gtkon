@@ -67,13 +67,36 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			HPaned position=250 border-width=3 {
 				VBox border-width=3 spacing=3 {
 					ComboBox text !expand $leftbox;
-					ScrolledWindow can-focus expand
-						hscrollbar-policy="{PolicyType.AUTOMATIC}"
-						vscrollbar-policy="{PolicyType.AUTOMATIC}" {
+					VBox $vb0 {
+						ScrolledWindow can-focus expand
+							hscrollbar-policy="{PolicyType.AUTOMATIC}"
+							vscrollbar-policy="{PolicyType.AUTOMATIC}" {
 
-						// TODO: move listview inside leftvb.. or we toggle visibility? do we need leftvb?
-						Listview:Widget $listview;
-						VBox $leftvb;
+							// TODO: move listview inside leftvb.. or we toggle visibility? do we need leftvb?
+							Listview:Widget $listview;
+						}
+					}
+					VBox $vb1 {
+						HBox !expand {
+							VBox !expand {
+								Label label="type";
+								Label label="os";
+								Label label="arch";
+								Label label="machine";
+								Label label="subsystem";
+								Label label="bits";
+								Label label="endian";
+							}
+							VBox !expand {
+								Label $itype label="";
+								Label $os label="linux";
+								Label $arch label="x86";
+								Label $machine label="x86";
+								Label $subsystem label="x86";
+								Label $bits label="32";
+								Label $endian label="big";
+							}
+						}
 					}
 				}
 
@@ -132,7 +155,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 		copyright="Copyright (c) 2009-2010 pancake/nibble"
 		comments="Graphical hexeditor, disassembler and debugger"
 		website="http://www.radare.org/"
-		authors='{new string[] {"pancake (pancake@nopcode.com)", "nibble (nibble.ds@gmail.com)", null}}';
+		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble.ds@gmail.com)", null}}';
 
 	-{
 		public signal void on_quit();
