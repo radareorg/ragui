@@ -7,10 +7,10 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
 		Notebook {
 			VBox {
 				tab-label { Label label="Disassembly"; }
-				CheckButton label="Hide bytes";
-				CheckButton label="Hide comments";
-				HSeparator;
-				CheckButton label="Hide metadata";
+				CheckButton !expand label="Hide bytes";
+				CheckButton !expand label="Hide comments";
+				HSeparator !expand;
+				CheckButton !expand label="Hide metadata";
 			}
 			Label label=todo { tab-label {
 				Label label="Analysis";
@@ -21,6 +21,10 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
 		}
 	}
 -{
+	public PreferencesWindow () {
+		resize (400,300);
+	}
+
 	private void OnButtonCloseClicked() {
 		this.hide ();
 	}

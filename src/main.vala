@@ -112,7 +112,28 @@ public class Ragui.Main {
 		});
 	}
 
+	public static string script = "";
+	public static bool runrc = true;
+
+	static const OptionEntry[] options = {
+		{ "norc", 'n', 0, OptionArg.NONE, ref script, "Do not load RC file", null },
+		{ "script", 's', 0, OptionArg.FILENAME, ref script, "Run script after loading file", "FILE" },
+		{ null }
+	};
+
 	public static int main (string[] args) {
+
+		try {
+			var opt_context = new OptionContext ("ragui");
+			opt_context.set_help_enabled (true);
+			opt_context.add_main_entries (options, null);
+			opt_context.parse (ref args);
+		} catch (OptionError e) {
+			stdout.printf ("%s\n", e.message);
+			stdout.printf ("Run '%s --help' to see a full list of available command line options.\n", args[0]);
+			return 1;
+		}
+
 		Gtk.init(ref args);
 		gc = new GuiCore ();
 		gc.core.file_open ("/bin/ls", 0);

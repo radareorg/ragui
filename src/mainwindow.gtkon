@@ -16,6 +16,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					Menu {
 						ImageMenuItem stock-id="New session";
 						ImageMenuItem stock-id="Open session";
+						ImageMenuItem stock-id="Save session";
 						ImageMenuItem stock-id="Close session";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="{OnQuit}";
@@ -69,6 +70,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			}
 		}
 
+/*
 		Toolbar !expand {
 			Button use-stock label="preferences";
 			VSeparator;
@@ -76,10 +78,11 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			Button use-stock label="step";
 			Button use-stock label="continue";
 		}
+*/
 
 		VPaned position=500 {
-			HPaned position=250 border-width=3 {
-				VBox border-width=3 spacing=3 {
+			HPaned position=250 {
+				VBox spacing=3 {
 					ComboBox text !expand $leftbox;
 					VBox $vb0 {
 						ScrolledWindow can-focus expand
@@ -101,14 +104,14 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 								Label label="bits";
 								Label label="endian";
 							}
-							VBox !expand {
-								Label $itype label="";
-								Label $os label="linux";
-								Label $arch label="x86";
-								Label $machine label="x86";
-								Label $subsystem label="x86";
-								Label $bits label="32";
-								Label $endian label="big";
+							VBox expand {
+								Label $itype label='';
+								Label $os label='';
+								Label $arch label="";
+								Label $machine label="";
+								Label $subsystem label="";
+								Label $bits label="";
+								Label $endian label="";
 							}
 						}
 					}

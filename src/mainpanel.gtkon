@@ -1,0 +1,49 @@
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+
+VBox gtkon:version=0.2 using=Gtk name=Ragui.MainPanel {
+	Label label="";
+	HBox {
+		VBox {
+			Label label="";
+			Label !expand label="Editor";
+			Button !expand label="Open session";
+			Button !expand label="Open file";
+			Button !expand label="Open program";
+		}
+		VBox {
+			Label label="";
+			Label !expand label="Debugger";
+			Button !expand label="Debug local program";
+			Button !expand label="Remote debugger";
+			Button !expand label="Attach process";
+		}
+	}
+	HBox {
+		Label label="";
+		VBox {
+			Label label="Diffing";
+			Button !expand label="Diff files";
+			Button !expand label="Diff programs";
+			Button !expand label="Diff projects";
+			Label label="";
+		}
+		VBox {
+			Label label="Help";
+			Button !expand label="API documentation";
+			Button !expand label="About this program";
+			Label label="";
+		}
+		Label label="";
+	}
+	Label label="";
+-{
+	public static void main (string[] args) {
+		Gtk.init (ref args);
+		var w = new Window (WindowType.TOPLEVEL);
+		w.title = "Open file";
+		w.add (new MainPanel ());
+		w.show_all ();
+		Gtk.main ();
+	}
+}-
+}
