@@ -21,7 +21,7 @@ using Cairo;
 using Gtk;
 using Gdk;
 
-public class Grava.Widget {
+public class Grava.Widget : VBox {
 	enum WheelAction {
 		PAN = 0,
 		ZOOM = 1,
@@ -50,10 +50,11 @@ public class Grava.Widget {
 	public signal void run_cmd(string addr);
 
 	public Gtk.Widget get_widget() {
-		return sw;
+		return this;
 	}
 
 	public Widget() {
+		//base.VBox (false, 3);
 		graph = new Graph();
 		graph.update();
 		create_widgets ();
@@ -79,6 +80,7 @@ public class Grava.Widget {
 			new Adjustment (0, 10, 1000, 2, 100, 1000),
 			new Adjustment (0, 10, 1000, 2, 100, 1000));
 		sw.set_policy (PolicyType.NEVER, PolicyType.NEVER);
+		add (sw);
 
 		Viewport vp = new Viewport (
 			new Adjustment (0, 10, 1000, 2, 100, 1000),

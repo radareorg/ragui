@@ -3,6 +3,7 @@
 Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 	delete-event="{OnWindowCloseEvent}"
 	using:Ragui="Ragui"
+	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
 	using:Hexview="Hexview"
@@ -79,7 +80,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					VBox $vb1 {
 						HBox !expand {
 							VBox !expand {
-								Label label="type";
+								Label !expand label="type";
 								Label label="os";
 								Label label="arch";
 								Label label="machine";
@@ -111,29 +112,19 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 								Hexview:Widget $hexview add2;
 							}
 						}
-
-/*
 						VBox {
-							tab-label {
-								Label label="Assembler";
-							}
-							Grasmwidget:Widget $grasm expand;
-						}
-*/
-
-						/*
-						   <Label label="data-foo">
-						   <tab-label>
-						   <Label label="hexdump" />
-						   </tab-label>
-						   </Label>
-						 */
-
-						Label label="graph-foo" {
 							tab-label {
 								Label label="graph";
 							}
+							VBox {
+								Grava:Widget $grava;
+							}
 						}
+						/*Label label="hash-foo" {
+							tab-label {
+								Label label="data analysis";
+							}
+						}*/
 					}
 
 				}
@@ -162,6 +153,10 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 
 		private void OnQuit() {
 			on_quit();
+		}
+
+		public MainWindow () {
+			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 		}
 
 		private void menuToolsAssembler() {
