@@ -8,7 +8,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 	using:Hexview="Hexview"
 	using:Listview="Listview"
 {
-	VBox border-width="1" {
+	VBox border-width=1 {
 		MenuBar !expand {
 			MenuItem label="_File" with-mnemonic {
 				submenu {
@@ -47,14 +47,15 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			Button use-stock label="gtk-open";
 		}
 
-		VPaned position="600" {
-			HPaned border-width="3" {
-				VBox border-width="3" {
+		VPaned position=600 {
+			HPaned border-width=3 {
+				VBox border-width=3 spacing=3 {
 					ComboBox text !expand $leftbox;
 					ScrolledWindow can-focus expand
 						hscrollbar-policy="{PolicyType.AUTOMATIC}"
 						vscrollbar-policy="{PolicyType.AUTOMATIC}" {
 
+						// TODO: move listview inside leftvb.. or we toggle visibility? do we need leftvb?
 						Listview:Widget $listview;
 						VBox $leftvb;
 					}

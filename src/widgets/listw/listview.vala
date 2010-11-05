@@ -74,6 +74,7 @@ public class Listview.Widget : ScrolledWindow {
 		return strcmp (str0, str1);
 	}
 
+	// TODO: rewrite in gtkon :D
 	public void create_widgets () {
 		this.rows = new SList <ListviewData?> ();
 		this.actions = new SList<string> ();
@@ -83,35 +84,41 @@ public class Listview.Widget : ScrolledWindow {
 		view.set_model (model);
 		model.set_sort_func (Column.OFFSET, sort_offset);
 		model.set_sort_func (Column.NAME, sort_name);
-		view.insert_column_with_attributes (Column.OFFSET, "0ffset",
+		view.insert_column_with_attributes (Column.OFFSET, "Offset",
 			new CellRendererText (), "text", 0);
 		view.insert_column_with_attributes (Column.NAME, "Name",
 			new CellRendererText (), "text", 1);
 		var col0 = view.get_column (Column.OFFSET);
+		var col1 = view.get_column (Column.NAME);
 		col0.set_clickable (true);
-		col0.set_sort_indicator (true);
+		col0.set_sort_indicator (false);
 		col0.clicked.connect ((x)=> {
 			var order = x.get_sort_order ();
 			if (order == SortType.ASCENDING)
 				order = SortType.DESCENDING;
 			else order = SortType.ASCENDING;
 			x.sort_order = order;
+			col0.set_sort_indicator (true);
+			col1.set_sort_indicator (false);
 			model.set_sort_column_id (Column.OFFSET, order);
 			});
-		var col1 = view.get_column (Column.NAME);
 		col1.set_clickable (true);
-		col1.set_sort_indicator (true);
+		col1.set_sort_indicator (false);
 		col1.clicked.connect ((x)=> {
 			var order = x.get_sort_order ();
 			if (order == SortType.ASCENDING)
 				order = SortType.DESCENDING;
 			else order = SortType.ASCENDING;
 			x.sort_order = order;
+			col0.set_sort_indicator (false);
+			col1.set_sort_indicator (true);
 			model.set_sort_column_id (Column.NAME, order);
 			});
-		model.set_sort_column_id (Column.OFFSET, SortType.ASCENDING);
+		//model.set_sort_column_id (Column.OFFSET, SortType.ASCENDING);
 
 		view.button_release_event.connect (button_press);
+		view.set_search_column (Column.NAME);
+		view.set_enable_search (true);
 		add (view);
 	}
 

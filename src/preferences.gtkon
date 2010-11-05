@@ -1,8 +1,7 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-Window gtkon:version=0.2
-	using=Gtk modal title="Ragui preferences" name="Ragui.PreferencesWindow"
-	destroy-event={OnWindowCloseEvent}
+Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
+	modal title="Ragui preferences" destroy-event={OnWindowCloseEvent}
 {
 	VBox border-width=1 {
 		Notebook {
@@ -23,11 +22,11 @@ Window gtkon:version=0.2
 	}
 -{
 	private void OnButtonCloseClicked() {
-		this.hide();
+		this.hide ();
 	}
 
 	private bool OnWindowCloseEvent(Gdk.Event ev) {
-		this.hide();
+		this.hide ();
 		return true;
 	}
 }-
