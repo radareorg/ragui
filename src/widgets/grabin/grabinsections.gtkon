@@ -1,37 +1,37 @@
-TreeView gtkon:version=0.2 using=Gtk using:Radare="Radare" $GrabinSections {
-	TreeViewColumn title="Index" clickable clicked="{sort_column (0)}" {
-		CellRendererText $.column0 expand;
-		CellRendererText &column0 attribute="text" column=0;
-	}
-	TreeViewColumn title="Address" clickable clicked="{sort_column (1)}" {
-		CellRendererText $.column1 expand;
-		CellRendererText &column1 attribute="text" column=1;
-	}
-	TreeViewColumn title="Offset" clickable clicked="{sort_column (2)}" {
-		CellRendererText $.column2 expand;
-		CellRendererText &column2 attribute="text" column=2;
-	}
-	TreeViewColumn title="Size" clickable clicked="{sort_column (3)}" {
-		CellRendererText $.column3 expand;
-		CellRendererText &column3 attribute="text" column=3;
-	}
-	TreeViewColumn title="Virtual Size" clickable clicked="{sort_column (4)}" {
-		CellRendererText $.column4 expand;
-		CellRendererText &column4 attribute="text" column=4;
-	}
-	TreeViewColumn title="Privileges" clickable clicked="{sort_column (5)}" {
-		CellRendererText $.column5 expand;
-		CellRendererText &column5 attribute="text" column=5;
-	}
-	TreeViewColumn title="Name" clickable clicked="{sort_column (6)}" {
-		CellRendererText $.column6 expand;
-		CellRendererText &column6 attribute="text" column=6;
+Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sections {
+	TreeView $view {
+		TreeViewColumn title="Index" clickable clicked="{sort_column (view, 0)}" {
+			CellRendererText $.column0 expand;
+			CellRendererText &column0 attribute="text" column=0;
+		}
+		TreeViewColumn title="Address" clickable clicked="{sort_column (view, 1)}" {
+			CellRendererText $.column1 expand;
+			CellRendererText &column1 attribute="text" column=1;
+		}
+		TreeViewColumn title="Offset" clickable clicked="{sort_column (view, 2)}" {
+			CellRendererText $.column2 expand;
+			CellRendererText &column2 attribute="text" column=2;
+		}
+		TreeViewColumn title="Size" clickable clicked="{sort_column (view, 3)}" {
+			CellRendererText $.column3 expand;
+			CellRendererText &column3 attribute="text" column=3;
+		}
+		TreeViewColumn title="Virtual Size" clickable clicked="{sort_column (view, 4)}" {
+			CellRendererText $.column4 expand;
+			CellRendererText &column4 attribute="text" column=4;
+		}
+		TreeViewColumn title="Privileges" clickable clicked="{sort_column (view, 5)}" {
+			CellRendererText $.column5 expand;
+			CellRendererText &column5 attribute="text" column=5;
+		}
+		TreeViewColumn title="Name" clickable clicked="{sort_column (view, 6)}" {
+			CellRendererText $.column6 expand;
+			CellRendererText &column6 attribute="text" column=6;
+		}
 	}
 
 -{
-	private ListStore listmodel;
-
-	public GrabinSections(RBin bin) {
+	public Sections(RBin bin) {
 		TreeIter iter;
 		listmodel = new ListStore (7, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string), typeof (string),
@@ -49,31 +49,9 @@ TreeView gtkon:version=0.2 using=Gtk using:Radare="Radare" $GrabinSections {
 					5, RStr.rwx_i(scn.srwx),
 					6, scn.name);
 		}
-		this.model = listmodel;
-		var col = this.get_column (0);
-		col.set_sort_indicator (true);
-		col.sort_order = SortType.ASCENDING;
-		listmodel.set_sort_column_id (0, SortType.ASCENDING);
-	}
-
-	private void sort_column(int n) {
-		int i;
-
-		for (i = 0; i < 7; i++) {
-			var col = this.get_column (i);
-			if (i == n) {
-				col.set_sort_indicator (true);
-				var order = col.get_sort_order ();
-				if (order == SortType.ASCENDING)
-					order = SortType.DESCENDING;
-				else order = SortType.ASCENDING;
-				col.sort_order = order;
-				listmodel.set_sort_column_id (i, order);
-			} else {
-				col.set_sort_indicator (false);
-			}
-
-		}
+		view.model = listmodel;
+		view.button_release_event.connect (button_press);
+		this.add (view);
 	}
 }-
 }
