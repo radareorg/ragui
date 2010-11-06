@@ -51,6 +51,7 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 		}
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);
+		// XXX
 		this.add (view);
 	}
 }-
