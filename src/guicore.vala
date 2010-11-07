@@ -2,9 +2,11 @@ using Radare;
 
 public class Ragui.GuiCore {
 	public RCore core;
+	public string arg0;
 
-	public GuiCore () {
+	public GuiCore (string arg0) {
 		core = new RCore ();
+		this.arg0 = arg0;
 	}
 
 	public void project_open (string file) {

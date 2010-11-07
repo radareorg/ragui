@@ -48,7 +48,7 @@ public class Ragui.Main {
 		}
 
 		Gtk.init (ref args);
-		gc = new GuiCore ();
+		gc = new GuiCore (args[0]);
 		mw = new MainWindow ();
 		if (files != null) {
 			gc.core.file_open (files[0], 0);

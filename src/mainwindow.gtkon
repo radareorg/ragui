@@ -14,9 +14,9 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			MenuItem label="_File" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="gtk-new";
-						ImageMenuItem stock-id="Open session";
-						ImageMenuItem stock-id="Save session";
+						ImageMenuItem stock-id="gtk-new" activate=OnNew;
+						ImageMenuItem stock-id="gtk-open" activate=OnOpenProject;
+						ImageMenuItem stock-id="gtk-save";
 						ImageMenuItem stock-id="Close session";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="OnQuit";
@@ -100,11 +100,28 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 	-{
 		public signal void on_quit();
 
+		private void OnNew() {
+			Pid pid;
+			string[] runme = { gc.arg0 };
+			try {
+				Process.spawn_async (null, runme, null,
+						SpawnFlags.DO_NOT_REAP_CHILD, null, out pid);
+			} catch (GLib.SpawnError err) {
+				print ("Error: %s\n", err.message);
+			}
+			//public delegate void ChildWatchFunc (Pid pid, int status);
+		}
+
+		private void OnOpenProject() {
+			panel.onOpenProject ();
+		}
+
 		private void OnQuit() {
 			on_quit();
 		}
 
 		public MainWindow () {
+			panel = new MainPanel ();
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 		}
 
@@ -138,6 +155,19 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 		}
 
 		public void OnMenuHelpAPI () {
+/* This is the theorically portable way.. but it doesnt works
+			try {
+				var file = File.new_for_path ("http://www.radare.org/vdoc");
+				var handler = file.query_default_handler (null);
+				var list = new List<File> ();
+				list.append (file);
+				var result = handler.launch (list, null);
+			} catch (GLib.Error err) {
+				print ("Error: %s\n", err.message);
+			}
+*/
+
+
 			Pid pid;
 			string[] runme = { "/usr/bin/xdg-open", "http://www.radare.org/vdoc" };
 			try {
@@ -162,8 +192,6 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 		public MainBody body;
 
 		public void view_panel () {
-			if (panel == null)
-				panel = new MainPanel ();
 			box_body.children = null;
 			box_body.add (panel);
 			box_body.show_all ();
