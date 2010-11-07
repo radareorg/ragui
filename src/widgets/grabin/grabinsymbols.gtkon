@@ -41,6 +41,7 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 				typeof (string), typeof (string), typeof (string), typeof (string),
 				typeof (string), typeof (string));
 		var baddr = bin.get_baddr ();
+		if (bin.get_symbols () != null)
 		foreach (var sym in bin.get_symbols ()) {
 			listmodel.append (out iter);
 			listmodel.set (iter,

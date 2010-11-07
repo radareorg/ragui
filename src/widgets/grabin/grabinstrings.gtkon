@@ -28,6 +28,7 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 		listmodel = new ListStore (5, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string));
 		var baddr = bin.get_baddr ();
+		if (bin.get_strings () != null)
 		foreach (var str in bin.get_strings ()) {
 			listmodel.append (out iter);
 			listmodel.set (iter,

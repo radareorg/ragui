@@ -38,6 +38,7 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 				typeof (string));
 		var baddr = bin.get_baddr ();
 		var i = 0;
+		if (bin.get_sections () != null)
 		foreach (var scn in bin.get_sections ()) {
 			listmodel.append (out iter);
 			listmodel.set (iter,
