@@ -27,17 +27,15 @@ public class Grabin.Widget : ScrolledWindow {
 
 	public bool button_press (Gtk.Widget w, Gdk.EventButton eb) {
 		string? data = null;
+		TreeModel model;
+		TreeIter iter;
 
 		if (eb.button != 3)
 			return false;
 		var sel = (w as TreeView).get_selection ();
-		if (sel.count_selected_rows () == 1) {
-			TreeModel m;
-			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);
-			foreach (var row in list) {
-				data = row.to_string ();
-				break;
-			}
+		if (sel.get_selected (out model, out iter)) {
+			var path = model.get_path (iter);
+			data = path.to_string ();
 		}
 		var menu = new Menu();
 		foreach (var str in this.actions) {
