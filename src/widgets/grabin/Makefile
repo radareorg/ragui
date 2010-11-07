@@ -7,5 +7,6 @@ all:
 	gtkamlc -C --library grabinimports --vapi=../include/grabinimports.vapi -H ../include/grabinimports.h --pkg grabin ${VALAFLAGS} grabinimports.gtkon
 	gtkamlc -C --library grabinstrings --vapi=../include/grabinstrings.vapi -H ../include/grabinstrings.h --pkg grabin ${VALAFLAGS} grabinstrings.gtkon
 	gtkamlc -C --library grabinrelocs --vapi=../include/grabinrelocs.vapi -H ../include/grabinrelocs.h --pkg grabin ${VALAFLAGS} grabinrelocs.gtkon
-	gtkamlc -C --pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg grabinimports --pkg grabinstrings --pkg grabinrelocs ${VALAFLAGS} grabintest.gtkon
-	gcc -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` grabin.c grabinsections.c grabinsymbols.c grabinimports.c grabinstrings.c grabinrelocs.c grabintest.c -o grabintest
+	gtkamlc -C --library grabinfat --vapi=../include/grabinfat.vapi -H ../include/grabinfat.h --pkg grabin ${VALAFLAGS} grabinfat.gtkon
+	gtkamlc -C --pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg grabinimports --pkg grabinstrings --pkg grabinrelocs --pkg grabinfat ${VALAFLAGS} grabintest.gtkon
+	gcc -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` grabin.c grabinsections.c grabinsymbols.c grabinimports.c grabinstrings.c grabinrelocs.c grabintest.c grabinfat.c -o grabintest
