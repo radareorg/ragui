@@ -11,19 +11,20 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 {
 	VBox border-width=1 {
 		MenuBar !expand {
-			MenuItem label="_File" with-mnemonic {
+			MenuItem label="_Project" with-mnemonic {
 				submenu {
 					Menu {
 						ImageMenuItem stock-id="gtk-new" activate=OnNew;
 						ImageMenuItem stock-id="gtk-open" activate=OnOpenProject;
-						ImageMenuItem stock-id="gtk-save";
-						ImageMenuItem stock-id="Close session";
+						ImageMenuItem stock-id="gtk-save" activate=OnFileSave;
+						ImageMenuItem stock-id="gtk-save-as"; // activate=OnFileSave;
+						ImageMenuItem stock-id="gtk-close" activate=OnFileClose;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="OnQuit";
 					}
 				}
 			}
-			MenuItem label="_Edit" with-mnemonic {
+			MenuItem $menu_edit label="_Edit" with-mnemonic {
 				submenu {
 					Menu {
 						ImageMenuItem stock-id="gtk-cut";
@@ -34,7 +35,7 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 					}
 				}
 			}
-			MenuItem label="_View" with-mnemonic {
+			MenuItem $menu_view label="_View" with-mnemonic {
 				submenu {
 					Menu {
 						ImageMenuItem stock-id="left panel";
@@ -120,6 +121,15 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			on_quit();
 		}
 
+		private void OnFileSave() {
+			/* TODO */
+		}
+
+		private void OnFileClose() {
+			/* TODO: warn if file not saved, etc.. */
+			view_panel ();
+		}
+
 		public MainWindow () {
 			panel = new MainPanel ();
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
@@ -131,7 +141,7 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 
 		private void menuToolsAssembler() {
 			var w = new Window (WindowType.TOPLEVEL);
-			w.title = "ragui: Assembler";
+			w.title = "ragui: assembler";
 			var grasm = new Grasmwidget.Widget ();
 			w.add (grasm);
 			w.show_all ();
@@ -192,9 +202,13 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 		public MainBody body;
 
 		public void view_panel () {
+			panel.show_all ();
+			body.hide ();
 			box_body.children = null;
 			box_body.add (panel);
 			box_body.show_all ();
+			menu_view.sensitive = false;
+			menu_edit.sensitive = false;
 		}
 
 		public void view_body () {
@@ -203,6 +217,10 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			box_body.children = null;
 			box_body.add (body);
 			box_body.show_all ();
+			panel.hide ();
+			body.show_all ();
+			menu_view.sensitive = true;
+			menu_edit.sensitive = true;
 		}
 
 		public void setup_view () {
