@@ -1,0 +1,60 @@
+Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Symbols {
+	TreeView $view {
+		TreeViewColumn title="Address" clickable clicked="{sort_column (view, 0)}" {
+			CellRendererText $.column0 expand;
+			CellRendererText &column0 attribute="text" column=0;
+		}
+		TreeViewColumn title="Offset" clickable clicked="{sort_column (view, 1)}" {
+			CellRendererText $.column1 expand;
+			CellRendererText &column1 attribute="text" column=1;
+		}
+		TreeViewColumn title="Ordinal" clickable clicked="{sort_column (view, 2)}" {
+			CellRendererText $.column2 expand;
+			CellRendererText &column2 attribute="text" column=2;
+		}
+		TreeViewColumn title="Forwarder" clickable clicked="{sort_column (view, 3)}" {
+			CellRendererText $.column3 expand;
+			CellRendererText &column3 attribute="text" column=3;
+		}
+		TreeViewColumn title="Size" clickable clicked="{sort_column (view, 4)}" {
+			CellRendererText $.column4 expand;
+			CellRendererText &column4 attribute="text" column=4;
+		}
+		TreeViewColumn title="bind" clickable clicked="{sort_column (view, 5)}" {
+			CellRendererText $.column5 expand;
+			CellRendererText &column5 attribute="text" column=5;
+		}
+		TreeViewColumn title="type Size" clickable clicked="{sort_column (view, 6)}" {
+			CellRendererText $.column6 expand;
+			CellRendererText &column6 attribute="text" column=6;
+		}
+		TreeViewColumn title="Name" clickable clicked="{sort_column (view, 7)}" {
+			CellRendererText $.column7 expand;
+			CellRendererText &column7 attribute="text" column=7;
+		}
+	}
+
+-{
+	public Symbols(RBin bin) {
+		TreeIter iter;
+		listmodel = new ListStore (8, typeof (string), typeof (string),
+				typeof (string), typeof (string), typeof (string), typeof (string),
+				typeof (string), typeof (string));
+		var baddr = bin.get_baddr ();
+		foreach (var sym in bin.get_symbols ()) {
+			listmodel.append (out iter);
+			listmodel.set (iter,
+					0, (baddr+sym.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+					1, sym.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+					2, sym.ordinal.to_string ("%03i"),
+					3, sym.forwarder,
+					4, sym.size.to_string ("%05i"),
+					5, sym.bind,
+					6, sym.type,
+					7, sym.name);
+		}
+		view.model = listmodel;
+		view.button_release_event.connect (button_press);
+	}
+}-
+}

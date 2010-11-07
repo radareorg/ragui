@@ -1,0 +1,33 @@
+Window gtkon:version=0.4
+	using=Gtk
+	using:Radare="Radare"
+	using:Grabin="Grabin"
+name=GrabinTest title="Grabin" {
+	Notebook tab-vborder=1 {
+		VBox $.vbsections {
+			tab-label {
+				Label label="Sections";
+			}
+		}
+		VBox $.vbsymbols {
+			tab-label {
+				Label label="Symbols";
+			}
+		}
+	}
+-{
+	static int main (string[] args) {
+		Gtk.init (ref args);
+		var window = new GrabinTest ();
+		var bin = new RBin ();
+		bin.load ("/bin/ls", false);
+		var grabinsections = new Sections (bin);
+		var grabinsymbols = new Symbols (bin);
+		window.vbsections.add (grabinsections);
+		window.vbsymbols.add (grabinsymbols);
+		window.show_all ();
+		Gtk.main ();
+		return 0;
+	}
+}-
+}
