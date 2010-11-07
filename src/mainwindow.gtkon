@@ -131,7 +131,7 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			pw.show_all();
 		}
 
-		private void OnMenuHelpAbout () {
+		public void OnMenuHelpAbout () {
 			aboutdialog.transient_for = this;
 			aboutdialog.run ();
 			aboutdialog.hide();

@@ -34,14 +34,21 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainPanel {
 		Label label="";
 		VBox {
 			Label !expand label="Help";
-			Button !expand label="API documentation";
-			Button !expand label="About this program";
+			Button !expand label="API documentation" released=onHelpAPI;
+			Button !expand label="About this program" released="{onHelpAbout();}";
 			Label label="";
 		}
 		Label label="";
 	}
 	Label label="";
 -{
+
+	public void onHelpAPI () {
+		print ("open DOC\n");
+	}
+
+	public signal void onHelpAbout ();
+
 	public void onOpenFile () {
 		int ret = 0;
 		var w = new Dialog ();

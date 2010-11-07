@@ -18,6 +18,8 @@ public class Ragui.GuiCore {
 	public void project_close () {
 		// open gtk dialog and so on.. 
 	}
+
+	public static const string VERSION = "0.1";
 }
 
 public static Ragui.GuiCore gc;

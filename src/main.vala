@@ -56,16 +56,19 @@ public class Ragui.Main {
 			mw.title = "ragui : %s".printf (files[0]);
 		} else mw.view_panel ();
 
-		if (mw.panel != null)
-		mw.panel.open_file.connect ( (x)=> {
-			print ("GO open file! (%s)\n", x);
-			mw.title = "ragui : %s".printf (x);
-			gc.core.file_open (x, 0);
-			gc.core.config.set ("io.va", "true");
-			gc.core.config.set ("scr.color", "false");
-			mw.view_body ();
-			return true; // XXX: must check if open fails or what
-		});
+		if (mw.panel != null) {
+			mw.panel.open_file.connect ( (x) => {
+				mw.title = "ragui : %s".printf (x);
+				gc.core.file_open (x, 0);
+				gc.core.config.set ("io.va", "true");
+				gc.core.config.set ("scr.color", "false");
+				mw.view_body ();
+				return true; // XXX: must check if open fails or what
+			});
+			mw.panel.onHelpAbout.connect ( () => {
+				mw.OnMenuHelpAbout ();
+			});
+		}
 		gc.core.config.set ("io.va", "true");
 		gc.core.config.set ("scr.color", "false");
 		//print ("==> %s\n", typeof (mw.leftbox));
