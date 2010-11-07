@@ -14,6 +14,21 @@ name=GrabinTest title="Grabin" {
 				Label label="Symbols";
 			}
 		}
+		VBox $.vbimports {
+			tab-label {
+				Label label="Imports";
+			}
+		}
+		VBox $.vbstrings {
+			tab-label {
+				Label label="Strings";
+			}
+		}
+		VBox $.vbrelocs {
+			tab-label {
+				Label label="Relocations";
+			}
+		}
 	}
 -{
 	static int main (string[] args) {
@@ -23,8 +38,14 @@ name=GrabinTest title="Grabin" {
 		bin.load ("/bin/ls", false);
 		var grabinsections = new Sections (bin);
 		var grabinsymbols = new Symbols (bin);
+		var grabinimports = new Imports (bin);
+		var grabinstrings = new Strings (bin);
+		var grabinrelocs = new Relocs (bin);
 		window.vbsections.add (grabinsections);
 		window.vbsymbols.add (grabinsymbols);
+		window.vbimports.add (grabinimports);
+		window.vbstrings.add (grabinstrings);
+		window.vbrelocs.add (grabinrelocs);
 		window.show_all ();
 		Gtk.main ();
 		return 0;

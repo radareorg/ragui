@@ -1,0 +1,44 @@
+Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Relocs {
+	TreeView $view {
+		TreeViewColumn title="Sym" clickable clicked="{sort_column (view, 0)}" {
+			CellRendererText $.column0 expand;
+			CellRendererText &column0 attribute="text" column=0;
+		}
+		TreeViewColumn title="Address" clickable clicked="{sort_column (view, 1)}" {
+			CellRendererText $.column1 expand;
+			CellRendererText &column1 attribute="text" column=1;
+		}
+		TreeViewColumn title="Offset" clickable clicked="{sort_column (view, 2)}" {
+			CellRendererText $.column2 expand;
+			CellRendererText &column2 attribute="text" column=2;
+		}
+		TreeViewColumn title="Type" clickable clicked="{sort_column (view, 3)}" {
+			CellRendererText $.column3 expand;
+			CellRendererText &column3 attribute="text" column=3;
+		}
+		TreeViewColumn title="Name" clickable clicked="{sort_column (view, 4)}" {
+			CellRendererText $.column4 expand;
+			CellRendererText &column4 attribute="text" column=4;
+		}
+	}
+
+-{
+	public Relocs(RBin bin) {
+		TreeIter iter;
+		listmodel = new ListStore (5, typeof (string), typeof (string),
+				typeof (string), typeof (string), typeof (string));
+		var baddr = bin.get_baddr ();
+		foreach (var rel in bin.get_relocs ()) {
+			listmodel.append (out iter);
+			listmodel.set (iter,
+					0, rel.sym.to_string ("%03i"),
+					1, (baddr+rel.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+					2, rel.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+					3, rel.type.to_string ("%02i"),
+					4, rel.name);
+		}
+		view.model = listmodel;
+		view.button_release_event.connect (button_press);
+	}
+}-
+}

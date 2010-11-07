@@ -1,0 +1,44 @@
+Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Strings {
+	TreeView $view {
+		TreeViewColumn title="Address" clickable clicked="{sort_column (view, 0)}" {
+			CellRendererText $.column0 expand;
+			CellRendererText &column0 attribute="text" column=0;
+		}
+		TreeViewColumn title="Offset" clickable clicked="{sort_column (view, 1)}" {
+			CellRendererText $.column1 expand;
+			CellRendererText &column1 attribute="text" column=1;
+		}
+		TreeViewColumn title="Ordinal" clickable clicked="{sort_column (view, 2)}" {
+			CellRendererText $.column2 expand;
+			CellRendererText &column2 attribute="text" column=2;
+		}
+		TreeViewColumn title="Size" clickable clicked="{sort_column (view, 3)}" {
+			CellRendererText $.column3 expand;
+			CellRendererText &column3 attribute="text" column=3;
+		}
+		TreeViewColumn title="String" clickable clicked="{sort_column (view, 4)}" {
+			CellRendererText $.column4 expand;
+			CellRendererText &column4 attribute="text" column=4;
+		}
+	}
+
+-{
+	public Strings(RBin bin) {
+		TreeIter iter;
+		listmodel = new ListStore (5, typeof (string), typeof (string),
+				typeof (string), typeof (string), typeof (string));
+		var baddr = bin.get_baddr ();
+		foreach (var str in bin.get_strings ()) {
+			listmodel.append (out iter);
+			listmodel.set (iter,
+					0, (baddr+str.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+					1, str.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+					2, str.ordinal.to_string ("%03i"),
+					3, str.size.to_string ("%03i"),
+					4, str.string);
+		}
+		view.model = listmodel;
+		view.button_release_event.connect (button_press);
+	}
+}-
+}

@@ -5,6 +5,10 @@ public class Grabin.Widget : ScrolledWindow {
 	public SList<string> actions;
 	public signal void menu_handler(string action, string data);
 
+	public Widget() {
+		set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+	}
+
 	public void sort_column(TreeView tv, int n) {
 		int i;
 
