@@ -34,7 +34,8 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainPanel {
 		Label label="";
 		VBox {
 			Label !expand label="Help";
-			Button !expand label="API documentation" released=onHelpAPI;
+			// lambda required to match signature
+			Button !expand label="API documentation" released="{onHelpAPI();}";
 			Button !expand label="About this program" released="{onHelpAbout();}";
 			Label label="";
 		}
@@ -42,11 +43,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainPanel {
 	}
 	Label label="";
 -{
-
-	public void onHelpAPI () {
-		print ("open DOC\n");
-	}
-
+	public signal void onHelpAPI ();
 	public signal void onHelpAbout ();
 
 	public void onOpenFile () {

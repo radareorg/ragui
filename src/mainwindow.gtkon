@@ -62,7 +62,7 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			MenuItem label="_Help" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="API documentation";
+						ImageMenuItem stock-id="API documentation" activate="OnMenuHelpAPI";
 						ImageMenuItem stock-id="gtk-help";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-about" activate="OnMenuHelpAbout";
@@ -135,6 +135,20 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			aboutdialog.transient_for = this;
 			aboutdialog.run ();
 			aboutdialog.hide();
+		}
+
+		public void OnMenuHelpAPI () {
+			Pid pid;
+			string[] runme = { "/usr/bin/xdg-open", "http://www.radare.org/vdoc" };
+			try {
+				if (!Process.spawn_async (null, runme, null,
+						SpawnFlags.DO_NOT_REAP_CHILD, null, out pid))
+					return;
+			} catch (GLib.SpawnError err) {
+				print ("Error: %s\n", err.message);
+			}
+			//public delegate void ChildWatchFunc (Pid pid, int status);
+			//ChildWatch.add (pid, (pid,status)=> {});
 		}
 
 		/* user defined window constructor */

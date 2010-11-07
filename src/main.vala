@@ -68,6 +68,9 @@ public class Ragui.Main {
 			mw.panel.onHelpAbout.connect ( () => {
 				mw.OnMenuHelpAbout ();
 			});
+			mw.panel.onHelpAPI.connect ( () => {
+				mw.OnMenuHelpAPI ();
+			});
 		}
 		gc.core.config.set ("io.va", "true");
 		gc.core.config.set ("scr.color", "false");
