@@ -7,6 +7,9 @@
 
 TODO
 * Bar clickable, combobox to select file or map range
+* Error dialog class
+* Implement open program dialog
+* Implement attach to process and debug
 
 BUGS
 * Fix grava delta produced by zoom

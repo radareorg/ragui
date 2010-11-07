@@ -1,13 +1,13 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
+Window gtkon:version=0.4 using=Gtk name=Ragui.PreferencesWindow
 	modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
 {
 	VBox border-width=1 {
 		Notebook {
 			VBox {
 				tab-label { Label label="Disassembly"; }
-				CheckButton !expand label="Hide bytes";
+				CheckButton !expand label="Hide bytes" toggled=cbBytes;
 				CheckButton !expand label="Hide comments";
 				HSeparator !expand;
 				CheckButton !expand label="Hide metadata";
@@ -21,6 +21,10 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.PreferencesWindow
 		}
 	}
 -{
+	private void cbBytes() {
+		gc.core.config.set ("asm.bytes", "false");
+	}
+
 	public PreferencesWindow () {
 		resize (400,300);
 	}

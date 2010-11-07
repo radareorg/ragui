@@ -1,34 +1,39 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-VBox gtkon:version=0.2 using=Gtk name=Ragui.MainPanel {
+VBox gtkon:version=0.4 using=Gtk name=Ragui.MainPanel {
 	Label label="";
 	HBox {
+		Label label="";
 		VBox {
 			Label label="";
 			Label !expand label="Editor";
-			Button !expand label="Open session";
-			Button !expand label="Open file";
+			Button !expand label="Open file" released=onOpenFile;
 			Button !expand label="Open program";
+			Button !expand label="Open project" released=onOpenProject;
 		}
+		Label label="";
 		VBox {
 			Label label="";
 			Label !expand label="Debugger";
 			Button !expand label="Debug local program";
 			Button !expand label="Remote debugger";
-			Button !expand label="Attach process";
+			Button !expand label="Attach to process";
 		}
+		Label label="";
 	}
+	Label label="";
 	HBox {
 		Label label="";
 		VBox {
-			Label label="Diffing";
+			Label !expand label="Diffing";
 			Button !expand label="Diff files";
 			Button !expand label="Diff programs";
 			Button !expand label="Diff projects";
 			Label label="";
 		}
+		Label label="";
 		VBox {
-			Label label="Help";
+			Label !expand label="Help";
 			Button !expand label="API documentation";
 			Button !expand label="About this program";
 			Label label="";
@@ -37,13 +42,45 @@ VBox gtkon:version=0.2 using=Gtk name=Ragui.MainPanel {
 	}
 	Label label="";
 -{
-	public static void main (string[] args) {
-		Gtk.init (ref args);
-		var w = new Window (WindowType.TOPLEVEL);
+	public void onOpenFile () {
+		int ret = 0;
+		var w = new Dialog ();
 		w.title = "Open file";
-		w.add (new MainPanel ());
-		w.show_all ();
-		Gtk.main ();
+		w.add_button ("autodetect", -1);
+		w.add_button ("gtk-cancel", 0);
+		w.add_button ("gtk-ok", 1);
+		var of = new OpenFile ();
+		do {
+			w.vbox.add (of);
+			w.show_all ();
+			ret = w.run ();
+		} while (ret == -1);
+		w.hide ();
+		w = null;
+		if (ret == 1)
+			open_file (of.fc.get_filename ());
 	}
+
+	public void onOpenProject () {
+		int ret = 0;
+		var w = new Dialog ();
+		w.resize (600, 400);
+		w.title = "Open project";
+		w.add_button ("gtk-cancel", 0);
+		w.add_button ("gtk-ok", 1);
+		var prjdir = Environment.get_home_dir () + "/.radare2/rdb";
+		var of = new OpenProject (prjdir);
+		do {
+			w.vbox.add (of);
+			w.show_all ();
+			ret = w.run ();
+		} while (ret == -1);
+		w.hide ();
+		w = null;
+		if (ret == 1)
+			open_file (of.fc.get_filename ());
+	}
+
+	public signal bool open_file(string file);
 }-
 }

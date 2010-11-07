@@ -1,6 +1,6 @@
 using Radare;
 
-public class GuiCore {
+public class Ragui.GuiCore {
 	public RCore core;
 
 	public GuiCore () {
@@ -19,3 +19,5 @@ public class GuiCore {
 		// open gtk dialog and so on.. 
 	}
 }
+
+public static Ragui.GuiCore gc;

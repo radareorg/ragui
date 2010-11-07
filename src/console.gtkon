@@ -1,6 +1,6 @@
 /* ragui - Copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-VBox gtkon:version=0.2 using=Gtk name=Ragui.Console {
+VBox gtkon:version=0.4 using=Gtk name=Ragui.Console {
 	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" {
 		TextView can-focus !editable $.console;
 	}

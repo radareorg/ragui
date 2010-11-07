@@ -21,20 +21,23 @@ WIDGETS+=widgets/grava/*.o
 WIDGETS+=widgets/listw/listview.c
 
 all: widgets.done
+	@${MAKE} vapi
 	@${MAKE} gtkon
-	@${MAKE} gtkaml
 	@${MAKE} vala
+	#@${MAKE} gtkaml
 	@${MAKE} link
 
-.PHONY: gtkaml gtkon vala link
+.PHONY: gtkaml gtkon vala vapi link
 
-GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon mainwindow.gtkon
+GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
+GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon
 GTKAMLFILES=
 VALAFILES=guicore.vala main.vala
 RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))
 RMGTKON_FILES+=$(subst .gtkon,.vala,$(GTKONFILES))
 GTKAML_C_FILES+=$(subst .gtkaml,.c,$(GTKAMLFILES))
 GTKON_C_FILES+=$(subst .gtkon,.c,$(GTKONFILES))
+GTKON_C_FILES+=mainwindow.c
 VALAFILES+=${RMVALAFILES}
 VALAFILES+=${RMGTKON_FILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
@@ -49,6 +52,9 @@ link:
 			break ; \
 		fi ; \
 	done
+
+vapi:
+	valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
 
 vala:
 	@for a in ${VALAFILES}; do \
@@ -67,11 +73,12 @@ gtkon:
 		if [ ! -e $$vala -o $$a -nt $$vala ]; then \
 			echo "  GTKAMLC  ${GTKONFILES}" ; \
 			rm -f ${BIN} ${GTKON_C_FILES} ; \
-			${GTKAMLC} --save-temps ${PKG} ${GTKAMLFLAGS} -c ${GTKONFILES} ; \
+			${GTKAMLC} -V ${PKG} ${GTKAMLFLAGS} ${GTKONFILES} ; \
 			break ; \
 		fi ; \
 	done
 
+GTKAMLFLAGS+=--vapidir=. --pkg guicore
 gtkaml:
 	@for a in ${GTKAMLFILES}; do \
 		vala=`echo $$a | sed -e s,gtkaml,vala,g` ; \
@@ -96,6 +103,7 @@ stuff:
 
 clean:
 	rm -f ${BIN} *.c *.h ${RMVALAFILES} ${RMGTKON_FILES}
+	rm -f guicore.vapi
 
 clean-widgets:
 	cd widgets && ${MAKE} clean
@@ -105,5 +113,6 @@ mrproper: clean clean-widgets
 
 test:
 	#gtkaml --define=MAIN openproject.gtkon
+	#gtkaml --define=MAIN mainpanel.gtkon
 	gtkaml --define=MAIN openfile.gtkon
 	#gtkaml --define=MAIN newproject.gtkon

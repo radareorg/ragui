@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
+Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 	delete-event="OnWindowCloseEvent"
 	using:Ragui="Ragui"
 	using:Grava="Grava"
@@ -14,7 +14,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			MenuItem label="_File" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="New session";
+						ImageMenuItem stock-id="gtk-new";
 						ImageMenuItem stock-id="Open session";
 						ImageMenuItem stock-id="Save session";
 						ImageMenuItem stock-id="Close session";
@@ -52,6 +52,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 					Menu {
 						ImageMenuItem stock-id="Calculator";
 						ImageMenuItem stock-id="Assembler" activate="menuToolsAssembler";
+						ImageMenuItem stock-id="Headers" activate="menuToolsHeaders";
 						ImageMenuItem stock-id="Scripting";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
@@ -69,7 +70,6 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 				}
 			}
 		}
-
 /*
 		Toolbar !expand {
 			Button use-stock label="preferences";
@@ -79,74 +79,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 			Button use-stock label="continue";
 		}
 */
-
-		VPaned position=500 {
-			HPaned position=250 {
-				VBox spacing=3 {
-					ComboBox text !expand $leftbox;
-					VBox $vb0 {
-						ScrolledWindow can-focus expand
-							hscrollbar-policy="{PolicyType.AUTOMATIC}"
-							vscrollbar-policy="{PolicyType.AUTOMATIC}" {
-
-							// TODO: move listview inside leftvb.. or we toggle visibility? do we need leftvb?
-							Listview:Widget $listview;
-						}
-					}
-					VBox $vb1 {
-						HBox !expand {
-							VBox !expand {
-								Label !expand label="type";
-								Label label="os";
-								Label label="arch";
-								Label label="machine";
-								Label label="subsystem";
-								Label label="bits";
-								Label label="endian";
-							}
-							VBox expand {
-								Label $itype label='';
-								Label $os label='';
-								Label $arch label="";
-								Label $machine label="";
-								Label $subsystem label="";
-								Label $bits label="";
-								Label $endian label="";
-							}
-						}
-					}
-				}
-
-				VBox add2 {
-					Notebook expand tab-vborder=1 {
-						VBox {
-							tab-label {
-								Label label="code/data";
-							}
-							VPaned position=300 {
-								Codeview:Widget $codeview;
-								Hexview:Widget $hexview add2;
-							}
-						}
-						VBox {
-							tab-label {
-								Label label="graph";
-							}
-							VBox {
-								Grava:Widget $grava;
-							}
-						}
-						/*Label label="hash-foo" {
-							tab-label {
-								Label label="data analysis";
-							}
-						}*/
-					}
-
-				}
-			}
-			Ragui:Console $console add2;
-		}
+		VBox $box_body;
 /*
 		HBox !expand {
 			ProgressBar !expand;
@@ -157,7 +90,7 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 
 	AboutDialog gtkaml:standalone $.aboutdialog delete-event="aboutdialog.hide_on_delete"
 		border-width=5 title="About ragui" !resizable modal !has-separator
-		window-position="{WindowPosition.CENTER_ON_PARENT}"
+		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name="ragui" version="0.1"
 		copyright="Copyright (c) 2009-2010 pancake/nibble"
 		comments="Graphical hexeditor, disassembler and debugger"
@@ -172,7 +105,11 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 		}
 
 		public MainWindow () {
-			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
+			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
+		}
+
+		private void menuToolsHeaders() {
+			/* TODO */
 		}
 
 		private void menuToolsAssembler() {
@@ -207,5 +144,29 @@ Window gtkon:version=0.2 using=Gtk name=Ragui.MainWindow title="ragui"
 		   leftbox.append_text ("bar low");
 		   }
 		 */
+		public MainPanel panel;
+		public MainBody body;
+
+		public void view_panel () {
+			if (panel == null)
+				panel = new MainPanel ();
+			box_body.children = null;
+			box_body.add (panel);
+			box_body.show_all ();
+		}
+
+		public void view_body () {
+			if (body == null)
+				body = new MainBody ();
+			box_body.children = null;
+			box_body.add (body);
+			box_body.show_all ();
+		}
+
+		public void setup_view () {
+			if (body != null) {
+				body.setup_view ();
+			}
+		}
 	}-
 }

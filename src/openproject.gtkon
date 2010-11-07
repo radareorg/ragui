@@ -1,13 +1,15 @@
 /* Dialogs to open project file */
 
-VBox using=Gtk gtkon:version=0.2 name=OpenProject border_width=5 spacing=5 {
+VBox using=Gtk gtkon:version=0.4 name=OpenProject border_width=5 spacing=5 {
 	Label fill !expand label="Select radare project file";
 	FileChooserWidget expand action=FileChooserAction.OPEN $fc;
 
+/*
 	HButtonBox layout_style={ButtonBoxStyle.END} !expand spacing=3 {
 		Button label=gtk-cancel use-stock clicked=onClickCancel;
 		Button label=gtk-open use-stock clicked=onClickOpen;
 	}
+*/
 
 	-{
 		public string file;

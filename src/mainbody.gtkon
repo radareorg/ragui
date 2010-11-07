@@ -1,0 +1,204 @@
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+
+VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
+	border-width=1
+	using:Ragui="Ragui"
+	using:Grava="Grava"
+	using:Grasmwidget="Grasmwidget"
+	using:Codeview="Codeview"
+	using:Hexview="Hexview"
+	using:Listview="Listview"
+{
+/*
+		Toolbar !expand {
+			Button use-stock label="preferences";
+			VSeparator;
+			Button use-stock label="breakpoint";
+			Button use-stock label="step";
+			Button use-stock label="continue";
+		}
+*/
+		VPaned $body position=500 {
+			HPaned position=250 {
+				VBox spacing=3 {
+					ComboBox text !expand $leftbox;
+					VBox $vb0 {
+						ScrolledWindow can-focus expand
+							hscrollbar-policy="{PolicyType.AUTOMATIC}"
+							vscrollbar-policy="{PolicyType.AUTOMATIC}" {
+
+							// TODO: move listview inside leftvb.. or we toggle visibility? do we need leftvb?
+							Listview:Widget $listview;
+						}
+					}
+				}
+
+				VBox add2 {
+					Notebook expand tab-vborder=1 {
+						VBox {
+							tab-label {
+								Label label="code/data";
+							}
+							VPaned position=300 {
+								Codeview:Widget $codeview;
+								Hexview:Widget $hexview add2;
+							}
+						}
+						VBox {
+							tab-label {
+								Label label="graph";
+							}
+							VBox {
+								Grava:Widget $grava;
+							}
+						}
+						/*Label label="hash-foo" {
+							tab-label {
+								Label label="data analysis";
+							}
+						}*/
+					}
+
+				}
+			}
+			Ragui:Console $console add2;
+		}
+/*
+		HBox !expand {
+			ProgressBar !expand;
+			Statusbar expand;
+		}
+*/
+
+	AboutDialog gtkaml:standalone $.aboutdialog delete-event="aboutdialog.hide_on_delete"
+		border-width=5 title="About ragui" !resizable modal !has-separator
+		window-position="{WindowPosition.CENTER_ON_PARENT}"
+		program-name="ragui" version="0.1"
+		copyright="Copyright (c) 2009-2010 pancake/nibble"
+		comments="Graphical hexeditor, disassembler and debugger"
+		website="http://www.radare.org/"
+		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble.ds@gmail.com)", null}}';
+
+	-{
+		public MainBody () {
+			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
+			setup_leftbox ();
+			setup_leftlist ();
+			setup_io ();
+			setup_console ();
+		}
+
+		private void setup_leftbox () {
+			leftbox.append_text ("Information");
+			leftbox.append_text ("Sections");
+			leftbox.append_text ("Imports");
+			leftbox.append_text ("Symbols");
+			leftbox.append_text ("Relocations");
+			leftbox.append_text ("Entry Points");
+			leftbox.append_text ("Registers");
+			leftbox.append_text ("Breakpoints");
+			leftbox.set_active (0);
+			leftbox.changed.connect ( (x)=> {
+				change_leftlist (x.get_active_text ());
+			});
+			change_leftlist ("Information");
+		}
+
+		public void setup_view () {
+			if (this.get_has_window ()) {
+				int h = 0, w = 0;
+				this.window.get_size (out w, out h);
+				body.position = h/2;
+			}
+		}
+
+		private void setup_leftlist () {
+			var lv = listview;
+			// TODO:get leftbox option
+			lv.set_actions ("seek", "breakpoint", "continue until", "inspect");
+			lv.menu_handler.connect ((m, d) => {
+				print ("clicked "+m.to_string ()+": "+
+				d.name+"at addr"+d.offset.to_string ()+"\n");
+			});
+		}
+
+		private inline string S(string str) {
+			if (str == null)
+				return "";
+			return str;
+		}
+
+		private void change_leftlist (string type) {
+			var lv = listview;
+			var baddr = gc.core.bin.get_baddr();
+			lv.clear ();
+			lv.show ();
+			var info = gc.core.bin.get_info ();
+			if (info == null)
+				return;
+			switch (type) {
+			case "Information":
+				if (info != null) {
+					lv.add_row_s ("file", S(info.file));
+					lv.add_row_s ("class", S(info.rclass));
+					lv.add_row_s ("type", S(info.type));
+					lv.add_row_s ("OS", S(info.os));
+					lv.add_row_s ("machine", S(info.machine));
+					lv.add_row_s ("subsystem", S(info.subsystem));
+					lv.add_row_s ("bits", info.bits.to_string ());
+					lv.add_row_s ("endian", info.big_endian?"big":"little");
+				}
+				// TODO lv.add_row_s ("relocs", info.dbg_info.is_stripped ()?"true":"false");
+				break;
+			case "Sections":
+				foreach (var scn in gc.core.bin.get_sections ())
+					lv.add_row (baddr+scn.rva, scn.name);
+				break;
+			case "Imports":
+				foreach (var imp in gc.core.bin.get_imports ())
+					lv.add_row (baddr+imp.rva, imp.name);
+				break;
+			case "Symbols":
+				foreach (var sym in gc.core.bin.get_symbols ())
+					lv.add_row (baddr+sym.rva, sym.name);
+				break;
+			case "Relocations":
+				foreach (var rel in gc.core.bin.get_relocs ())
+					lv.add_row (baddr+rel.rva, rel.name);
+				break;
+			case "Entry Points":
+				int i = 0;
+				foreach (var entry in gc.core.bin.get_entries ()) {
+					lv.add_row (baddr+entry.rva, "entry%i".printf (i++));
+				}
+				break;
+			case "Registers":
+				break;
+			}
+		}
+
+		private void setup_io () {
+			var hex = hexview;
+			hex.buffer.update.connect ((x,y)=> {
+				print ("READING FROM 0x%08llx\n", x);
+				uint8 *ptr = (void *)(size_t)x;
+				hex.buffer.start = x;
+				hex.buffer.end = x+y;
+				hex.buffer.size = y;
+				hex.buffer.bytes = new uint8[y];
+				if (x>=0x8048000)
+					Memory.copy (hex.buffer.bytes, ptr, y);
+			});
+		}
+
+		private void setup_console () {
+			var cons = console;
+			cons.cmd_handler.connect ((x) => {
+				var prompt = ("[0x%08"+uint64.FORMAT_MODIFIER+"x] ").printf (gc.core.offset);
+				var cmd = gc.core.cmd_str (x);
+				cons.set_text (prompt+x+"\n"+cmd);
+			});
+		}
+
+	}-
+}

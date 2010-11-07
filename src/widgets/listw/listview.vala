@@ -134,6 +134,13 @@ public class Listview.Widget : ScrolledWindow {
 		}
 	}
 
+	public void add_row_s (string key, string val) {
+		TreeIter iter;
+		model.append (out iter);
+		model.set (iter, 0, key, 1, val);
+		//rows.append (ListviewData (off, name));
+	}
+
 	public void add_row (uint64 off, string name) {
 		TreeIter iter;
 		model.append (out iter);
