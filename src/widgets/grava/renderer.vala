@@ -16,9 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Cairo;
 using Gtk;
-using GLib;
+using Cairo;
 
 public class Grava.Renderer {
 	public static void draw_edge(Context ctx, Edge edge) {
@@ -36,9 +35,9 @@ public class Grava.Renderer {
 			ctx.set_line_width (6);
 		else ctx.set_line_width (1);
 		set_color (ctx, edge.data);
-		ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
+		ctx.translate (edge.orig.x+(edge.orig.w/2), edge.orig.y+oh);
 		ctx.translate (dx-4, dy);
-		triangle (ctx, 8,8,true);
+		triangle (ctx, 8, 8, true);
 		ctx.stroke ();
 
 		ctx.restore ();
@@ -64,7 +63,7 @@ public class Grava.Renderer {
 			dx = edge.dest.w;
 			//dy += edge.dest.h/2;
 			//////ctx.curve_to(0, 0, 200, 100, dx-edge.orig.w/2, dy);
-			ctx.curve_to(0, 0, 
+			ctx.curve_to (0, 0, 
 				(edge.dest.x-edge.orig.x)/2 , 
 				(edge.dest.y-edge.orig.y)/2 , 
 				(edge.dest.x-edge.orig.x)/2 , 
@@ -100,14 +99,14 @@ public class Grava.Renderer {
 			//ctx.set_source_rgb (0.0, 0.0, 0.0);
 			if (Graph.selected == edge.orig)
 				ctx.set_line_width (6);
-			line(ctx, 0,0, dx, dy);
+			line (ctx, 0,0, dx, dy);
 		} else {
 			/* bottom to up */
 			ctx.translate (edge.orig.x+(edge.orig.w/2),edge.orig.y+oh);
-			ctx.move_to(0, 0);
+			ctx.move_to (0, 0);
 			  //dx = edge.dest.x-edge.orig.x;
 			dx = edge.dest.x-edge.orig.x+edge.dest.w/2-edge.orig.w/2;
-			dy = edge.dest.y-edge.orig.y- oh; // or 80 or so depending if > or < ???
+			dy = edge.dest.y-edge.orig.y-oh; // or 80 or so depending if > or < ???
 			//arrow
 			if (Graph.selected == edge.orig)
 				ctx.set_line_width (6);
@@ -283,16 +282,16 @@ public class Grava.Renderer {
 				circle(ctx, node.w, node.h);
 			else square (ctx, node.w, node.h);
 		}
-		ctx.stroke();
-		ctx.restore();
+		ctx.stroke ();
+		ctx.restore ();
 	}
 
 	public static void circle(Context ctx, double w, double h) {
-		ctx.save();
-		ctx.scale(1, h/w);
+		ctx.save ();
+		ctx.scale (1, h/w);
 		ctx.move_to (w, h/2.5);
-		ctx.arc(w/2, h/2.5, ((w<h)?h:w)*0.7, 0, 2*Math.PI);
-		ctx.restore();
+		ctx.arc (w/2, h/2.5, ((w<h)?h:w)*0.7, 0, 2*Math.PI);
+		ctx.restore ();
 		//ctx.arc(100,250, 50, 0, 2*Math.PI); //w/2, h/2.5, ((w<h)?h:w)*0.7, 0, 2*Math.PI);
 /*
 		ctx.rel_line_to (w, 0);

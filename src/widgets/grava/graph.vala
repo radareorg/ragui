@@ -214,8 +214,8 @@ public class Grava.Graph {
 		var sedon = nodes.copy ();
 		sedon.reverse ();
 		foreach (unowned Node node in sedon) {
-			if (x>= node.x*z && x <= node.x*z+node.w*z
-			&& y >= node.y*z && y <= node.y*z+node.h*z)
+			if ((x >= (node.x*z)) && (x <= (node.x*z+node.w*z))
+			&&  (y >= (node.y*z)) && (y <= (node.y*z+node.h*z)))
 				return node;
 		}
 		return null;

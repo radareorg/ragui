@@ -16,10 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using GLib;
-using Cairo;
 using Gtk;
 using Gdk;
+using Cairo;
 
 public class Grava.Widget : VBox {
 	enum WheelAction {
@@ -453,13 +452,14 @@ load_graph_at("$$");
 		if (n != null) {
 			/* XXX this is not scaling properly */
 			if (((eb.y-(10*graph.zoom)-graph.pany)<(n.y*graph.zoom))
-			&&  (eb.x-graph.panx>(n.x+n.w-(10*graph.zoom))*graph.zoom)) {
+			  && (eb.x-graph.panx>(n.x+n.w-(10*graph.zoom))*graph.zoom)) {
 				n.has_body = !n.has_body;
 				n.fit();
 			}
-			opanx = eb.x;
-			opany = eb.y;
-			da.queue_draw_area(0, 0, 5000, 3000);
+			//opanx = graph.zoom*(eb.x-graph.panx); //*graph.zoom;
+			//opany = graph.zoom*(eb.y-graph.pany); //*graph.zoom;
+			opanx = opany = 0; // already calculated in 2nd motion iteration
+			da.queue_draw_area (0, 0, 5000, 3000);
 		}
 		return true;
 	}
@@ -482,24 +482,28 @@ load_graph_at("$$");
 			/* TODO: properly handle the graph.zoom */
 			if (n != on) {
 				/* offx, offy are the delta between click and node x,y */
-				offx = (emx/graph.zoom - n.x);
-				offy = (emy/graph.zoom - n.y);
+				//offx = (emx/graph.zoom - n.x);
+				//offy = (emy/graph.zoom - n.y);
+				offx = (emx-n.x)/graph.zoom;
+				offy = (emy-n.y)/graph.zoom;
+				//print ("ONCE DELTA %lf %lf\n", offx, offy);
+				offx = 0; offy = 0; // select top-left corner of node
 				on = n;
 			}
 
 			n.x = (emx - offx)/graph.zoom;
 			n.y = (emy - offy)/graph.zoom;
 
-			da.queue_draw_area(0, 0, 5000, 3000);
+			da.queue_draw_area (0, 0, 5000, 3000);
 			Graph.selected = n;
 		} else {
 			/* pan view */
 			if ((opanx!=0) && (opany!=0)) {
 				double x = em.x-opanx;
 				double y = em.y-opany;
-				graph.panx+=x;//*0.8;
-				graph.pany+=y;//*0.8;
-				da.queue_draw_area(0, 0, 5000, 3000);
+				graph.panx += x;//*0.8;
+				graph.pany += y;//*0.8;
+				da.queue_draw_area (0, 0, 5000, 3000);
 			}
 			opanx = em.x;
 			opany = em.y;
@@ -517,13 +521,13 @@ load_graph_at("$$");
 		ctx.save();
 		if (graph.zoom < 0.05)
 			graph.zoom = 0.05;
-		graph.draw(ctx);
-		ctx.restore();
+		graph.draw (ctx);
+		ctx.restore ();
 		if (separator != 0) {
 			ctx.set_source_rgba (0.6, 0.6, 0.6, 0.2);
 			ctx.move_to (0, 0);
 			Renderer.square (ctx, separator, 2048);
-			ctx.fill();
+			ctx.fill ();
 		}
 	}
 

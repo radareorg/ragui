@@ -1,6 +1,7 @@
 #include ../../config.mk
 
 VALAFLAGS=--pkg gtk+-2.0 --pkg cairo -g
+VALAFLAGS+=--pkg posix
 
 SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
 	node.vala renderer.vala widget.vala shape.vala dot.vala \
