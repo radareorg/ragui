@@ -3,10 +3,12 @@ using Gtk;
 public class Grabin.Widget : ScrolledWindow {
 	public ListStore listmodel;
 	public SList<string> actions;
+	public int retcol;
 	public signal void menu_handler(string action, string data);
 
 	public Widget() {
 		set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		retcol = 0;
 	}
 
 	public void sort_column(TreeView tv, int n) {
@@ -33,13 +35,14 @@ public class Grabin.Widget : ScrolledWindow {
 		string? data = null;
 		TreeModel model;
 		TreeIter iter;
+		GLib.Value val;
 
 		if (eb.button != 3)
 			return false;
 		var sel = (w as TreeView).get_selection ();
 		if (sel.get_selected (out model, out iter)) {
-			var path = model.get_path (iter);
-			data = path.to_string ();
+			model.get_value (iter, retcol, out val);
+			data = val.get_string ();
 		}
 		var menu = new Menu();
 		foreach (var str in this.actions) {
@@ -62,5 +65,9 @@ public class Grabin.Widget : ScrolledWindow {
 				break;
 			this.actions.append (k);
 		}
+	}
+
+	public void clear () {
+		listmodel.clear ();
 	}
 }

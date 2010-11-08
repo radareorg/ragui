@@ -45,11 +45,35 @@ name=GrabinTest title="Grabin" {
 		Gtk.init (ref args);
 		var window = new GrabinTest ();
 		var grabinsections = new Sections (bin);
+		grabinsections.set_actions ("Seek");
+		grabinsections.menu_handler.connect ((m, d) => {
+				print ("Sections clicked "+m.to_string ()+": "+d+"\n");
+			});
 		var grabinsymbols = new Symbols (bin);
+		grabinsymbols.set_actions ("Seek");
+		grabinsymbols.menu_handler.connect ((m, d) => {
+				print ("Symbols clicked "+m.to_string ()+": "+d+"\n");
+			});
 		var grabinimports = new Imports (bin);
+		grabinimports.set_actions ("Seek");
+		grabinimports.menu_handler.connect ((m, d) => {
+				print ("Imports clicked "+m.to_string ()+": "+d+"\n");
+			});
 		var grabinstrings = new Strings (bin);
+		grabinstrings.set_actions ("Seek");
+		grabinstrings.menu_handler.connect ((m, d) => {
+				print ("Strings clicked "+m.to_string ()+": "+d+"\n");
+			});
 		var grabinrelocs = new Relocs (bin);
+		grabinrelocs.set_actions ("Seek");
+		grabinrelocs.menu_handler.connect ((m, d) => {
+				print ("Relocations clicked "+m.to_string ()+": "+d+"\n");
+			});
 		var grabinfat = new Fat (bin);
+		grabinfat.set_actions ("Load", "Extract");
+		grabinfat.menu_handler.connect ((m, d) => {
+				print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
+			});
 		window.vbsections.add (grabinsections);
 		window.vbsymbols.add (grabinsymbols);
 		window.vbimports.add (grabinimports);

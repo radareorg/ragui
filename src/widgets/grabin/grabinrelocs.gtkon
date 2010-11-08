@@ -38,6 +38,7 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 					3, rel.type.to_string ("%02i"),
 					4, rel.name);
 		}
+		retcol = 1;
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);
 	}

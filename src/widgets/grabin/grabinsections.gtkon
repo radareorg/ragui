@@ -50,6 +50,7 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 					5, RStr.rwx_i(scn.srwx),
 					6, scn.name);
 		}
+		retcol = 1;
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);
 	}

@@ -1,16 +1,20 @@
 Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Fat {
 	TreeView $view {
-		TreeViewColumn title="Filename" clickable clicked="{sort_column (view, 0)}" {
+		TreeViewColumn title="Index" clickable clicked="{sort_column (view, 0)}" {
 			CellRendererText $.column0 expand;
 			CellRendererText &column0 attribute="text" column=0;
 		}
-		TreeViewColumn title="Arch" clickable clicked="{sort_column (view, 1)}" {
+		TreeViewColumn title="Filename" clickable clicked="{sort_column (view, 1)}" {
 			CellRendererText $.column1 expand;
 			CellRendererText &column1 attribute="text" column=1;
 		}
-		TreeViewColumn title="Machine" clickable clicked="{sort_column (view, 2)}" {
+		TreeViewColumn title="Arch" clickable clicked="{sort_column (view, 2)}" {
 			CellRendererText $.column2 expand;
 			CellRendererText &column2 attribute="text" column=2;
+		}
+		TreeViewColumn title="Machine" clickable clicked="{sort_column (view, 3)}" {
+			CellRendererText $.column3 expand;
+			CellRendererText &column3 attribute="text" column=3;
 		}
 	}
 
@@ -19,7 +23,8 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 		TreeIter iter;
 		int i;
 
-		listmodel = new ListStore (3, typeof (string), typeof (string), typeof (string));
+		listmodel = new ListStore (4, typeof (string), typeof (string),
+					typeof (string), typeof (string));
 		for (i = 0; i < bin.narch; i++) {
 			bin.set_archidx (i);
 			var info = bin.get_info ();
@@ -27,10 +32,12 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 				continue;
 			listmodel.append (out iter);
 			listmodel.set (iter,
-					0, bin.curarch.file,
-					1, "%s - %i".printf (info.arch, info.bits),
-					2, info.machine);
+					0, i.to_string ("%03i"),
+					1, bin.curarch.file,
+					2, "%s - %i".printf (info.arch, info.bits),
+					3, info.machine);
 		}
+		retcol = 0;
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);
 	}
