@@ -1,4 +1,4 @@
-Notebook $GrabinAll gtkon:version=0.4 
+Notebook $Grabin.All gtkon:version=0.4 
 	using=Gtk
 	using:Radare="Radare"
 	using:Grabin="Grabin"
@@ -34,45 +34,26 @@ scrollable tab-vborder=1 {
 		}
 	}
 -{
-	public GrabinAll (RBin bin) {
-		var grabinsections = new Sections (bin);
-		grabinsections.set_actions ("Seek");
-		grabinsections.set_retcolumn (Sections.COLUMN.Address);
-		grabinsections.menu_handler.connect ((m, d) => {
-				print ("Sections clicked "+m+": "+d+"\n");
-			});
-		var grabinsymbols = new Symbols (bin);
-		grabinsymbols.set_actions ("Seek");
-		grabinsymbols.menu_handler.connect ((m, d) => {
-				print ("Symbols clicked "+m.to_string ()+": "+d+"\n");
-			});
-		var grabinimports = new Imports (bin);
-		grabinimports.set_actions ("Seek");
-		grabinimports.menu_handler.connect ((m, d) => {
-				print ("Imports clicked "+m.to_string ()+": "+d+"\n");
-			});
-		var grabinstrings = new Strings (bin);
-		grabinstrings.set_actions ("Seek");
-		grabinstrings.set_retcolumn (Strings.COLUMN.String);
-		grabinstrings.menu_handler.connect ((m, d) => {
-				print ("Strings clicked "+m.to_string ()+": "+d+"\n");
-			});
-		var grabinrelocs = new Relocs (bin);
-		grabinrelocs.set_actions ("Seek");
-		grabinrelocs.menu_handler.connect ((m, d) => {
-				print ("Relocations clicked "+m.to_string ()+": "+d+"\n");
-			});
-		var grabinfat = new Fat (bin);
-		grabinfat.set_actions ("Load", "Extract");
-		grabinfat.menu_handler.connect ((m, d) => {
-				print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
-			});
-		this.vbsections.add (grabinsections);
-		this.vbsymbols.add (grabinsymbols);
-		this.vbimports.add (grabinimports);
-		this.vbstrings.add (grabinstrings);
-		this.vbrelocs.add (grabinrelocs);
-		this.vbfat.add (grabinfat);
+	public Grabin.Sections sections;
+	public Grabin.Symbols symbols;
+	public Grabin.Imports imports;
+	public Grabin.Strings strings;
+	public Grabin.Relocs relocs;
+	public Grabin.Fat fat;
+
+	public All (RBin bin) {
+		sections = new Grabin.Sections (bin);
+		symbols = new Grabin.Symbols (bin);
+		imports = new Grabin.Imports (bin);
+		strings = new Grabin.Strings (bin);
+		relocs = new Grabin.Relocs (bin);
+		fat = new Grabin.Fat (bin);
+		this.vbsections.add (sections);
+		this.vbsymbols.add (symbols);
+		this.vbimports.add (imports);
+		this.vbstrings.add (strings);
+		this.vbrelocs.add (relocs);
+		this.vbfat.add (fat);
 	}
 }-
 }

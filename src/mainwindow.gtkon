@@ -53,7 +53,6 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 					Menu {
 						ImageMenuItem stock-id="Calculator";
 						ImageMenuItem stock-id="Assembler" activate="menuToolsAssembler";
-						ImageMenuItem stock-id="Grabin" activate="menuToolsGrabin";
 						ImageMenuItem stock-id="Headers" activate="menuToolsHeaders";
 						ImageMenuItem stock-id="Scripting";
 						SeparatorMenuItem;
@@ -137,7 +136,36 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 		}
 
 		private void menuToolsHeaders() {
-			/* TODO */
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "ragui: grabin";
+			var grabin = new Grabin.All (gc.core.bin);
+			grabin.sections.set_actions ("Seek");
+			grabin.sections.menu_handler.connect ((m, d) => {
+					print ("Sections clicked "+m+": "+d+"\n");
+				});
+			grabin.symbols.set_actions ("Seek");
+			grabin.symbols.menu_handler.connect ((m, d) => {
+					print ("Symbols clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.imports.set_actions ("Seek");
+			grabin.imports.menu_handler.connect ((m, d) => {
+					print ("Imports clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.strings.set_actions ("Seek");
+			grabin.strings.set_retcolumn (Grabin.Strings.COLUMN.String);
+			grabin.strings.menu_handler.connect ((m, d) => {
+					print ("Strings clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.relocs.set_actions ("Seek");
+			grabin.relocs.menu_handler.connect ((m, d) => {
+					print ("Relocations clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.fat.set_actions ("Load", "Extract");
+			grabin.fat.menu_handler.connect ((m, d) => {
+					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
+				});
+			w.add (grabin);
+			w.show_all ();
 		}
 
 		private void menuToolsAssembler() {
@@ -145,14 +173,6 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			w.title = "ragui: assembler";
 			var grasm = new Grasmwidget.Widget ();
 			w.add (grasm);
-			w.show_all ();
-		}
-
-		private void menuToolsGrabin() {
-			var w = new Window (WindowType.TOPLEVEL);
-			w.title = "ragui: grabin";
-			var grabin = new GrabinAll (gc.core.bin);
-			w.add (grabin);
 			w.show_all ();
 		}
 
