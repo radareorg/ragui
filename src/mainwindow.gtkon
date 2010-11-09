@@ -53,6 +53,7 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 					Menu {
 						ImageMenuItem stock-id="Calculator";
 						ImageMenuItem stock-id="Assembler" activate="menuToolsAssembler";
+						ImageMenuItem stock-id="Grabin" activate="menuToolsGrabin";
 						ImageMenuItem stock-id="Headers" activate="menuToolsHeaders";
 						ImageMenuItem stock-id="Scripting";
 						SeparatorMenuItem;
@@ -144,6 +145,14 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 			w.title = "ragui: assembler";
 			var grasm = new Grasmwidget.Widget ();
 			w.add (grasm);
+			w.show_all ();
+		}
+
+		private void menuToolsGrabin() {
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "ragui: grabin";
+			var grabin = new GrabinAll (gc.core.bin);
+			w.add (grabin);
 			w.show_all ();
 		}
 

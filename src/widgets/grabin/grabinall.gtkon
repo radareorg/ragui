@@ -1,49 +1,40 @@
-Window gtkon:version=0.4
+Notebook $GrabinAll gtkon:version=0.4 
 	using=Gtk
 	using:Radare="Radare"
 	using:Grabin="Grabin"
-name=GrabinTest title="Grabin" {
-	Notebook tab-vborder=1 {
-		VBox $.vbsections {
-			tab-label {
-				Label label="Sections";
-			}
+scrollable tab-vborder=1 {
+	VBox $.vbsections {
+		tab-label {
+			Label label="Sections";
 		}
-		VBox $.vbsymbols {
-			tab-label {
-				Label label="Symbols";
-			}
+	}
+	VBox $.vbsymbols {
+		tab-label {
+			Label label="Symbols";
 		}
-		VBox $.vbimports {
-			tab-label {
-				Label label="Imports";
-			}
+	}
+	VBox $.vbimports {
+		tab-label {
+			Label label="Imports";
 		}
-		VBox $.vbstrings {
-			tab-label {
-				Label label="Strings";
-			}
+	}
+	VBox $.vbstrings {
+		tab-label {
+			Label label="Strings";
 		}
-		VBox $.vbrelocs {
-			tab-label {
-				Label label="Relocations";
-			}
+	}
+	VBox $.vbrelocs {
+		tab-label {
+			Label label="Relocations";
 		}
-		VBox $.vbfat {
-			tab-label {
-				Label label="SubBinaries";
-			}
+	}
+	VBox $.vbfat {
+		tab-label {
+			Label label="SubBinaries";
 		}
 	}
 -{
-	static int main (string[] args) {
-		if (args.length != 2)
-			error ("Usage: %s <file>\n", args[0]);
-		var bin = new RBin ();
-		if (bin.load (args[1], false) != 1)
-			error ("Cannot open binary file\n");
-		Gtk.init (ref args);
-		var window = new GrabinTest ();
+	public GrabinAll (RBin bin) {
 		var grabinsections = new Sections (bin);
 		grabinsections.set_actions ("Seek");
 		grabinsections.set_retcolumn (Sections.COLUMN.Address);
@@ -76,15 +67,12 @@ name=GrabinTest title="Grabin" {
 		grabinfat.menu_handler.connect ((m, d) => {
 				print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
 			});
-		window.vbsections.add (grabinsections);
-		window.vbsymbols.add (grabinsymbols);
-		window.vbimports.add (grabinimports);
-		window.vbstrings.add (grabinstrings);
-		window.vbrelocs.add (grabinrelocs);
-		window.vbfat.add (grabinfat);
-		window.show_all ();
-		Gtk.main ();
-		return 0;
+		this.vbsections.add (grabinsections);
+		this.vbsymbols.add (grabinsymbols);
+		this.vbimports.add (grabinimports);
+		this.vbstrings.add (grabinstrings);
+		this.vbrelocs.add (grabinrelocs);
+		this.vbfat.add (grabinfat);
 	}
 }-
 }

@@ -10,10 +10,12 @@ lib:
 	gtkamlc -C --library grabinstrings --vapi=../include/grabinstrings.vapi -H ../include/grabinstrings.h --pkg grabin ${VALAFLAGS} grabinstrings.gtkon
 	gtkamlc -C --library grabinrelocs --vapi=../include/grabinrelocs.vapi -H ../include/grabinrelocs.h --pkg grabin ${VALAFLAGS} grabinrelocs.gtkon
 	gtkamlc -C --library grabinfat --vapi=../include/grabinfat.vapi -H ../include/grabinfat.h --pkg grabin ${VALAFLAGS} grabinfat.gtkon
+	gtkamlc -C --library grabinall --vapi=../include/grabinall.vapi -H ../include/grabinall.h \
+		--pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg grabinimports --pkg grabinstrings --pkg grabinrelocs --pkg grabinfat ${VALAFLAGS} grabinall.gtkon
 
 main: lib
-	gtkamlc -C --pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg grabinimports --pkg grabinstrings --pkg grabinrelocs --pkg grabinfat ${VALAFLAGS} grabintest.gtkon
-	gcc -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` grabin.c grabinsections.c grabinsymbols.c grabinimports.c grabinstrings.c grabinrelocs.c grabintest.c grabinfat.c -o grabintest
+	valac -C --pkg gtk+-2.0 --pkg grabinall ${VALAFLAGS} grabintest.vala
+	gcc -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` grabin.c grabinsections.c grabinsymbols.c grabinimports.c grabinstrings.c grabinrelocs.c grabinfat.c grabinall.c grabintest.c -o grabintest
 
 clean:
 	rm -f *.c grabintest

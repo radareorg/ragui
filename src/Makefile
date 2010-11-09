@@ -9,7 +9,7 @@ PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
 #Grabin
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
-PKG+=--pkg grabinfat 
+PKG+=--pkg grabinfat --pkg grabinall
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
 PKG+=--vapidir=widgets/include
 PKG+=--Xcc=-Iwidgets/include
@@ -27,7 +27,7 @@ WIDGETS+=widgets/listw/listview.c
 WIDGETS+=widgets/grabin/grabin.c widgets/grabin/grabinsections.c
 WIDGETS+=widgets/grabin/grabinsymbols.c widgets/grabin/grabinimports.c
 WIDGETS+=widgets/grabin/grabinstrings.c widgets/grabin/grabinrelocs.c
-WIDGETS+=widgets/grabin/grabinfat.c
+WIDGETS+=widgets/grabin/grabinfat.c widgets/grabin/grabinall.c
 
 all: widgets.done
 	@${MAKE} vapi
