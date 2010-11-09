@@ -19,6 +19,13 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 	}
 
 -{
+	public enum COLUMN {
+		Index = 0,
+		Filename,
+		Arch,
+		Machine,
+	}
+
 	public Fat(RBin bin) {
 		TreeIter iter;
 		int i;

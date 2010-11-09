@@ -67,6 +67,10 @@ public class Grabin.Widget : ScrolledWindow {
 		}
 	}
 
+	public void set_retcolumn(int i) {
+		retcol = i;
+	}
+
 	public void clear () {
 		listmodel.clear ();
 	}

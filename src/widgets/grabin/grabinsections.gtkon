@@ -31,6 +31,16 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 	}
 
 -{
+	public enum COLUMN {
+		Index = 0,
+		Address,
+		Offset,
+		Size,
+		VSize,
+		Srwx,
+		Name
+	}
+
 	public Sections(RBin bin) {
 		TreeIter iter;
 		listmodel = new ListStore (7, typeof (string), typeof (string),

@@ -46,8 +46,9 @@ name=GrabinTest title="Grabin" {
 		var window = new GrabinTest ();
 		var grabinsections = new Sections (bin);
 		grabinsections.set_actions ("Seek");
+		grabinsections.set_retcolumn (Sections.COLUMN.Address);
 		grabinsections.menu_handler.connect ((m, d) => {
-				print ("Sections clicked "+m.to_string ()+": "+d+"\n");
+				print ("Sections clicked "+m+": "+d+"\n");
 			});
 		var grabinsymbols = new Symbols (bin);
 		grabinsymbols.set_actions ("Seek");
@@ -61,6 +62,7 @@ name=GrabinTest title="Grabin" {
 			});
 		var grabinstrings = new Strings (bin);
 		grabinstrings.set_actions ("Seek");
+		grabinstrings.set_retcolumn (Strings.COLUMN.String);
 		grabinstrings.menu_handler.connect ((m, d) => {
 				print ("Strings clicked "+m.to_string ()+": "+d+"\n");
 			});
