@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org>, nible<develsec.org> */
 
 VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 	border-width=1
@@ -35,7 +35,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 				}
 
 				VBox add2 {
-					Notebook expand tab-vborder=1 {
+					Notebook expand scrollable tab-vborder=1 {
 						VBox {
 							tab-label {
 								Label label="code/data";
@@ -108,7 +108,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 		copyright="Copyright (c) 2009-2010 pancake/nibble"
 		comments="Graphical hexeditor, disassembler and debugger"
 		website="http://www.radare.org/"
-		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble.ds@gmail.com)", null}}';
+		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble@develsec.org)", null}}';
 
 	-{
 		public MainBody () {
