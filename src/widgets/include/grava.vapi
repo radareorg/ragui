@@ -154,6 +154,7 @@ namespace Grava {
 		public XDot ();
 		public static bool export (Grava.Graph gr, string file);
 		public static bool import (Grava.Graph gr, string file);
+		public static bool import_string (Grava.Graph gr, string contents);
 	}
 	[CCode (cprefix = "GRAVA_SHAPE_", cheader_filename = "grava.h")]
 	public enum Shape {

@@ -5,7 +5,11 @@ VALAC?=valac
 GTKAMLC?=gtkamlc
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
-PKG+= --pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
+PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
+#Grabin
+PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
+PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
+PKG+=--pkg grabinfat 
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
 PKG+=--vapidir=widgets/include
 PKG+=--Xcc=-Iwidgets/include
@@ -19,6 +23,11 @@ WIDGETS+=widgets/hexview/hexviewbuffer.c
 WIDGETS+=widgets/grasm/grasmwidget.c
 WIDGETS+=widgets/grava/*.o
 WIDGETS+=widgets/listw/listview.c
+#Grabin
+WIDGETS+=widgets/grabin/grabin.c widgets/grabin/grabinsections.c
+WIDGETS+=widgets/grabin/grabinsymbols.c widgets/grabin/grabinimports.c
+WIDGETS+=widgets/grabin/grabinstrings.c widgets/grabin/grabinrelocs.c
+WIDGETS+=widgets/grabin/grabinfat.c
 
 all: widgets.done
 	@${MAKE} vapi
@@ -96,6 +105,7 @@ widgets.done:
 	cd widgets/grasm && ${MAKE} lib
 	cd widgets/grava && ${MAKE} lib
 	cd widgets/listw && ${MAKE} lib
+	cd widgets/grabin && ${MAKE} lib
 	:> widgets.done
 
 stuff:

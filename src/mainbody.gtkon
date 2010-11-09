@@ -8,6 +8,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 	using:Codeview="Codeview"
 	using:Hexview="Hexview"
 	using:Listview="Listview"
+	using:Grabin="Grabin"
 {
 /*
 		Toolbar !expand {
@@ -52,6 +53,36 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 								Grava:Widget $grava;
 							}
 						}
+						VBox $.vbsections {
+							tab-label {
+								Label label="Sections";
+							}
+						}
+						VBox $.vbsymbols {
+							tab-label {
+								Label label="Symbols";
+							}
+						}
+						VBox $.vbimports {
+							tab-label {
+								Label label="Imports";
+							}
+						}
+						VBox $.vbstrings {
+							tab-label {
+								Label label="Strings";
+							}
+						}
+						VBox $.vbrelocs {
+							tab-label {
+								Label label="Relocations";
+							}
+						}
+						VBox $.vbfat {
+							tab-label {
+								Label label="SubBinaries";
+							}
+						}
 						/*Label label="hash-foo" {
 							tab-label {
 								Label label="data analysis";
@@ -86,6 +117,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 			setup_leftlist ();
 			setup_io ();
 			setup_console ();
+			setup_grabin ();
 		}
 
 		private void setup_leftbox () {
@@ -198,6 +230,46 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 				var cmd = gc.core.cmd_str (x);
 				cons.set_text (prompt+x+"\n"+cmd);
 			});
+		}
+
+		private void setup_grabin () {
+			var grabinsections = new Grabin.Sections (gc.core.bin);
+			grabinsections.set_actions ("Seek");
+			grabinsections.set_retcolumn (Grabin.Sections.COLUMN.Address);
+			grabinsections.menu_handler.connect ((m, d) => {
+					print ("Sections clicked "+m+": "+d+"\n");
+				});
+			var grabinsymbols = new Grabin.Symbols (gc.core.bin);
+			grabinsymbols.set_actions ("Seek");
+			grabinsymbols.menu_handler.connect ((m, d) => {
+					print ("Symbols clicked "+m.to_string ()+": "+d+"\n");
+				});
+			var grabinimports = new Grabin.Imports (gc.core.bin);
+			grabinimports.set_actions ("Seek");
+			grabinimports.menu_handler.connect ((m, d) => {
+					print ("Imports clicked "+m.to_string ()+": "+d+"\n");
+				});
+			var grabinstrings = new Grabin.Strings (gc.core.bin);
+			grabinstrings.set_actions ("Seek");
+			grabinstrings.menu_handler.connect ((m, d) => {
+					print ("Strings clicked "+m.to_string ()+": "+d+"\n");
+				});
+			var grabinrelocs = new Grabin.Relocs (gc.core.bin);
+			grabinrelocs.set_actions ("Seek");
+			grabinrelocs.menu_handler.connect ((m, d) => {
+					print ("Relocations clicked "+m.to_string ()+": "+d+"\n");
+				});
+			var grabinfat = new Grabin.Fat (gc.core.bin);
+			grabinfat.set_actions ("Load", "Extract");
+			grabinfat.menu_handler.connect ((m, d) => {
+					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
+				});
+			this.vbsections.add (grabinsections);
+			this.vbsymbols.add (grabinsymbols);
+			this.vbimports.add (grabinimports);
+			this.vbstrings.add (grabinstrings);
+			this.vbrelocs.add (grabinrelocs);
+			this.vbfat.add (grabinfat);
 		}
 
 	}-

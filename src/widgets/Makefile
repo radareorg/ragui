@@ -5,6 +5,7 @@ all:
 	cd codew && ${MAKE}
 	cd hexview && ${MAKE}
 	cd listw && ${MAKE}
+	cd grabin && ${MAKE}
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../codew/*.vala --library codew
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../grava/*.vala --library grava
 
@@ -13,3 +14,4 @@ clean:
 	cd codew && ${MAKE} clean
 	cd grava && ${MAKE} clean
 	cd grasm && ${MAKE} clean
+	cd grabin && ${MAKE} clean
