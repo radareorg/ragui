@@ -52,7 +52,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 								Grava:Widget $grava;
 							}
 						}
-						VBox no-show-all $vbheaders {
+						VBox $vbheaders {
 							tab-label {
 								Label label="Headers";
 							}
@@ -91,6 +91,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 			setup_leftlist ();
 			setup_io ();
 			setup_console ();
+			setup_headers ();
 		}
 
 		private void setup_leftbox () {
@@ -203,6 +204,36 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 				var cmd = gc.core.cmd_str (x);
 				cons.set_text (prompt+x+"\n"+cmd);
 			});
+		}
+
+		private void setup_headers () {
+			var grabin = new Grabin.All (gc.core.bin);
+			grabin.sections.set_actions ("Seek");
+			grabin.sections.menu_handler.connect ((m, d) => {
+					print ("Sections clicked "+m+": "+d+"\n");
+				});
+			grabin.symbols.set_actions ("Seek");
+			grabin.symbols.menu_handler.connect ((m, d) => {
+					print ("Symbols clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.imports.set_actions ("Seek");
+			grabin.imports.menu_handler.connect ((m, d) => {
+					print ("Imports clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.strings.set_actions ("Seek");
+			grabin.strings.set_retcolumn (Grabin.Strings.COLUMN.String);
+			grabin.strings.menu_handler.connect ((m, d) => {
+					print ("Strings clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.relocs.set_actions ("Seek");
+			grabin.relocs.menu_handler.connect ((m, d) => {
+					print ("Relocations clicked "+m.to_string ()+": "+d+"\n");
+				});
+			grabin.fat.set_actions ("Load", "Extract");
+			grabin.fat.menu_handler.connect ((m, d) => {
+					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
+				});
+			vbheaders.add (grabin);
 		}
 	}-
 }

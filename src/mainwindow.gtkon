@@ -43,6 +43,7 @@ Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
 						ImageMenuItem stock-id="graph";
 						ImageMenuItem stock-id="code";
 						ImageMenuItem stock-id="hexdump";
+						ImageMenuItem stock-id="headers";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="reset";
 					}
