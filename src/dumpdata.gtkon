@@ -1,0 +1,54 @@
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+Window using=Gtk $Ragui.DumpData
+	modal title="Dump data" destroy-event=OnWindowCloseEvent
+{
+	VBox border-width=1 {
+		VBox {
+			Label !expand label="Dump data";
+			HBox !expand {
+				FileChooserWidget expand action={FileChooserAction.SAVE} $fc;
+			}
+			HBox !expand {
+				Label !expand label="from";
+				Entry $from;
+			}
+			HBox !expand {
+				Label !expand label="to";
+				Entry $to;
+			}
+		}
+		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
+			Button label=gtk-cancel use-stock clicked=OnButtonCloseClicked;
+			Button label=gtk-ok use-stock clicked=OnButtonOkClicked;
+		}
+	}
+-{
+	//public uint64 from { get; set { }};
+	//public uint64 to 
+
+	public DumpData() {
+		resize (400, 300);
+	}
+
+	private void OnButtonCloseClicked() {
+		this.hide ();
+	}
+
+	private void OnButtonOkClicked() {
+		var f = from.text.to_uint64 ();
+		var t = to.text.to_uint64 ();
+		if (f>t) {
+			gc.cmd (@"s $offset");
+			gc.cmd (@"wt $filename");
+			this.hide ();
+		} else {
+			warning ("TODO: display popup with error message");
+		}
+	}
+
+	private bool OnWindowCloseEvent(Gdk.Event ev) {
+		this.hide ();
+		return true;
+	}
+}-
+}

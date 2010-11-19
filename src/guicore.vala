@@ -39,6 +39,7 @@ public class Ragui.GuiCore {
 	public bool seek (uint64 addr) {
 		// XXX: handle ret value
 		gc.core.seek (addr, true);
+		cmd (@"s $addr");
 		return true;
 	}
 

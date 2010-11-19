@@ -41,6 +41,7 @@ all: widgets.done
 GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon
+# TODO: GTKONFILES+=datadump.gtkon
 GTKAMLFILES=
 VALAFILES=guicore.vala main.vala
 RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))

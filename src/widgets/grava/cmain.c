@@ -86,7 +86,8 @@ int main(int argc, char **argv) {
 	grava_graph_update(grava->graph);
 	grava_xdot_export (grava->graph, "out.xdot");
 #else
-	grava_xdot_import (grava->graph, "test.xdot");
+	//grava_xdot_import (grava->graph, "test.xdot");
+	grava_xdot_import (grava->graph, "/tmp/graph.xdot");
 	//grava_xdot_import (grava->graph, "file.xdot");
 	//grava_xdot_import (grava->graph, "out.xdot");
 #endif

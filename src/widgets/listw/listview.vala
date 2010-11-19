@@ -1,4 +1,5 @@
 using Gtk;
+using Gdk;
 
 public struct ListviewData {
 	public uint64 offset;
@@ -20,11 +21,26 @@ public class Listview.Widget : ScrolledWindow {
 	public signal void menu_handler(string action, ListviewData row);
 	public signal void menu_construct();
 
+	private ListviewData? get_listviewdata () {
+		ListviewData? data = null;
+		var sel = view.get_selection ();
+		if (sel.count_selected_rows () == 1) {
+			TreeModel m;
+			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);
+			foreach (var row in list) {
+				var nth = row.to_string ();
+				data = rows.nth_data (nth.to_int ());
+				break;
+			}
+		}
+		return data;
+	}
+
 	private bool button_press (Gtk.Widget _w, Gdk.EventButton eb) {
 		if (eb.button != 3)
 			return false;
 
-		ListviewData? data = null;
+		var data = get_listviewdata ();
 		var sel = view.get_selection ();
 		if (sel.count_selected_rows () == 1) {
 			TreeModel m;
@@ -94,6 +110,16 @@ public class Listview.Widget : ScrolledWindow {
 		var col1 = view.get_column (Column.NAME);
 		col0.set_clickable (true);
 		col0.set_sort_indicator (false);
+		view.button_press_event.connect ((e)=> {
+			if (e.type == EventType.2BUTTON_PRESS) {
+				var data = get_listviewdata ();
+				var action = actions.nth_data (0);
+				print (@"DOUBLE LICK! $action\n");
+				menu_handler (action, data);
+				return true;
+			}
+			return false;
+		});
 		col0.clicked.connect ((x)=> {
 			var order = x.get_sort_order ();
 			if (order == SortType.ASCENDING)
@@ -108,9 +134,8 @@ public class Listview.Widget : ScrolledWindow {
 		col1.set_sort_indicator (false);
 		col1.clicked.connect ((x)=> {
 			var order = x.get_sort_order ();
-			if (order == SortType.ASCENDING)
-				order = SortType.DESCENDING;
-			else order = SortType.ASCENDING;
+			order = (order == SortType.ASCENDING)?
+				SortType.DESCENDING:SortType.ASCENDING;
 			x.sort_order = order;
 			col0.set_sort_indicator (false);
 			col1.set_sort_indicator (true);
@@ -118,6 +143,14 @@ public class Listview.Widget : ScrolledWindow {
 			});
 		//model.set_sort_column_id (Column.OFFSET, SortType.ASCENDING);
 
+	/*
+		//col1.clicked.connect ( (x)=> {
+			var s = view.get_settings ();
+			var t = s.gtk_double_click_time ();
+			var d = s.gtk_double_click_distance ();
+			print (@"Go fuck myself $s $t $d\n");
+		//});
+*/
 		view.button_release_event.connect (button_press);
 		view.set_search_column (Column.NAME);
 		view.set_enable_search (true);
@@ -128,7 +161,7 @@ public class Listview.Widget : ScrolledWindow {
 		this.actions = new SList<string> ();
 		this.actions.append (x);
 		var l = va_list();
-		while (true) {
+		for (;;) {
 			string? k = l.arg ();
 			if (k == null)
 				break;

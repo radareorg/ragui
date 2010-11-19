@@ -1,6 +1,7 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org>, nible<develsec.org> */
 
-VBox using=Gtk name=Ragui.MainBody border-width=1
+VBox using=Gtk $Ragui.MainBody border-width=1
+	using:Radare="Radare"
 	using:Ragui="Ragui"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
@@ -17,7 +18,6 @@ VBox using=Gtk name=Ragui.MainBody border-width=1
 			Button use-stock label="continue";
 		}
 */
-		VPaned $body position=500 {
 			HPaned position=250 {
 				VBox spacing=3 {
 					ComboBox text !expand $leftbox;
@@ -32,42 +32,42 @@ VBox using=Gtk name=Ragui.MainBody border-width=1
 					}
 				}
 
-				VBox add2 {
-					// TODO: set each tab to a var, and use it from see code/graph
-					Notebook expand scrollable tab-vborder=1 {
-						VBox {
-							tab-label {
-								Label label="code/data";
-							}
-							VPaned position=300 {
-								Codeview:Widget $codeview;
-								Hexview:Widget $hexview add2;
-							}
-						}
-						VBox {
-							tab-label {
-								Label label="graph";
+				VPaned $body position=500 add2 {
+					VBox {
+						// TODO: set each tab to a var, and use it from see code/graph
+						Notebook expand scrollable tab-vborder=1 {
+							VBox {
+								tab-label {
+									Label label="code/data";
+								}
+								VPaned position=300 {
+									Codeview:Widget $codeview;
+									Hexview:Widget $hexview add2;
+								}
 							}
 							VBox {
-								Grava:Widget $grava;
+								tab-label {
+									Label label="graph";
+								}
+								VBox {
+									Grava:Widget $grava;
+								}
 							}
+							VBox $vbheaders {
+								tab-label {
+									Label label="Headers";
+								}
+							}
+							/*Label label="hash-foo" {
+							  tab-label {
+							  Label label="data analysis";
+							  }
+							  }*/
 						}
-						VBox $vbheaders {
-							tab-label {
-								Label label="Headers";
-							}
-						}
-						/*Label label="hash-foo" {
-							tab-label {
-								Label label="data analysis";
-							}
-						}*/
 					}
-
+					Ragui:Console $console add2;
 				}
 			}
-			Ragui:Console $console add2;
-		}
 /*
 		HBox !expand {
 			ProgressBar !expand;
@@ -153,6 +153,7 @@ VBox using=Gtk name=Ragui.MainBody border-width=1
 				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
 			});
 			lv.menu_handler.connect ((m, d) => {
+				//print ("m=%p\n", m);
 				var action = m.to_string ();
 				uint64 offset = d.offset;
 				switch (action) {
@@ -172,10 +173,13 @@ VBox using=Gtk name=Ragui.MainBody border-width=1
 					gc.cmd ("ab");
 					gc.cmd ("af");
 					gc.cmd (@"ag $offset > /tmp/graph.xdot");
+					RSystem.cmd ("xdot /tmp/graph.xdot &");
+					/*
 					grava.graph.init ();
 					Grava.XDot.import (grava.graph, "/tmp/graph.xdot");
 					grava.graph.update ();
 					grava.draw ();
+					*/
 					break;
 				// breakpoints
 				case "set breakpoint":
