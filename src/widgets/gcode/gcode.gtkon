@@ -1,0 +1,44 @@
+/* gcode - Copyright(C) 2009-2010 - nibble<develsec.org> */
+
+HBox using=Gtk $Gcode.Widget {
+	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll {
+		TextView can-focus !editable $.code;
+	}
+-{
+	public signal void data_handler(bool down);
+	private Adjustment vadj;
+	private int maxlines;
+	private TextTag couriertag;
+
+	public Widget() {
+		vadj = scroll.get_vadjustment();
+		vadj.value_changed.connect (scroll_change);
+		couriertag = code.buffer.create_tag ("font", "font", "courier");
+	}
+
+	private void scroll_change() {
+		var adjvalue = vadj.get_value ();
+		if (adjvalue == 0)
+			data_handler (false);
+		else if (adjvalue + vadj.get_page_size () == vadj.get_upper ())
+			data_handler (true);
+	}
+
+	public void set_text(string str) {
+		Gtk.TextIter ei; 
+		Gtk.TextMark im;
+		code.buffer.get_end_iter (out ei); 
+		//code.buffer.insert (ei, str, -1);
+		code.buffer.insert_with_tags (ei, str, -1, couriertag);
+		/* Autoscroll */
+		code.buffer.get_end_iter (out ei); 
+		im = code.buffer.get_insert (); 
+		code.buffer.place_cursor (ei); 
+		code.scroll_to_mark (im, 0.0, true, 0.0, 1.0);
+	}
+
+	public void set_maxlines(int l) {
+		maxlines = l;
+	}
+}-
+}

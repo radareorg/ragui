@@ -143,6 +143,7 @@ public static class Grava.XDot {
 				}
 			}
 		}
+		return true;
 	}
 
 	public static bool import_string (Graph gr, string contents) {
@@ -156,6 +157,7 @@ public static class Grava.XDot {
 			import_line (gr, row + line);
 			row = "";
 		}
+		return true;
 	}
 
 	public static bool import (Graph gr, string file) {

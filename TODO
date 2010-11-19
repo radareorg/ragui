@@ -12,6 +12,7 @@ TODO
 * Error dialog class
 * Implement open program dialog
 * Implement attach to process and debug
+* Use parvala in grabin Makefile
 
 BUGS
 * Fix grava delta produced by zoom
