@@ -1,6 +1,5 @@
 /* Dialogs to open project file */
-
-VBox using=Gtk gtkon:version=0.4 name=OpenProject border_width=5 spacing=5 {
+VBox using=Gtk name=OpenProject border_width=5 spacing=5 {
 	Label fill !expand label="Select radare project file";
 	FileChooserWidget expand action=FileChooserAction.OPEN $fc;
 

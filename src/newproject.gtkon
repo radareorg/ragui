@@ -1,5 +1,5 @@
 /* ragui -- pancake 2010 */
-VBox using=Gtk gtkon:version=0.4 name=NewProject border_width=5 spacing=5 {
+VBox using=Gtk name=NewProject border_width=5 spacing=5 {
 	Label fill !expand label="Give me a name for the project file";
 	FileChooserWidget expand action={FileChooserAction.SAVE} $fc;
 

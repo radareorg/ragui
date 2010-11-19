@@ -18,6 +18,7 @@ public class Listview.Widget : ScrolledWindow {
 	public SList<string> actions;
 
 	public signal void menu_handler(string action, ListviewData row);
+	public signal void menu_construct();
 
 	private bool button_press (Gtk.Widget _w, Gdk.EventButton eb) {
 		if (eb.button != 3)
@@ -35,6 +36,7 @@ public class Listview.Widget : ScrolledWindow {
 			}
 		}
 		var menu = new Menu();
+		menu_construct ();
 		foreach (var str in this.actions) {
 			var imi = new ImageMenuItem.with_label (str);
 			imi.activate.connect ((x)=> { menu_handler (x.label, data); });

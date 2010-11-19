@@ -13,14 +13,14 @@ public class Ragui.Main {
 	}
 
 	public static string script = "";
-	public static bool runrc = true;
+	public static bool norc = true;
 	public static bool debugger = false;
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[] files;
 
 	static const OptionEntry[] options = {
 		{ "debugger", 'd', 0, OptionArg.NONE, ref debugger, "Run in debugger mode", null },
-		{ "norc", 'n', 0, OptionArg.NONE, ref script, "Do not load RC file", null },
+		{ "norc", 'n', 0, OptionArg.NONE, ref norc, "Do not load RC file", null },
 		{ "script", 's', 0, OptionArg.FILENAME, ref script, "Run script after loading file", "FILE" },
 		{ "", 0, 0, OptionArg.FILENAME_ARRAY, ref files, null, "FILE..." },
 		{ null }
@@ -50,6 +50,7 @@ public class Ragui.Main {
 		Gtk.init (ref args);
 		mw = new MainWindow ();
 		gc = new GuiCore (mw, args[0]);
+		gc.debugger = debugger; // set gui mode in debugger mode
 		if (files != null) {
 			gc.core.file_open (files[0], 0);
 			mw.view_body ();
@@ -57,9 +58,9 @@ public class Ragui.Main {
 		} else mw.view_panel ();
 
 		if (mw.panel != null) {
-			mw.panel.open_file.connect ( (x) => {
-				mw.title = "ragui : %s".printf (x);
-				gc.core.file_open (x, 0);
+			mw.panel.open_file.connect ( (file) => {
+				mw.title = @"ragui : $file";
+				gc.core.file_open (file, 0);
 				gc.core.config.set ("io.va", "true");
 				gc.core.config.set ("scr.color", "false");
 				mw.view_body ();

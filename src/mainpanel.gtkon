@@ -1,15 +1,15 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-VBox gtkon:version=0.4 using=Gtk name=Ragui.MainPanel {
+VBox using=Gtk name=Ragui.MainPanel {
 	Label label="";
 	HBox {
 		Label label="";
 		VBox {
 			Label label="";
 			Label !expand label="Editor";
-			Button !expand label="Open file" released=onOpenFile;
-			Button !expand label="Open program";
-			Button !expand label="Open project" released=onOpenProject;
+			Button !expand label="Open file" activate=onOpenFile released=onOpenFile;
+			Button !expand label="Open program" activate=onOpenProgramreleased=onOpenProgram;
+			Button !expand label="Open project" activate=onOpenProject released=onOpenProject;
 		}
 		Label label="";
 		VBox {
@@ -45,6 +45,10 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainPanel {
 -{
 	public signal void onHelpAPI ();
 	public signal void onHelpAbout ();
+
+	public void onOpenProgram () {
+		onOpenFile (); // XXX: implement
+	}
 
 	public void onOpenFile () {
 		int ret = 0;

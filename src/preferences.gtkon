@@ -1,6 +1,5 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
-
-Window gtkon:version=0.4 using=Gtk name=Ragui.PreferencesWindow
+Window using=Gtk name=Ragui.PreferencesWindow
 	modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
 {
 	VBox border-width=1 {

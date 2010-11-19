@@ -1,7 +1,6 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org>, nible<develsec.org> */
 
-VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
-	border-width=1
+VBox using=Gtk name=Ragui.MainBody border-width=1
 	using:Ragui="Ragui"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
@@ -34,6 +33,7 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 				}
 
 				VBox add2 {
+					// TODO: set each tab to a var, and use it from see code/graph
 					Notebook expand scrollable tab-vborder=1 {
 						VBox {
 							tab-label {
@@ -103,6 +103,8 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 			leftbox.append_text ("Entry Points");
 			leftbox.append_text ("Registers");
 			leftbox.append_text ("Breakpoints");
+			leftbox.append_text ("Processes");
+			leftbox.append_text ("Threads");
 			leftbox.set_active (0);
 			leftbox.changed.connect ( (x)=> {
 				change_leftlist (x.get_active_text ());
@@ -120,11 +122,69 @@ VBox gtkon:version=0.4 using=Gtk name=Ragui.MainBody
 
 		private void setup_leftlist () {
 			var lv = listview;
-			// TODO:get leftbox option
-			lv.set_actions ("seek", "breakpoint", "continue until", "inspect");
+			lv.menu_construct.connect ((m) => {
+				var cbtext = leftbox.get_active_text ();
+				print (@"Choosen menu is $cbtext\n");
+				switch (cbtext) {
+				case "Information":
+					listview.set_actions ("backup");
+					break;
+				case "Relocations":
+					listview.set_actions ("see code", "see data");
+					break;
+				case "Breakpoints":
+					listview.set_actions ("add", "remove", "enable", "disable");
+					break;
+				case "Sections":
+					listview.set_actions ("see code", "see data", "resize", "delete", "dump", "restore", "change perms");
+					break;
+				case "Entry Points":
+				case "Imports":
+				case "Symbols":
+					listview.set_actions ("see code", "see data", "set breakpoint");
+					break;
+				case "Processes":
+					listview.set_actions ("attach", "stop", "continue", "kill");
+					break;
+				case "Threads":
+					listview.set_actions ("select", "pause", "continue", "kill");
+					break;
+				}
+				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
+			});
 			lv.menu_handler.connect ((m, d) => {
+				var action = m.to_string ();
+				uint64 offset = d.offset;
+				switch (action) {
+				case "backup":
+					break;
+				case "see code":
+					gc.cmd (@"s $offset");
+					gc.cmd ("pd 20");
+					gc.cmd ("ab");
+					gc.cmd ("af");
+					gc.cmd (@"ag $offset > /tmp/graph.xdot");
+					grava.graph.init ();
+					Grava.XDot.import (grava.graph, "/tmp/graph.xdot");
+					grava.graph.update ();
+					grava.draw ();
+					break;
+				// breakpoints
+				case "set breakpoint":
+					gc.cmd (@"db $offset");
+					break;
+				case "remove":
+					gc.cmd (@"db-$offset");
+					break;
+				case "enable":
+					gc.cmd (@"dbe @ $offset");
+					break;
+				case "disable":
+					gc.cmd (@"dbd @ $offset");
+					break;
+				}
 				print ("clicked "+m.to_string ()+": "+
-				d.name+"at addr"+d.offset.to_string ()+"\n");
+					d.name+"at addr"+d.offset.to_string ()+"\n");
 			});
 		}
 

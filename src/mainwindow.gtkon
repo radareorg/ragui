@@ -1,7 +1,6 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-Window gtkon:version=0.4 using=Gtk name=Ragui.MainWindow title="ragui"
-	delete-event="OnWindowCloseEvent"
+Window using=Gtk name=Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 	using:Ragui="Ragui"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
