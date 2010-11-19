@@ -15,9 +15,9 @@ VBox using=Gtk name=Ragui.MainPanel {
 		VBox {
 			Label label="";
 			Label !expand label="Debugger";
-			Button !expand label="Debug local program";
-			Button !expand label="Remote debugger";
-			Button !expand label="Attach to process";
+			Button !expand label="Debug local program" activate=onDebugProgram released=onDebugProgram;
+			Button !expand label="Remote debugger" activate=onDebugRemote released=onDebugRemote;
+			Button !expand label="Attach to process" activate=onDebugAttach released=onDebugAttach;
 		}
 		Label label="";
 	}
@@ -89,6 +89,72 @@ VBox using=Gtk name=Ragui.MainPanel {
 		w = null;
 		if (ret == 1)
 			open_file (of.fc.get_filename ());
+	}
+
+	public void onDebugProgram() {
+		int ret = 0;
+		var w = new Dialog.with_buttons ("Open program to debug",
+				gc.window, DialogFlags.MODAL,
+				"gtk-cancel", 0,
+				"gtk-ok", 1
+			);
+		w.resize (600, 400);
+		var of = new OpenProgram ();
+		do {
+			w.vbox.add (of);
+			w.show_all ();
+			ret = w.run ();
+		} while (ret == -1);
+		w.hide ();
+		w = null;
+		if (ret == 1) {
+			// TODO: setup all that shit
+			open_file ("dbg://"+of.fc.get_filename ());
+		}
+	}
+
+	public void onDebugRemote() {
+		int ret = 0;
+		var w = new Dialog.with_buttons ("Open remote debug",
+				gc.window, DialogFlags.MODAL,
+				"gtk-cancel", 0,
+				"gtk-ok", 1
+			);
+		w.resize (600, 400);
+		var of = new OpenRemote ();
+		do {
+			w.vbox.add (of);
+			w.show_all ();
+			ret = w.run ();
+		} while (ret == -1);
+		w.hide ();
+		w = null;
+		if (ret == 1) {
+			// TODO: setup all that shit
+			open_file (of.get_url ());
+		}
+	}
+
+	public void onDebugAttach() {
+		int ret = 0;
+		var w = new Dialog.with_buttons ("Attach to process",
+				gc.window, DialogFlags.MODAL,
+				"gtk-cancel", 0,
+				"gtk-ok", 1
+			);
+		w.resize (600, 400);
+		var of = new OpenProcess ();
+		do {
+			w.vbox.add (of);
+			w.show_all ();
+			ret = w.run ();
+		} while (ret == -1);
+		w.hide ();
+		w = null;
+		if (ret == 1) {
+			// TODO: setup all that debug shit
+			open_file ("attach://%d".printf (of.get_pid ()));
+		}
 	}
 
 	public signal bool open_file(string file);

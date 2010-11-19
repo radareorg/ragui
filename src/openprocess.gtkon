@@ -1,0 +1,22 @@
+/* Dialogs to open programs to debug */
+VBox using=Gtk $OpenProcess border_width=5 spacing=5 {
+	HBox !expand spacing=5 {
+		Label fill !expand label="Select process";
+		ComboBox text $pids expand;
+		Button label="refresh" !expand activate=onRefresh released=onRefresh;
+	}
+	-{
+		public void onRefresh() {
+			pids.append_text ("1024  vim");
+			pids.append_text ("1025  bash");
+			pids.set_active (0);
+		}
+		public int get_pid () {
+			string pidstr = pids.get_active_text ();
+			return pidstr.to_int ();
+		}
+		public OpenProcess () {
+			onRefresh ();
+		}
+	}-
+}

@@ -1,4 +1,4 @@
-Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Imports {
+Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Imports {
 	TreeView $view {
 		TreeViewColumn title="Address" clickable clicked="{sort_column (view, 0)}" {
 			CellRendererText $.column0 expand;
@@ -29,7 +29,6 @@ Grabin:Widget gtkon:version=0.4 using=Gtk using:Grabin="Grabin" using:Radare="Ra
 			CellRendererText &column6 attribute="text" column=6;
 		}
 	}
-
 -{
 	public enum COLUMN {
 		Address = 0,

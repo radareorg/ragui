@@ -39,7 +39,8 @@ all: widgets.done
 .PHONY: gtkaml gtkon vala vapi link
 
 GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
-GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon
+GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
+GTKONFILES+=openremote.gtkon
 GTKAMLFILES=
 VALAFILES=guicore.vala main.vala
 RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))

@@ -1,8 +1,7 @@
-Notebook $Grabin.All gtkon:version=0.4 
+Notebook $Grabin.All scrollable tab-vborder=1
 	using=Gtk
 	using:Radare="Radare"
-	using:Grabin="Grabin"
-scrollable tab-vborder=1 {
+	using:Grabin="Grabin" {
 	VBox $.vbsections {
 		tab-label {
 			Label label="Sections";

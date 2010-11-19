@@ -1,0 +1,23 @@
+/* Dialogs to open programs to debug */
+VBox using=Gtk name=OpenProgram border_width=5 spacing=5 {
+	HBox !expand spacing=5 {
+		Label fill !expand label="Select file";
+		FileChooserButton expand title="Select file" action={FileChooserAction.OPEN} $fc;
+	}
+	HBox !expand spacing=5 {
+		Label fill !expand label="EntryBreak";
+		ComboBox text $breaks !expand;
+		Entry text="";
+	}
+
+	-{
+		public OpenProgram () {
+			breaks.append_text ("loader");
+			breaks.append_text ("init");
+			breaks.append_text ("fini");
+			breaks.append_text ("entry0");
+			breaks.append_text ("main");
+			breaks.set_active (0);
+		}
+	}-
+}
