@@ -8,7 +8,7 @@ VBox using=Gtk name=Ragui.MainPanel {
 			Label label="";
 			Label !expand label="Editor";
 			Button !expand label="Open file" activate=onOpenFile released=onOpenFile;
-			Button !expand label="Open program" activate=onOpenProgramreleased=onOpenProgram;
+			Button !expand label="Open program" activate=onOpenProgram released=onOpenProgram;
 			Button !expand label="Open project" activate=onOpenProject released=onOpenProject;
 		}
 		Label label="";

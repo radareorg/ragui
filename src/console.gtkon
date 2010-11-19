@@ -19,10 +19,16 @@ VBox using=Gtk name=Ragui.Console {
 		couriertag = console.buffer.create_tag ("courierfont", "font", "courier");
 	}
 
+	public void cmd(string cmd) {
+		line.text = cmd;
+		send_cmd ();
+	}
+
 	private void send_cmd() {
 		cmd_handler (line.text);
 		line.set_text ("");
 	}
+
 	private TextTag fixedtag;
 	private TextTag couriertag;
 
