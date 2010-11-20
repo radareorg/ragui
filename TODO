@@ -6,6 +6,7 @@
                   |___/           
 
 TODO
+* Add SegmentedBar in Grabin.All
 * Running visual command in gui makes gui useless
   - we have to be able to disable visual mode
 * Bar clickable, combobox to select file or map range

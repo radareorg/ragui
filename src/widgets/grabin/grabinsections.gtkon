@@ -1,4 +1,4 @@
-Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sections {
+Grabin.Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sections {
 	TreeView $view {
 		TreeViewColumn title="Index" clickable clicked="{sort_column (view, 0)}" {
 			CellRendererText $.column0 expand;
@@ -29,7 +29,6 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sect
 			CellRendererText &column6 attribute="text" column=6;
 		}
 	}
-
 -{
 	public enum COLUMN {
 		Index = 0,
@@ -41,7 +40,7 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sect
 		Name
 	}
 
-	public Sections(RBin bin) {
+	public void fill(RBin bin) {
 		TreeIter iter;
 		listmodel = new ListStore (7, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string), typeof (string),
@@ -52,13 +51,13 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sect
 		foreach (var scn in bin.get_sections ()) {
 			listmodel.append (out iter);
 			listmodel.set (iter,
-					0, (i++).to_string ("%02i"),
-					1, (baddr+scn.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
-					2, scn.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
-					3, scn.size.to_string ("%05i"),
-					4, scn.vsize.to_string ("%05i"),
-					5, RStr.rwx_i(scn.srwx),
-					6, scn.name);
+				0, (i++).to_string ("%02i"),
+				1, (baddr+scn.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+				2, scn.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+				3, scn.size.to_string ("%05i"),
+				4, scn.vsize.to_string ("%05i"),
+				5, RStr.rwx_i(scn.srwx),
+				6, scn.name);
 		}
 		retcol = 1;
 		view.model = listmodel;

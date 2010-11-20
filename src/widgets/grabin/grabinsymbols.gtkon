@@ -33,7 +33,6 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Symb
 			CellRendererText &column7 attribute="text" column=7;
 		}
 	}
-
 -{
 	public enum COLUMN {
 		Address = 0,
@@ -46,14 +45,14 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Symb
 		Name
 	}
 
-	public Symbols(RBin bin) {
-		TreeIter iter;
+	public void fill(RBin bin) {
 		listmodel = new ListStore (8, typeof (string), typeof (string),
-				typeof (string), typeof (string), typeof (string), typeof (string),
-				typeof (string), typeof (string));
+				typeof (string), typeof (string), typeof (string),
+				typeof (string), typeof (string), typeof (string));
 		var baddr = bin.get_baddr ();
 		if (bin.get_symbols () != null)
 		foreach (var sym in bin.get_symbols ()) {
+			TreeIter iter;
 			listmodel.append (out iter);
 			listmodel.set (iter,
 					0, (baddr+sym.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),

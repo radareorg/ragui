@@ -1,6 +1,9 @@
 using Gtk;
 using Radare;
 
+public static Ragui.GuiCore gc;
+public const static string U64FMT = uint64.FORMAT_MODIFIER
+
 public class Ragui.GuiCore {
 	public RCore core;
 	public string arg0;
@@ -45,5 +48,3 @@ public class Ragui.GuiCore {
 
 	public static const string VERSION = "0.1";
 }
-
-public static Ragui.GuiCore gc;

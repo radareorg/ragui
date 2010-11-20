@@ -40,7 +40,7 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Impo
 		Name
 	}
 
-	public Imports(RBin bin) {
+	public void fill(RBin bin) {
 		TreeIter iter;
 		listmodel = new ListStore (7, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string), typeof (string),

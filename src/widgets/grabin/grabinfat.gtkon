@@ -26,23 +26,21 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Fat 
 		Machine,
 	}
 
-	public Fat(RBin bin) {
-		TreeIter iter;
-		int i;
-
+	public void fill(RBin bin) {
 		listmodel = new ListStore (4, typeof (string), typeof (string),
-					typeof (string), typeof (string));
-		for (i = 0; i < bin.narch; i++) {
+				typeof (string), typeof (string));
+		for (int i = 0; i < bin.narch; i++) {
 			bin.set_archidx (i);
 			var info = bin.get_info ();
-			if (info == null)
-				continue;
-			listmodel.append (out iter);
-			listmodel.set (iter,
+			if (info != null) {
+				TreeIter iter;
+				listmodel.append (out iter);
+				listmodel.set (iter,
 					0, i.to_string ("%03i"),
 					1, bin.curarch.file,
 					2, "%s - %i".printf (info.arch, info.bits),
 					3, info.machine);
+			}
 		}
 		retcol = 0;
 		view.model = listmodel;

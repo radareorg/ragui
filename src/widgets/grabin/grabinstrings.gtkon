@@ -31,7 +31,7 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Stri
 		String
 	}
 
-	public Strings(RBin bin) {
+	public void fill(RBin bin) {
 		TreeIter iter;
 		listmodel = new ListStore (5, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string));

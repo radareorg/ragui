@@ -7,6 +7,7 @@ public static void main (string[] args) {
 	
 	var segbarHD = new SegmentedBar();
 
+#if 0
 	segbarHD.BarHeight = 30; 
 	segbarHD.HorizontalPadding = segbarHD.BarHeight / 2;
 /*
@@ -18,8 +19,8 @@ public static void main (string[] args) {
 	segbarHD.AddSegmentRgb (".data", 0.60, 0x3465a4);
 	segbarHD.AddSegmentRgb (".got", 0.05, 0x73d216);
 	segbarHD.AddSegmentRgb (".rodata", 0.25, 0x232286);
-	segbarHD.ShowReflection = true;
-
+	segbarHD.ShowReflection = false;
+#endif
 	var vb = new VBox (false, 10);
 	var cb = new ComboBox.text ();
 	cb.append_text ("/bin/ls");

@@ -12,22 +12,15 @@ public class Grabin.Widget : ScrolledWindow {
 	}
 
 	public void sort_column(TreeView tv, int n) {
-		int i;
-
-		for (i = 0; i < tv.get_columns ().length (); i++) {
+		for (int i = 0; i < tv.get_columns ().length (); i++) {
 			var col = tv.get_column (i);
 			if (i == n) {
 				col.set_sort_indicator (true);
-				var order = col.get_sort_order ();
-				if (order == SortType.ASCENDING) 
-					order = SortType.DESCENDING;
-				else order = SortType.ASCENDING;
+				var order = (col.get_sort_order ()==SortType.ASCENDING)?
+					SortType.DESCENDING: SortType.ASCENDING;
 				col.sort_order = order;
 				listmodel.set_sort_column_id (i, order);
-			} else {
-				col.set_sort_indicator (false);
-			}
-
+			} else col.set_sort_indicator (false);
 		}
 	}
 

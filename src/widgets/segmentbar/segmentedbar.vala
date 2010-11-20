@@ -36,6 +36,7 @@ using Gtk;
 using Cairo;
  
  
+namespace Grabin {
 public class SegmentedBar : Widget
 {
  
@@ -903,4 +904,5 @@ public class SegmentedBar : Widget
         // ((IDisposable)cr.Target).Dispose ();
         // ((IDisposable)cr).Dispose ();
     }
+}
 }

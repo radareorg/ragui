@@ -14,10 +14,10 @@ lib:
 	gtkamlc -C --library grabinstrings --vapi=../include/grabinstrings.vapi -H ../include/grabinstrings.h --pkg grabin ${VALAFLAGS} grabinstrings.gtkon
 	gtkamlc -C --library grabinrelocs --vapi=../include/grabinrelocs.vapi -H ../include/grabinrelocs.h --pkg grabin ${VALAFLAGS} grabinrelocs.gtkon
 	gtkamlc -C --library grabinfat --vapi=../include/grabinfat.vapi -H ../include/grabinfat.h --pkg grabin ${VALAFLAGS} grabinfat.gtkon
-	gtkamlc -C --library grabinall --vapi=../include/grabinall.vapi -H ../include/grabinall.h ${PKG} ${VALAFLAGS} grabinall.gtkon
+	gtkamlc -C --library grabinall --pkg segmentbar --vapi=../include/grabinall.vapi -H ../include/grabinall.h ${PKG} ${VALAFLAGS} grabinall.gtkon
 
 main: lib
-	valac -C --pkg gtk+-2.0 ${PKG} --pkg grabinall ${VALAFLAGS} grabintest.vala
+	valac -C --pkg gtk+-2.0 ${PKG} --pkg grabinall ${VALAFLAGS} ../segmentbar/segmentedbar.vala grabintest.vala
 	gcc -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` ${CFILES}  grabintest.c -o grabintest
 
 clean:

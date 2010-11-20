@@ -1,58 +1,40 @@
-Notebook $Grabin.All scrollable tab-vborder=1
-	using=Gtk
-	using:Radare="Radare"
-	using:Grabin="Grabin" {
-	VBox $.vbsections {
-		tab-label {
-			Label label="Sections";
+VBox $Grabin.All using=Gtk using:Radare="Radare" using:Grabin="Grabin" {
+	Button !expand label="fuck you";
+//	Grabin.SegmentedBar $sb;
+	Notebook scrollable tab-vborder=1 {
+		VBox $.vbsections {
+			tab-label { Label label="Sections"; }
+			Grabin.Sections $sections;
+		}
+		VBox $.vbsymbols {
+			tab-label { Label label="Symbols"; }
+			Grabin.Symbols $symbols;
+		}
+		VBox $.vbimports {
+			tab-label { Label label="Imports"; }
+			Grabin.Imports $imports;
+		}
+		VBox $.vbstrings {
+			tab-label { Label label="Strings"; }
+			Grabin.Strings $strings;
+		}
+		VBox $.vbrelocs {
+			tab-label { Label label="Relocations"; }
+			Grabin.Relocs $relocs;
+		}
+		VBox $.vbfat {
+			tab-label { Label label="SubBinaries"; }
+			Grabin.Fat $fat;
 		}
 	}
-	VBox $.vbsymbols {
-		tab-label {
-			Label label="Symbols";
+	-{
+		public All (RBin rbin) {
+			sections.fill (rbin);
+			symbols.fill (rbin);
+			imports.fill (rbin);
+			strings.fill (rbin);
+			relocs.fill (rbin);
+			fat.fill (rbin);
 		}
-	}
-	VBox $.vbimports {
-		tab-label {
-			Label label="Imports";
-		}
-	}
-	VBox $.vbstrings {
-		tab-label {
-			Label label="Strings";
-		}
-	}
-	VBox $.vbrelocs {
-		tab-label {
-			Label label="Relocations";
-		}
-	}
-	VBox $.vbfat {
-		tab-label {
-			Label label="SubBinaries";
-		}
-	}
--{
-	public Grabin.Sections sections;
-	public Grabin.Symbols symbols;
-	public Grabin.Imports imports;
-	public Grabin.Strings strings;
-	public Grabin.Relocs relocs;
-	public Grabin.Fat fat;
-
-	public All (RBin bin) {
-		sections = new Grabin.Sections (bin);
-		symbols = new Grabin.Symbols (bin);
-		imports = new Grabin.Imports (bin);
-		strings = new Grabin.Strings (bin);
-		relocs = new Grabin.Relocs (bin);
-		fat = new Grabin.Fat (bin);
-		this.vbsections.add (sections);
-		this.vbsymbols.add (symbols);
-		this.vbimports.add (imports);
-		this.vbstrings.add (strings);
-		this.vbrelocs.add (relocs);
-		this.vbfat.add (fat);
-	}
-}-
+	}-
 }
