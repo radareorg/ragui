@@ -1,6 +1,5 @@
 VBox $Grabin.All using=Gtk using:Radare="Radare" using:Grabin="Grabin" {
-	Button !expand label="fuck you";
-//	Grabin.SegmentedBar $sb;
+	Grabin.SegmentedBar !expand $sb;
 	Notebook scrollable tab-vborder=1 {
 		VBox $.vbsections {
 			tab-label { Label label="Sections"; }
