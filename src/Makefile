@@ -9,7 +9,7 @@ PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
 #Grabin
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
-PKG+=--pkg grabinfat --pkg grabinall
+PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
 PKG+=--vapidir=widgets/include
 PKG+=--Xcc=-Iwidgets/include
@@ -23,6 +23,7 @@ WIDGETS+=widgets/hexview/hexviewbuffer.c
 WIDGETS+=widgets/grasm/grasmwidget.c
 WIDGETS+=widgets/grava/*.o
 WIDGETS+=widgets/listw/listview.c
+WIDGETS+=widgets/segmentbar/segmentedbar.c
 #Grabin
 WIDGETS+=widgets/grabin/grabin.c widgets/grabin/grabinsections.c
 WIDGETS+=widgets/grabin/grabinsymbols.c widgets/grabin/grabinimports.c
@@ -40,7 +41,7 @@ all: widgets.done
 
 GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
-GTKONFILES+=openremote.gtkon
+GTKONFILES+=openremote.gtkon dumpdata.gtkon
 # TODO: GTKONFILES+=datadump.gtkon
 GTKAMLFILES=
 VALAFILES=guicore.vala main.vala

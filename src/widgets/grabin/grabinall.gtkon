@@ -1,5 +1,4 @@
 VBox $Grabin.All using=Gtk using:Radare="Radare" using:Grabin="Grabin" {
-	Grabin.SegmentedBar !expand $sb;
 	Notebook scrollable tab-vborder=1 {
 		VBox $.vbsections {
 			tab-label { Label label="Sections"; }
@@ -26,11 +25,16 @@ VBox $Grabin.All using=Gtk using:Radare="Radare" using:Grabin="Grabin" {
 			Grabin.Fat $fat;
 		}
 	}
+	VBox border-width=2 !expand {
+		Grabin.SegmentedBar !expand $sb;
+	}
 	-{
 		public All (RBin rbin) {
-			sections.fill (rbin);
-			symbols.fill (rbin);
-			imports.fill (rbin);
+			sb.ShowReflection = false;
+			sb.ShowLabels = false;
+			sections.fill (rbin, sb);
+			symbols.fill (rbin, sb);
+			imports.fill (rbin, sb);
 			strings.fill (rbin);
 			relocs.fill (rbin);
 			fat.fill (rbin);

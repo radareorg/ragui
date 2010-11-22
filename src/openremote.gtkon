@@ -1,5 +1,5 @@
 /* Dialogs to open remote filez */
-VBox using=Gtk name=OpenRemote border_width=5 spacing=5 {
+VBox using=Gtk $OpenRemote border_width=5 spacing=5 {
 	HBox !expand spacing=5 {
 		Label fill !expand label="Protocol";
 		ComboBox text $proto !expand;

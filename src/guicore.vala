@@ -2,7 +2,7 @@ using Gtk;
 using Radare;
 
 public static Ragui.GuiCore gc;
-public const static string U64FMT = uint64.FORMAT_MODIFIER
+public static const string U64FMT = uint64.FORMAT_MODIFIER;
 
 public class Ragui.GuiCore {
 	public RCore core;
@@ -44,6 +44,34 @@ public class Ragui.GuiCore {
 		gc.core.seek (addr, true);
 		cmd (@"s $addr");
 		return true;
+	}
+
+// TODO: we need the MainWindow instance here..
+	public bool show_yesno (string question) {
+		MessageDialog md = new MessageDialog (window,
+				DialogFlags.DESTROY_WITH_PARENT,
+				MessageType.QUESTION, ButtonsType.YES_NO, question);
+		int ret = md.run ();
+		md.destroy ();
+		return ret==ResponseType.YES;
+	}
+
+	public void show_message (string msg, MessageType mt) {
+		MessageDialog md = new MessageDialog (window,
+				DialogFlags.DESTROY_WITH_PARENT,
+				mt, ButtonsType.CLOSE, msg);
+		md.run ();
+		md.destroy ();
+	}
+
+	public void show_error (string msg) {
+		MessageDialog md = new MessageDialog (window,
+				DialogFlags.DESTROY_WITH_PARENT,
+				MessageType.ERROR,
+				ButtonsType.CLOSE,
+				msg);
+		md.run ();
+		md.destroy ();
 	}
 
 	public static const string VERSION = "0.1";

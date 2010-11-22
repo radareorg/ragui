@@ -1,3 +1,4 @@
+/* XXX: add support for the bar */
 Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Fat {
 	TreeView $view {
 		TreeViewColumn title="Index" clickable clicked="{sort_column (view, 0)}" {

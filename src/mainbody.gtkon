@@ -101,6 +101,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 			leftbox.append_text ("Symbols");
 			leftbox.append_text ("Relocations");
 			leftbox.append_text ("Entry Points");
+			leftbox.append_text ("Strings");
 			leftbox.append_text ("Registers");
 			leftbox.append_text ("Breakpoints");
 			leftbox.append_text ("Processes");
@@ -139,9 +140,10 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					listview.set_actions ("see code", "see data", "resize", "delete", "dump", "restore", "change perms");
 					break;
 				case "Entry Points":
+				case "Strings":
 				case "Imports":
 				case "Symbols":
-					listview.set_actions ("disasm", "graph", "see code", "see data", "set breakpoint");
+					listview.set_actions ("disasm", "see data", "graph", "see code", "see data", "set breakpoint");
 					break;
 				case "Processes":
 					listview.set_actions ("attach", "stop", "continue", "kill");
@@ -157,6 +159,11 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				var action = m.to_string ();
 				uint64 offset = d.offset;
 				switch (action) {
+				case "dump":
+					var w = new DumpData ();
+					w.transient_for = gc.window;
+					w.show_all ();
+					break;
 				case "backup":
 					break;
 				case "disasm":
@@ -166,6 +173,10 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					console.cmd (@"pdf");
 					break;
 				case "see code":
+					gc.show_error ("Not yet implemented");
+					break;
+				case "see data":
+					hexview.seek (offset);
 					break;
 				case "graph":
 					gc.cmd (@"s $offset");
@@ -232,6 +243,10 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				foreach (var scn in gc.core.bin.get_sections ())
 					lv.add_row (baddr+scn.rva, scn.name);
 				break;
+			case "Strings":
+				foreach (var str in gc.core.bin.get_strings ())
+					lv.add_row (baddr+str.rva, str.string);
+				break;
 			case "Imports":
 				foreach (var imp in gc.core.bin.get_imports ())
 					lv.add_row (baddr+imp.rva, imp.name);
@@ -246,9 +261,8 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				break;
 			case "Entry Points":
 				int i = 0;
-				foreach (var entry in gc.core.bin.get_entries ()) {
+				foreach (var entry in gc.core.bin.get_entries ())
 					lv.add_row (baddr+entry.rva, "entry%i".printf (i++));
-				}
 				break;
 			case "Registers":
 				break;
@@ -256,16 +270,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		}
 
 		private void setup_io () {
-			var hex = hexview;
-			hex.buffer.update.connect ((x,y)=> {
+			hexview.buffer.update.connect ((x, y)=> {
 				print ("READING FROM 0x%08llx\n", x);
-				uint8 *ptr = (void *)(size_t)x;
-				hex.buffer.start = x;
-				hex.buffer.end = x+y;
-				hex.buffer.size = y;
-				hex.buffer.bytes = new uint8[y];
-				if (x>=0x8048000)
-					Memory.copy (hex.buffer.bytes, ptr, y);
+				hexview.buffer.start = x;
+				hexview.buffer.end = x+y;
+				hexview.buffer.size = y;
+				hexview.buffer.bytes = new uint8[y];
+				uint8 *ptr = hexview.buffer.bytes;
+				gc.core.read_at (x, ptr, y);
 			});
 		}
 
@@ -280,8 +292,17 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 
 		private void setup_headers () {
 			var grabin = new Grabin.All (gc.core.bin);
-			grabin.sections.set_actions ("Seek");
+			grabin.sections.set_actions ("seek", "dump");
 			grabin.sections.menu_handler.connect ((m, d) => {
+					switch (d) {
+					case "seek":
+						//gc.seek ();
+						gc.show_error ("Section dump not yet implemented");
+						break;
+					case "dump":
+						gc.show_error ("Section dump not yet implemented");
+						break;
+					}
 					print ("Sections clicked "+m+": "+d+"\n");
 				});
 			grabin.symbols.set_actions ("Seek");

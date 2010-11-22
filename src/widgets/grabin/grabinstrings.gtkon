@@ -42,8 +42,8 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Stri
 			listmodel.set (iter,
 					0, (baddr+str.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
 					1, str.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
-					2, str.ordinal.to_string ("%03i"),
-					3, str.size.to_string ("%03i"),
+					2, str.ordinal.to_string ("0x%03x"),
+					3, str.size.to_string ("0x%03x"),
 					4, str.string);
 		}
 		retcol = 0;

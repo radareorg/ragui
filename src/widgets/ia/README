@@ -1,0 +1,72 @@
+IA Widget
+=========
+
+office-clip-like assistant for r2
+
+IA must understand the sentences
+
+enum SentenceType {
+	QUESTION,
+}
+
+class Sentence {
+	bool has_question;
+	bool has_lol;
+	bool has_hello;
+	bool has_bye;
+	string text;
+	SentenceType type;
+
+	private bool is_lol (string text) {
+		return ((text.str ("ji") != null) ||
+			(text.str ("je") != null) ||
+			(text.str ("xD") != null)
+			);
+	}
+
+	private bool is_question (string text) {
+		return ((text.str ("?") != null));
+	}
+
+	private bool is_hello (string text) {
+		return ((text.str ("welcome") != null) ||
+			(text.str ("hello") != null) ||
+			(text.str ("hi") != null)
+			);
+	}
+
+	private bool is_bye (string text) {
+		return ((text.str ("bye") != null) ||
+			(text.str ("exit") != null) ||
+			(text.str ("quit") != null)
+			);
+	}
+
+	public Sentence (string text) {
+		this.text = text;
+		this.is_question = false;
+		has_lol = is_lol (text);
+		has_hello = is_hello (text);
+		has_bye = is_bye (text);
+		type = SentenceType.QUESTION;
+		} else
+			is_question = true;
+			type = SentenceType.QUESTION;
+		} else
+		if (text.str ("what")) {
+		}
+	}
+}
+
+public class IA {
+	public answer (Sentence str) {
+	}
+}
+
+
+how to -> howto
+what is ->
+yes -> bool
+no -> bool
+he ji xD lol je -> lol
+hi hello -> welcome

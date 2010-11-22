@@ -111,6 +111,7 @@ public class Listview.Widget : ScrolledWindow {
 		col0.set_clickable (true);
 		col0.set_sort_indicator (false);
 		view.button_press_event.connect ((e)=> {
+		// TODO: we have to use this callback!! view.row_activated.connect ((x,y)=> {
 			if (e.type == EventType.2BUTTON_PRESS) {
 				var data = get_listviewdata ();
 				var action = actions.nth_data (0);

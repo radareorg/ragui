@@ -1,5 +1,5 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
-Window using=Gtk name=Ragui.PreferencesWindow
+Window using=Gtk $Ragui.PreferencesWindow
 	modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
 {
 	VBox border-width=1 {
@@ -13,6 +13,9 @@ Window using=Gtk name=Ragui.PreferencesWindow
 			}
 			Label label=todo { tab-label {
 				Label label="Analysis";
+			} }
+			Label label=todo { tab-label {
+				Label label="Keys";
 			} }
 		}
 		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {

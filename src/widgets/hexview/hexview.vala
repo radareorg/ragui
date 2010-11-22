@@ -512,4 +512,14 @@ print ("ROWS = %d\n", rows);
 		da.window.get_size (out w, out h);
 		da.queue_draw_area (0, 0, w+200, h+200);
 	}
+
+	public void seek (uint64 addr) {
+		//buffer.start = addr;
+		//buffer.end = addr+sz;
+		//buffer.size = y;
+		//buffer.bytes = new uint8[y];
+		this.offset = this.address = addr;
+		buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
+		refresh (da);
+	}
 }

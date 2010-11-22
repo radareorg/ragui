@@ -52,7 +52,7 @@ public class Grabin.Widget : ScrolledWindow {
 		this.actions = new SList<string> ();
 		this.actions.append (x);
 		var l = va_list();
-		while (true) {
+		for (;;) {
 			string? k = l.arg ();
 			if (k == null)
 				break;

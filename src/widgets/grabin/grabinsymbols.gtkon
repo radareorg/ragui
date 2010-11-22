@@ -45,25 +45,45 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Symb
 		Name
 	}
 
-	public void fill(RBin bin) {
+	private uint64 min = 0;
+	private uint64 max = 0;
+
+	public void fill(RBin bin, SegmentedBar sb) {
 		listmodel = new ListStore (8, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string));
 		var baddr = bin.get_baddr ();
 		if (bin.get_symbols () != null)
 		foreach (var sym in bin.get_symbols ()) {
+			min = (min==0)?sym.offset:uint64.min (sym.offset, min);
+			max = uint64.max (sym.offset+sym.size, max);
 			TreeIter iter;
 			listmodel.append (out iter);
 			listmodel.set (iter,
-					0, (baddr+sym.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
-					1, sym.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
-					2, sym.ordinal.to_string ("%03i"),
-					3, sym.forwarder,
-					4, sym.size.to_string ("%05i"),
-					5, sym.bind,
-					6, sym.type,
-					7, sym.name);
+				0, (baddr+sym.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+				1, sym.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+				2, sym.ordinal.to_string ("0x%05x"),
+				3, sym.forwarder,
+				4, sym.size.to_string ("0x%05x"),
+				5, sym.bind,
+				6, sym.type,
+				7, sym.name);
 		}
+		view.cursor_changed.connect ((c)=> {
+			TreeModel m;
+			var sel = view.get_selection ();
+			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);          
+			foreach (var row in list) {
+				Value a, b;
+				TreeIter it;
+				listmodel.get_iter (out it, row);
+				m.get_value (it, 1, out a);
+				m.get_value (it, 4, out b);
+				sb.mark_range (min, max, a.get_string ().to_uint64 (),
+					b.get_string ().to_uint64 ());
+				break;
+			}     
+		});
 		retcol = 0;
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);

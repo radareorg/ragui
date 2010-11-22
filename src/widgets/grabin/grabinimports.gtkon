@@ -40,7 +40,10 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Impo
 		Name
 	}
 
-	public void fill(RBin bin) {
+	private uint64 min = 0;
+	private uint64 max = 0;
+
+	public void fill(RBin bin, SegmentedBar sb) {
 		TreeIter iter;
 		listmodel = new ListStore (7, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string), typeof (string),
@@ -48,6 +51,8 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Impo
 		var baddr = bin.get_baddr ();
 		if (bin.get_imports () != null)
 		foreach (var imp in bin.get_imports ()) {
+			min = (min==0)?imp.offset:uint64.min (imp.offset, min);
+			max = uint64.max (imp.offset+32, max);
 			listmodel.append (out iter);
 			listmodel.set (iter,
 					0, (baddr+imp.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
@@ -58,6 +63,21 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Impo
 					5, imp.type,
 					6, imp.name);
 		}
+		view.cursor_changed.connect ((c)=> {
+			TreeModel m;
+			var sel = view.get_selection ();
+			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);          
+			foreach (var row in list) {
+				Value a, b;
+				TreeIter it;
+				listmodel.get_iter (out it, row);
+				m.get_value (it, 2, out a);
+				m.get_value (it, 4, out b);
+				sb.mark_range (min, max, a.get_string ().to_uint64 (),
+					b.get_string ().to_uint64 ());
+				break;
+			}     
+		});
 		retcol = 0;
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);

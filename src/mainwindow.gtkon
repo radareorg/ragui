@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-Window using=Gtk name=Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
+Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 	using:Ragui="Ragui"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
@@ -16,7 +16,7 @@ Window using=Gtk name=Ragui.MainWindow title="ragui" delete-event="OnWindowClose
 						ImageMenuItem stock-id="gtk-new" activate=OnNew;
 						ImageMenuItem stock-id="gtk-open" activate=OnOpenProject;
 						ImageMenuItem stock-id="gtk-save" activate=OnFileSave;
-						ImageMenuItem stock-id="gtk-save-as"; // activate=OnFileSave;
+						ImageMenuItem stock-id="gtk-save-as" activate=OnFileSaveAs;
 						ImageMenuItem stock-id="gtk-close" activate=OnFileClose;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="OnQuit";
@@ -123,6 +123,12 @@ Window using=Gtk name=Ragui.MainWindow title="ragui" delete-event="OnWindowClose
 
 		private void OnFileSave() {
 			/* TODO */
+			//if (gc.prjfile == null)
+			//	OnFileSaveAs();
+		}
+
+		private void OnFileSaveAs() {
+			/* TODO */
 		}
 
 		private void OnFileClose() {
@@ -205,8 +211,6 @@ Window using=Gtk name=Ragui.MainWindow title="ragui" delete-event="OnWindowClose
 				print ("Error: %s\n", err.message);
 			}
 */
-
-
 			Pid pid;
 			string[] runme = { "/usr/bin/xdg-open", "http://www.radare.org/vdoc" };
 			try {

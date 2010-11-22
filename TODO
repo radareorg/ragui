@@ -6,11 +6,11 @@
                   |___/           
 
 TODO
-* Add SegmentedBar in Grabin.All
+* Templates for data
+* configurable keybindings to run r2 commands
 * Running visual command in gui makes gui useless
   - we have to be able to disable visual mode
 * Bar clickable, combobox to select file or map range
-* Error dialog class
 * Implement open program dialog
 * Implement attach to process and debug
 * Use parvala in grabin Makefile

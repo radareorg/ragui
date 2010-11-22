@@ -904,5 +904,26 @@ public class SegmentedBar : Widget
         // ((IDisposable)cr.Target).Dispose ();
         // ((IDisposable)cr).Dispose ();
     }
+
+		// hacky!
+		public void mark_range (uint64 min, uint64 max, uint64 cur, uint64 len) {
+			if (cur<min || cur>max) {
+				// FAIL
+				warning ("range fail");
+				return;
+			}
+			double pre = (double)(cur-min) / (double)(max-min);
+			double size = (double)len / (double)(max-min);
+			double rest = 1-size-pre;
+			print (@"len = $len\n");
+			print (@"max = $max $size $rest\n");
+			print (@"SET FOO $pre $size $rest\n");
+			if (size < 0.01)
+				size = 0.01;
+			segments = null;
+			AddSegmentRgb ("null", pre, 0x3465a4);
+			AddSegmentRgb ("sel", size, 0xf57900);
+			AddSegmentRgb ("null", rest, 0x3465a4);
+		}
 }
 }

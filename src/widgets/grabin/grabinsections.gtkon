@@ -40,25 +40,47 @@ Grabin.Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sect
 		Name
 	}
 
-	public void fill(RBin bin) {
+	private uint64 min = 0;
+	private uint64 max = 0;
+
+	public void fill(RBin bin, SegmentedBar sb) {
 		TreeIter iter;
 		listmodel = new ListStore (7, typeof (string), typeof (string),
-				typeof (string), typeof (string), typeof (string), typeof (string),
-				typeof (string));
+				typeof (string), typeof (string), typeof (string),
+				typeof (string), typeof (string));
 		var baddr = bin.get_baddr ();
 		var i = 0;
 		if (bin.get_sections () != null)
 		foreach (var scn in bin.get_sections ()) {
+			min = (min==0)?scn.offset:uint64.min (scn.offset, min);
+			max = uint64.max (scn.offset+scn.vsize, max);
 			listmodel.append (out iter);
 			listmodel.set (iter,
 				0, (i++).to_string ("%02i"),
 				1, (baddr+scn.rva).to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
 				2, scn.offset.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
-				3, scn.size.to_string ("%05i"),
-				4, scn.vsize.to_string ("%05i"),
+				3, scn.size.to_string ("0x%05x"),
+				4, scn.vsize.to_string ("0x%05x"),
 				5, RStr.rwx_i(scn.srwx),
 				6, scn.name);
 		}
+		//view.row_activated.connect ((p, c)=> {
+		view.cursor_changed.connect ((c)=> {
+			TreeModel m;
+			var sel = view.get_selection ();
+			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);          
+			foreach (var row in list) {
+				Value a, b;
+				TreeIter it;
+				listmodel.get_iter (out it, row);
+				m.get_value (it, 2, out a);
+				m.get_value (it, 4, out b);
+				sb.mark_range (min, max, a.get_string ().to_uint64 (),
+					b.get_string ().to_uint64 ());
+				break;
+			}     
+		});
+
 		retcol = 1;
 		view.model = listmodel;
 		view.button_release_event.connect (button_press);

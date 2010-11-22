@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 
-VBox using=Gtk name=Ragui.MainPanel {
+VBox using=Gtk $Ragui.MainPanel {
 	Label label="";
 	HBox {
 		Label label="";
