@@ -53,8 +53,13 @@ public class Ragui.Main {
 		gc.debugger = debugger; // set gui mode in debugger mode
 		if (files != null) {
 			gc.core.file_open (files[0], 0);
-			mw.view_body ();
-			mw.title = "ragui : %s".printf (files[0]);
+			if (gc.core.file != null) {
+				mw.view_body ();
+				mw.title = "ragui : %s".printf (files[0]);
+			} else {
+				gc.show_error ("Cannot open file");
+				mw.view_panel ();
+			}
 		} else mw.view_panel ();
 
 		if (mw.panel != null) {

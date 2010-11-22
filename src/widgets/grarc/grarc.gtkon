@@ -1,0 +1,11 @@
+VBox using=Gtk $Grarc spacing=3 {
+	HBox spacing=3 {
+		ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll {
+			TextView can-focus !editable $.code;
+		}
+		ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll2 {
+			TextView can-focus !editable $.code2;
+		}
+	}
+	Entry !editable !expand;
+}

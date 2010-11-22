@@ -518,6 +518,7 @@ print ("ROWS = %d\n", rows);
 		//buffer.end = addr+sz;
 		//buffer.size = y;
 		//buffer.bytes = new uint8[y];
+		cursor = xcursor = 0;
 		this.offset = this.address = addr;
 		buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
 		refresh (da);

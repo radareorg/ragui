@@ -18,7 +18,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 			Button use-stock label="continue";
 		}
 */
-			HPaned position=250 {
+			HPaned $panel position=250 {
 				VBox spacing=3 {
 					ComboBox text !expand $leftbox;
 					VBox $vb0 {
@@ -40,7 +40,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 								tab-label {
 									Label label="code/data";
 								}
-								VPaned position=300 {
+								VPaned $codhex position=300 {
 									Codeview:Widget $codeview;
 									Hexview:Widget $hexview add2;
 								}
@@ -328,6 +328,35 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
 				});
 			vbheaders.add (grabin);
+		}
+
+		public enum PanelType {
+			LEFT,
+			CODE,
+			HEX,
+			CONS,
+			GRAPH,
+			BIN
+		}
+
+		public void show_panel (PanelType pt) {
+			switch (pt) {
+			case PanelType.LEFT:
+				if (panel.position == 300)
+					panel.position = 0;
+				else panel.position = 300;
+				break;
+			case PanelType.CODE:
+				break;
+			case PanelType.HEX:
+				break;
+			case PanelType.CONS:
+				break;
+			case PanelType.GRAPH:
+				break;
+			case PanelType.BIN:
+				break;
+			}
 		}
 	}-
 }

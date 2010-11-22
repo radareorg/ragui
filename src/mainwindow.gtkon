@@ -37,7 +37,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			MenuItem $menu_view label="_View" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="left panel";
+						ImageMenuItem stock-id="left panel" activate="menuViewLeftpanel";
 						ImageMenuItem stock-id="console";
 						ImageMenuItem stock-id="graph";
 						ImageMenuItem stock-id="code";
@@ -192,6 +192,10 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		private bool OnWindowCloseEvent(Gdk.Event ev) {
 			OnQuit();
 			return true;
+		}
+
+		private void menuViewLeftpanel () {
+			body.show_panel (body.PanelType.LEFT);
 		}
 
 		private void OnMenuEditPreferences () {
