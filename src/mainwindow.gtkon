@@ -123,21 +123,28 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		private void OnFileSave() {
 			/* TODO */
-			//if (gc.prjfile == null)
-			//	OnFileSaveAs();
+			if (is_open) {
+				//if (gc.prjfile == null)
+				//	OnFileSaveAs();
+			} else gc.show_error ("Nothing to save");
 		}
 
 		private void OnFileSaveAs() {
 			/* TODO */
+			if (is_open) {
+			} else gc.show_error ("Nothing to save");
 		}
+
+		private bool is_open;
 
 		private void OnFileClose() {
 			/* TODO: warn if file not saved, etc.. */
-			view_panel ();
+			if (is_open)
+				view_panel ();
 		}
 
 		public MainWindow () {
-			panel = new MainPanel ();
+		//	panel = new MainPanel ();
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 		}
 
@@ -235,11 +242,13 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		public MainBody body;
 
 		public void view_panel () {
-			panel.show_all ();
-			body.hide ();
-			box_body.children = null;
+			if (panel == null)
+				panel = new MainPanel ();
+			is_open = false;
+			//box_body.children = null;
 			box_body.add (panel);
 			box_body.show_all ();
+			body.hide ();
 			menu_view.sensitive = false;
 			menu_edit.sensitive = false;
 		}
@@ -247,7 +256,8 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		public void view_body () {
 			if (body == null)
 				body = new MainBody ();
-			box_body.children = null;
+			is_open = true;
+			//box_body.children = null;
 			box_body.add (body);
 			box_body.show_all ();
 			panel.hide ();
