@@ -96,7 +96,7 @@ public class Codeview.Widget : ScrolledWindow {
 		case ScrollDirection.UP:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				pany += 300*ZOOM_FACTOR;
+				pany += 200*ZOOM_FACTOR;
 				break;
 			case WheelAction.ZOOM:
 				zoom += ZOOM_FACTOR;
@@ -106,12 +106,18 @@ public class Codeview.Widget : ScrolledWindow {
 		case ScrollDirection.DOWN:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				pany -= 300*ZOOM_FACTOR;
+				pany -= 200*ZOOM_FACTOR;
 				break;
 			case WheelAction.ZOOM:
 				zoom -= ZOOM_FACTOR;
 				break;
 			}
+			break;
+		case ScrollDirection.LEFT:
+			opanx -= 100*ZOOM_FACTOR;
+			break;
+		case ScrollDirection.RIGHT:
+			opanx += 100*ZOOM_FACTOR;
 			break;
 		}
 

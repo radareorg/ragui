@@ -103,10 +103,16 @@ public class Grava.Widget : VBox {
 		sw.grab_focus();
 
 		switch (es.direction) {
+		case ScrollDirection.LEFT:
+			graph.pany -= 32;
+			break;
+		case ScrollDirection.RIGHT:
+			graph.pany += 32;
+			break;
 		case ScrollDirection.UP:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				graph.pany += 64;
+				graph.pany += 32;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom += ZOOM_FACTOR;
@@ -120,7 +126,7 @@ public class Grava.Widget : VBox {
 		case ScrollDirection.DOWN:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				graph.pany -= 64;
+				graph.pany -= 32;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom -= ZOOM_FACTOR;
