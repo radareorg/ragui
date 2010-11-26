@@ -104,6 +104,7 @@ gtkaml:
 
 widgets.done:
 	#cd widgets/hexview && ${MAKE} lib
+	cd widgets/segmentbar && ${MAKE}
 	cd widgets/codew && ${MAKE} lib
 	cd widgets/grasm && ${MAKE} lib
 	cd widgets/grava && ${MAKE} lib

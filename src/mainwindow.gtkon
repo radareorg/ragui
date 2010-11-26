@@ -144,7 +144,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		public MainWindow () {
-		//	panel = new MainPanel ();
+			panel = new MainPanel ();
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 		}
 
