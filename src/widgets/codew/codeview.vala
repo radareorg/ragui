@@ -114,10 +114,10 @@ public class Codeview.Widget : ScrolledWindow {
 			}
 			break;
 		case ScrollDirection.LEFT:
-			opanx -= 100*ZOOM_FACTOR;
+			opanx += 100*ZOOM_FACTOR;
 			break;
 		case ScrollDirection.RIGHT:
-			opanx += 100*ZOOM_FACTOR;
+			opanx -= 100*ZOOM_FACTOR;
 			break;
 		}
 

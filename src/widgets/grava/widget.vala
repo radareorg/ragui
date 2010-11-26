@@ -63,7 +63,7 @@ public class Grava.Widget : VBox {
 		da = new DrawingArea ();
 
 		/* add event listeners */
-		da.add_events(  Gdk.EventMask.BUTTON1_MOTION_MASK |
+		da.add_events ( Gdk.EventMask.BUTTON1_MOTION_MASK |
 				Gdk.EventMask.SCROLL_MASK         |
 				Gdk.EventMask.BUTTON_PRESS_MASK   |
 				Gdk.EventMask.BUTTON_RELEASE_MASK );
@@ -104,15 +104,15 @@ public class Grava.Widget : VBox {
 
 		switch (es.direction) {
 		case ScrollDirection.LEFT:
-			graph.pany -= 32;
+			graph.panx += 10;
 			break;
 		case ScrollDirection.RIGHT:
-			graph.pany += 32;
+			graph.panx -= 10;
 			break;
 		case ScrollDirection.UP:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				graph.pany += 32;
+				graph.pany += 10;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom += ZOOM_FACTOR;
@@ -126,7 +126,7 @@ public class Grava.Widget : VBox {
 		case ScrollDirection.DOWN:
 			switch(wheel_action) {
 			case WheelAction.PAN:
-				graph.pany -= 32;
+				graph.pany -= 10;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom -= ZOOM_FACTOR;
