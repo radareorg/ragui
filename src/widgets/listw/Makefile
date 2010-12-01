@@ -3,14 +3,19 @@ CFILES=
 VALAFLAGS=--pkg gtk+-2.0 --Xcc=-I../include
 OUT_BIN=listw
 OUT_HFILE=../include/listview.h
+CFLAGS+=-I../include `pkg-config --cflags gtk+-2.0 r_asm r_util`
+OFILES=$(subst .vala,.o,${VALAFILES})
 
-.PHONY: main lib
+.PHONY: main objs lib
 
 main: lib all
 
+objs: ${OFILES}
+
 lib: ../include/listview.h
 	valac -C --library listview --vapi=../include/listview.vapi ${VALAFLAGS} ${VALAFILES} -H ../include/listview.h
-	#cp *.h
-	#@cp -f .vala-aux/listview.vapi ../include
+	${MAKE} objs
+	rm -f liblistw.a
+	ar -q liblistw.a ${OFILES}
 
 include ../parvala.mk

@@ -1,0 +1,33 @@
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* add 'modal' as Window attribute if wanted to be modal */
+Window using=Gtk $Ragui.Analyze title="Analyze code" destroy-event=OnWindowCloseEvent {
+	VBox border-width=1 {
+		VBox border-width=3 spacing=3 {
+			Label !expand label="analyze code... TODO: add options";
+		}
+		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
+			Button label=gtk-cancel use-stock clicked=OnButtonCloseClicked;
+			Button label=gtk-ok use-stock clicked=OnButtonOkClicked;
+		}
+	}
+-{
+	public Analyze() {
+		resize (400, 300);
+	}
+
+	private void OnButtonCloseClicked() {
+		this.hide ();
+	}
+
+	private void OnButtonOkClicked() {
+		this.hide ();
+		gc.bgcmd ("aa");
+	}
+
+	private bool OnWindowCloseEvent(Gdk.Event ev) {
+		this.hide ();
+		return true;
+	}
+}-
+}
+

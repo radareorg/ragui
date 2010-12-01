@@ -14,53 +14,46 @@ PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar
 PKG+=--vapidir=widgets/include
 PKG+=--Xcc=-Iwidgets/include
 PKG+=--pkg r_core
-VALAFLAGS=${PKG}
+VALAFLAGS=${PKG} --thread
 
-# TODO: use .a archive files here
-WIDGETS=`ls widgets/codew/*.c| grep -v main`
-WIDGETS+=widgets/hexview/hexview.c
-WIDGETS+=widgets/hexview/hexviewbuffer.c
-WIDGETS+=widgets/grasm/grasmwidget.c
 WIDGETS+=widgets/grava/libgrava.a
-WIDGETS+=widgets/listw/listview.c
-WIDGETS+=widgets/segmentbar/segmentedbar.c
-#Grabin
-WIDGETS+=widgets/grabin/grabin.c widgets/grabin/grabinsections.c
-WIDGETS+=widgets/grabin/grabinsymbols.c widgets/grabin/grabinimports.c
-WIDGETS+=widgets/grabin/grabinstrings.c widgets/grabin/grabinrelocs.c
-WIDGETS+=widgets/grabin/grabinfat.c widgets/grabin/grabinall.c
+WIDGETS+=widgets/codew/libcodew.a
+WIDGETS+=widgets/hexview/libhexview.a
+WIDGETS+=widgets/segmentbar/libsegbar.a
+WIDGETS+=widgets/grabin/libgrabin.a
+WIDGETS+=widgets/grasm/libgrasm.a
+WIDGETS+=widgets/listw/liblistw.a
 
 all: widgets.done
 	@${MAKE} vapi
 	@${MAKE} gtkon
 	@${MAKE} vala
-	#@${MAKE} gtkaml
 	@${MAKE} link
 
-.PHONY: gtkaml gtkon vala vapi link
+.PHONY: gtkaml gtkon vala vapi link widgets
 
 GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
-GTKONFILES+=openremote.gtkon dumpdata.gtkon
+GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
 # TODO: GTKONFILES+=datadump.gtkon
-GTKAMLFILES=
 VALAFILES=guicore.vala main.vala
-RMVALAFILES+=$(subst .gtkaml,.vala,$(GTKAMLFILES))
 RMGTKON_FILES+=$(subst .gtkon,.vala,$(GTKONFILES))
-GTKAML_C_FILES+=$(subst .gtkaml,.c,$(GTKAMLFILES))
 GTKON_C_FILES+=$(subst .gtkon,.c,$(GTKONFILES))
 GTKON_C_FILES+=mainwindow.c
 VALAFILES+=${RMVALAFILES}
 VALAFILES+=${RMGTKON_FILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
+OFILES=$(subst .vala,.o,$(VALAFILES))
 
-link:
+CFLAGS+=-Iwidgets/include `pkg-config --cflags gtk+-2.0 ${R2DEPS}`
+link: ${OFILES}
 	@for a in ${CFILES}; do \
 		if [ ! -e ${BIN} -o $$a -nt ${BIN} ]; then \
-			echo "  CC ${CFILES}" ; \
+			echo "  CC ${OFILES}" ; \
+			echo "  LD ragui" ; \
 			${CC} ${CFLAGS} -Iwidgets/include \
 				`pkg-config --cflags --libs gtk+-2.0 ${R2DEPS}` \
-				${CFILES} ${WIDGETS} -o ${BIN} ; \
+				${OFILES} ${WIDGETS} -o ${BIN} ; \
 			break ; \
 		fi ; \
 	done
@@ -75,7 +68,7 @@ vala:
 			rm -f ${BIN} ${CFILES} ; \
 			echo "  VALAC  ${VALAFILES}" ; \
 			${VALAC} -C ${VALAFLAGS} ${VALAFILES} ; \
-			break ; \
+			exit $? ; \
 		fi ; \
 	done
 
@@ -86,22 +79,11 @@ gtkon:
 			echo "  GTKAMLC  ${GTKONFILES}" ; \
 			rm -f ${BIN} ${GTKON_C_FILES} ; \
 			${GTKAMLC} -V ${PKG} ${GTKAMLFLAGS} ${GTKONFILES} ; \
-			break ; \
+			exit $? ; \
 		fi ; \
 	done
 
-GTKAMLFLAGS+=--vapidir=. --pkg guicore
-gtkaml:
-	@for a in ${GTKAMLFILES}; do \
-		vala=`echo $$a | sed -e s,gtkaml,vala,g` ; \
-		if [ ! -e $$vala -o $$a -nt $$vala ]; then \
-			echo "  GTKAMLC  ${GTKAMLFILES}" ; \
-			rm -f ${RMVALAFILES} ; \
-			${GTKAMLC} --save-temps ${PKG} ${GTKAMLFLAGS} -c ${GTKAMLFILES} ; \
-			break ; \
-		fi ; \
-	done
-
+# hacky..conflicts with widgets:
 widgets.done:
 	#cd widgets/hexview && ${MAKE} lib
 	cd widgets/segmentbar && ${MAKE}
@@ -130,3 +112,6 @@ test:
 	#gtkaml --define=MAIN mainpanel.gtkon
 	gtkaml --define=MAIN openfile.gtkon
 	#gtkaml --define=MAIN newproject.gtkon
+
+widgets:
+	cd widgets && ${MAKE} all

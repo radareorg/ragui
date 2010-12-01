@@ -2,7 +2,8 @@ VALAFLAGS=--pkg gtk+-2.0 --pkg r_core --vapidir=../include --Xcc=-I../include --
 PKG=--pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg grabinimports
 PKG+=--pkg grabinstrings --pkg grabinrelocs --pkg grabinfat
 CFILES=grabin.c grabinsections.c grabinsymbols.c grabinimports.c
-CFILES+=grabinstrings.c grabinrelocs.c grabinfat.c grabinall.c ../segmentbar/segmentedbar.c
+CFILES+=grabinstrings.c grabinrelocs.c grabinfat.c grabinall.c 
+OFILES=$(subst .c,.o,$(CFILES))
 
 all: main
 
@@ -17,10 +18,13 @@ lib:
 	gtkamlc -C --library grabinrelocs --vapi=../include/grabinrelocs.vapi -H ../include/grabinrelocs.h --pkg grabin ${VALAFLAGS} grabinrelocs.gtkon
 	gtkamlc -C --library grabinfat --vapi=../include/grabinfat.vapi -H ../include/grabinfat.h --pkg grabin ${VALAFLAGS} grabinfat.gtkon
 	gtkamlc -C --library grabinall --pkg segmentbar --vapi=../include/grabinall.vapi -H ../include/grabinall.h ${PKG} ${VALAFLAGS} grabinall.gtkon
+	${CC} -c -I../include `pkg-config --cflags gtk+-2.0 r_core` ${CFILES}
+	rm -f libgrabin.a
+	ar -q libgrabin.a ${OFILES}
 
 main: lib
 	valac -C --pkg gtk+-2.0 ${PKG} --pkg segmentbar --pkg grabinall ${VALAFLAGS} grabintest.vala 
-	gcc -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` ${CFILES} grabintest.c -o grabintest
+	${CC} -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` ${CFILES} ../segmentbar/segmentedbar.c grabintest.c -o grabintest
 
 clean:
 	rm -f *.c grabintest

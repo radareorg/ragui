@@ -1,5 +1,6 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
-Window using=Gtk $Ragui.DumpData modal title="Dump data" destroy-event=OnWindowCloseEvent {
+/* add 'modal' as Window attribute if wanted to be modal */
+Window using=Gtk $Ragui.DumpData title="Dump data" destroy-event=OnWindowCloseEvent {
 	VBox border-width=1 {
 		VBox border-width=3 spacing=3 {
 			HBox !expand spacing=3 {
@@ -20,18 +21,26 @@ Window using=Gtk $Ragui.DumpData modal title="Dump data" destroy-event=OnWindowC
 		resize (400, 300);
 	}
 
+	public void set_info (string file, uint64 from, uint64 to) {
+		this.from.text = ("0x%08"+uint64.FORMAT_MODIFIER+"x").printf (from);
+		this.to.text = ("0x%08"+uint64.FORMAT_MODIFIER+"x").printf (to);
+		this.fc.set_filename (file);
+	}
+
 	private void OnButtonCloseClicked() {
 		this.hide ();
 	}
 
 	private void OnButtonOkClicked() {
+		var file = fc.get_filename ();
 		var f = from.text.to_uint64 ();
 		var t = to.text.to_uint64 ();
 		if (f>t) {
-			//gc.cmd (@"s $offset");
-			//gc.cmd (@"wt $filename");
+			var bs = t-f;
+			gc.cmd (@"wt $file @ $f:$bs");
 			this.hide ();
-		} else warning ("TODO: display popup with error message");
+			gc.show_message ("Dumped $bs bytes to $file", MessageType.INFO);
+		} else gc.show_error ("Invalid range\n");
 	}
 
 	private bool OnWindowCloseEvent(Gdk.Event ev) {

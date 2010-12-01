@@ -1,11 +1,11 @@
 all:
 	mkdir -p include
-	cd grava && ${MAKE}
-	cd grasm && ${MAKE}
-	cd codew && ${MAKE}
-	cd hexview && ${MAKE}
-	cd listw && ${MAKE}
-	cd grabin && ${MAKE}
+	cd grava && ${MAKE} lib
+	cd grasm && ${MAKE} lib
+	cd codew && ${MAKE} lib
+	cd hexview && ${MAKE} lib
+	cd listw && ${MAKE} lib
+	cd grabin && ${MAKE} lib
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../codew/*.vala --library codew
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../grava/*.vala --library grava
 

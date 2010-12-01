@@ -233,7 +233,7 @@ public class Grava.Renderer {
 		ctx.fill ();
 		ctx.restore ();
 
-		ctx.select_font_face ("Sans Serif", //Courier", 
+		ctx.select_font_face ("mono", //"Sans Serif", //Courier", 
 			FontSlant.NORMAL,
 			FontWeight.BOLD);
 		ctx.set_font_size (10);

@@ -35,6 +35,31 @@ public class Ragui.GuiCore {
 		return ret;
 	}
 
+	public bool bgtask = false;
+
+	public int bgcmd (string cmd) {
+		// TODO: BLOCK UI with a modal popup, closed when thread is joined
+		try {
+			unowned Thread<void*> th = Thread.create <void*>( () => {
+				bgtask = true;
+				int ret = gc.core.cmd0 (cmd);
+				gc.core.cons.flush ();
+				return null;
+			}, true);
+			unowned Thread th2 = Thread.create <void> ( () => {
+				th.join ();
+				bgtask = true;
+				Idle.add (() => {
+					show_message ("Task finished!\n");
+				});
+			}, true);
+			show_message ("Working in background.. wait a bit");
+		} catch (ThreadError e) {
+			show_error (e.message);
+		}
+		return 0; // XXX
+	}
+
 	public string cmdstr (string cmd) {
 		return gc.core.cmd_str (cmd);
 	}
@@ -42,7 +67,7 @@ public class Ragui.GuiCore {
 	public bool seek (uint64 addr) {
 		// XXX: handle ret value
 		gc.core.seek (addr, true);
-		cmd (@"s $addr");
+		gc.cmd (@"s $addr");
 		return true;
 	}
 
@@ -56,7 +81,7 @@ public class Ragui.GuiCore {
 		return ret==ResponseType.YES;
 	}
 
-	public void show_message (string msg, MessageType mt) {
+	public void show_message (string msg, MessageType mt = MessageType.INFO) {
 		MessageDialog md = new MessageDialog (window,
 				DialogFlags.DESTROY_WITH_PARENT,
 				mt, ButtonsType.CLOSE, msg);

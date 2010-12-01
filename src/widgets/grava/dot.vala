@@ -93,7 +93,7 @@ public static class Grava.XDot {
 
 				// XXX HACK
 				string directive = ((string)(ptr+1)).replace (", pos=", "\", pos=");
-				var foo = directive.split ("\", ");
+				var foo = directive.split ("\", "); // TODO: bypass \"
 				foreach (var field in foo) {
 					if (field.has_prefix ("pos=\"")) {
 						string pos = field[5:-1];
@@ -112,6 +112,7 @@ public static class Grava.XDot {
 						break;
 					} else
 					if (field.has_prefix ("label=\"")) {
+						field = field.replace ("\"]", "");
 						weak string str = (string?)((char*)field+7);
 						string label = str.replace ("\\l", "\n");
 						print ("LABEL(%s)\n", label);

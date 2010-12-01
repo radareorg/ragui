@@ -99,12 +99,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 			leftbox.append_text ("Sections");
 			leftbox.append_text ("Imports");
 			leftbox.append_text ("Symbols");
+			leftbox.append_text ("Functions");
 			leftbox.append_text ("Relocations");
 			leftbox.append_text ("Entry Points");
 			leftbox.append_text ("Strings");
 			leftbox.append_text ("Registers");
 			leftbox.append_text ("Breakpoints");
 			leftbox.append_text ("Processes");
+			leftbox.append_text ("Comments");
 			leftbox.append_text ("Threads");
 			leftbox.set_active (0);
 			leftbox.changed.connect ( (x)=> {
@@ -162,6 +164,8 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				case "dump":
 					var w = new DumpData ();
 					w.transient_for = gc.window;
+					// TODO: set size listw must store this too
+					w.set_info (d.name, d.offset, d.offset);
 					w.show_all ();
 					break;
 				case "backup":
