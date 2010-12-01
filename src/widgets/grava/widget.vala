@@ -93,7 +93,7 @@ public class Grava.Widget : VBox {
 		sw.add_with_viewport (vp);
 
 		load_graph_at.connect ((obj, addr) => {
-//			stdout.printf("HOWHOWHOW "+addr);
+//			print ("HOWHOWHOW "+addr);
 		});
 	}
 
@@ -145,7 +145,7 @@ public class Grava.Widget : VBox {
 
 	private bool key_release(Gtk.Widget w, Gdk.EventKey ek) {
 		sw.grab_focus ();
-//		stdout.printf("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
+//		print ("Key released %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 		switch (ek.keyval) {
 		case 65507: // CONTROL KEY
 			wheel_action = WheelAction.PAN;
@@ -390,17 +390,17 @@ load_graph_at("$$");
 		//imi = new ImageMenuItem.with_label("Focus");
 		imi = new ImageMenuItem.from_stock("gtk-zoom-in", null);
 		imi.activate.connect ((imi) => {
-	//		stdout.printf("go in!\n");
+	//		print ("go in!\n");
 			focus_at_label(null, Graph.selected.get("label"));
 			//MenuItem mi = menu.get_active();
 			//load_graph_at(((Label)imi.child).get_text()); //"0x400");
-			//stdout.printf(" cocococo "+ menu.);
+			//print (" cocococo "+ menu.);
 		});
 		menu.append(imi);
 
 		imi = new ImageMenuItem.with_label("Breakpoint here");
 		imi.activate.connect ((imi) => {
-	//		stdout.printf("add bp!\n");
+	//		print ("add bp!\n");
 			set_breakpoint(null, Graph.selected.get("label"));
 		});
 		menu.append(imi);
@@ -415,7 +415,7 @@ load_graph_at("$$");
 /*
 		imi = new ImageMenuItem.with_label("Remove true branch");
 		imi.activate.connect ((imi) => {
-///			stdout.printf("Focus!\n");
+///			print ("Focus!\n");
 		});
 		menu.append(imi);
 
@@ -431,7 +431,7 @@ load_graph_at("$$");
 			foreach(string str in graph.selected.calls) {
 				imi = new ImageMenuItem.with_label (str);
 				imi.activate.connect ((imi) => {
-					//stdout.printf("FUCKME: \n"+imi.submenu_placement());
+					//print ("FUCKME: \n"+imi.submenu_placement());
 					load_graph_at(((Label)imi.child).get_text()); //"0x400");
 				});
 				menu.append (imi);

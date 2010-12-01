@@ -63,14 +63,17 @@ public static class Grava.XDot {
 		return n;
 	}
 
-	private static bool import_line (Graph gr, string row) {
+	private static bool import_line (Graph gr, string _row) {
 		Edge? e = null;
 		Node? n = null;
-		if (row[0] == '\t' && row[1] == '"') {
+		int i = 0;
+		for (i = 0; _row[i] != '\0' && (_row[i]==' '||_row[i]=='\t'); i++);
+		string row = _row[i:_row.length];
+		if (row[0] == '"') {
 			char *ptr = row.chr (-1, '[');
 			if (ptr != null) {
 				ptr[0] = '\0';
-				if (row.str ("->") != null) {
+				if (row.str ("\" -> \"") != null) {
 					string node1, node2;
 					if (parse_edge (row, out node1, out node2)) {
 						print ("EDGE '%s' -> '%s'\n", node1, node2);
@@ -119,15 +122,12 @@ public static class Grava.XDot {
 					} else
 					if (field.has_prefix ("color=")) {
 						string color;
-						weak string str;
-						if (field[7] == '"') {
-							str = (string?)((char*)field+7);
-							color = str.replace ("\\l", "\n");
-							char *bar = color.chr (-1, '"');
-							if (bar != null)
-								bar[0]='\0';
+						if (field[6]=='"') {
+							string p = field[7:field.length];
+							int to = (int)p.pointer_to_offset (p.chr (-1, '"'));
+							color = p[0:to];
 						} else {
-							str = (string?)((char*)field+6);
+							weak string str = (string?)((char*)field+6);
 							color = str.replace ("\\l", "\n");
 							char *bar = color.chr (-1, ',');
 							if (bar != null)

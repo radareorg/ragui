@@ -78,10 +78,10 @@ public class Grava.DefaultLayout : Grava.Layout {
 			n.y = m.y;
 			n.w = m.w;
 			n.h = m.h;
-stdout.printf("TAKEND FOR %s\n", n.get("offset"));
+print ("TAKEND FOR %s\n", n.get("offset"));
 			return true;
 		}
-stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
+print ("NOT TAKEND FOR %s\n", n.get("offset"));
 		
 		return false;
 	}
@@ -121,7 +121,7 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 
 		last_y = 50;
 
-/*
+#if 0
 		// Tots vertical, un sota l'altr ordenats per base addr
 		foreach(unowned Node node in graph.nodes) {
 			if (!node.visible) continue;
@@ -130,7 +130,7 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 			node.fit();
 			node.y = last_y ;
 			last_y = node.y + node.h + 50 ;
-			//stdout.printf(" at %f %s %x\n", node.y, node.get ("label" ) , node.baseaddr );
+			//print (" at %f %s %x\n", node.y, node.get ("label" ) , node.baseaddr );
 		}
 		
 		// Per cada node. Segueixo la condiciÃ³ certa, tots els nodes que estiguin
@@ -151,11 +151,11 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 					n.y = m.y;
 					n.w = m.w;
 					n.h = m.h;
-					stdout.printf("FUCKA! %f %f\n", n.x, n.y);
+					print ("FUCKA! %f %f\n", n.x, n.y);
 					continue;
 				}
 			}
-			stdout.printf("---- not ounfd !\n");
+			print ("---- not ounfd !\n");
 
 			/// busco l'edge verd d'aquest node
 			///
@@ -163,7 +163,7 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 			destn = null;
 			foreach(unowned Edge edge in graph.edges) {
 				if (edge.orig == n && edge.jmpcnd == true) {
-					if(d)stdout.printf ( "0x%x ----> 0x%x\n",edge.orig.baseaddr ,edge.dest.baseaddr );
+					if (d) print ( "0x%x ----> 0x%x\n",edge.orig.baseaddr ,edge.dest.baseaddr );
 					destn = edge.dest;
 					found = true;
 					break;
@@ -189,10 +189,10 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 				}
 				/// DesplaÃ§o
 				///
-				for( k = (i+1) ;  k < graph.nodes.length() ; k ++ ) {
+				for (k = i+1; k < graph.nodes.length(); k++) {
 					p = graph.nodes.nth_data ( k );
 					
-					if(d)stdout.printf ( "Displacing 0x%x\n", p.baseaddr );
+					if (d) print ( "Displacing 0x%x\n", p.baseaddr );
 				
 					// El node estava entre el node origen i el desti
 					if ( p.x == n.x )
@@ -200,7 +200,7 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 				
 					/// Es ja el node desti.
 					if ( p == destn ) {
-						if(d)stdout.printf ( "AT 0x%x\n", p.baseaddr );
+						if (d) print ( "AT 0x%x\n", p.baseaddr );
 						destn.x = n.x; 
 						destn.y = n.y + n.h + 50;
 						break;
@@ -209,10 +209,8 @@ stdout.printf("NOT TAKEND FOR %s\n", n.get("offset"));
 			}
 			setxy(n);
 		}
-
 		return;
-*/
-
+#endif
 		walkChild (graph.selected, 5);
 		//walkChild(graph.selected); //
 		foreach (unowned Node node in graph.nodes) {

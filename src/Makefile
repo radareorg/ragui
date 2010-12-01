@@ -21,7 +21,7 @@ WIDGETS=`ls widgets/codew/*.c| grep -v main`
 WIDGETS+=widgets/hexview/hexview.c
 WIDGETS+=widgets/hexview/hexviewbuffer.c
 WIDGETS+=widgets/grasm/grasmwidget.c
-WIDGETS+=widgets/grava/*.o
+WIDGETS+=widgets/grava/libgrava.a
 WIDGETS+=widgets/listw/listview.c
 WIDGETS+=widgets/segmentbar/segmentedbar.c
 #Grabin

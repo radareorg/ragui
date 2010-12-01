@@ -184,13 +184,15 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					gc.cmd ("ab");
 					gc.cmd ("af");
 					gc.cmd (@"ag $offset > /tmp/graph.xdot");
-					RSystem.cmd ("xdot /tmp/graph.xdot &");
-					/*
-					grava.graph.init ();
-					Grava.XDot.import (grava.graph, "/tmp/graph.xdot");
-					grava.graph.update ();
-					grava.draw ();
-					*/
+					bool use_xdot = false;
+					if (use_xdot) {
+						RSystem.cmd ("xdot /tmp/graph.xdot &");
+					} else {
+						grava.graph.init ();
+						Grava.XDot.import (grava.graph, "/tmp/graph.xdot");
+						grava.graph.update ();
+						grava.draw ();
+					}
 					break;
 				// breakpoints
 				case "set breakpoint":
