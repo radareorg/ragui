@@ -46,14 +46,19 @@ public class Ragui.GuiCore {
 				gc.core.cons.flush ();
 				return null;
 			}, true);
-			unowned Thread th2 = Thread.create <void> ( () => {
+			//unowned Thread th2 = 
+			// TODO: capture this thread somewhere..
+			Thread.create <void> ( () => {
 				th.join ();
 				bgtask = true;
 				Idle.add (() => {
+					hide_infprogress ();
 					show_message ("Task finished!\n");
+					return false;
 				});
 			}, true);
-			show_message ("Working in background.. wait a bit");
+			//show_message ("Working in background.. wait a bit");
+			show_infprogress ("analyzing code..");
 		} catch (ThreadError e) {
 			show_error (e.message);
 		}
@@ -97,6 +102,37 @@ public class Ragui.GuiCore {
 				msg);
 		md.run ();
 		md.destroy ();
+	}
+
+	private Window ipw;
+	private bool ipw_hide;
+
+	public void hide_infprogress () {
+		ipw.hide_all ();
+		ipw = null;
+		ipw_hide = true;
+	}
+
+	public void show_infprogress (string msg) {
+		// TODO: handle on-window_close here... to stop gracefully..
+		ipw = new Window (WindowType.TOPLEVEL);
+		ipw.modal = true;
+		ipw.parent = window;
+		var vb = new VBox (false, 5);
+		var pb = new ProgressBar ();
+		pb.pulse_fraction = 0.05;
+		pb.bar_style = ProgressBarStyle.CONTINUOUS;
+		ipw.add (vb);
+		ipw_hide = false;
+		Timeout.add (50, ()=> {
+			if (ipw_hide)
+				return false;
+			pb.pulse ();
+			return true;
+		});
+		vb.pack_start (new Label (msg), false, false, 3);
+		vb.pack_start (pb, false, false, 8);
+		ipw.show_all ();
 	}
 
 	public static const string VERSION = "0.1";

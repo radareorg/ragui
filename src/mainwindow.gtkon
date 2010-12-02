@@ -150,8 +150,10 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		private void menuToolsAnalyze() {
+			var w = new Analyze ();
+			w.show_all ();
 			// TODO: open dialog with options. write analyze.gtkon
-			gc.bgcmd ("aa");
+			//gc.bgcmd ("aa");
 		}
 
 		private void menuToolsHeaders() {
