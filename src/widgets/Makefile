@@ -6,6 +6,7 @@ all:
 	cd hexview && ${MAKE} lib
 	cd listw && ${MAKE} lib
 	cd grabin && ${MAKE} lib
+	cd segmentbar && ${MAKE} lib
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../codew/*.vala --library codew
 	#-cd include && valac -C --pkg gtk+-2.0 --pkg cairo ../grava/*.vala --library grava
 

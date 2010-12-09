@@ -19,10 +19,10 @@ VALAFLAGS=${PKG} --thread
 WIDGETS+=widgets/grava/libgrava.a
 WIDGETS+=widgets/codew/libcodew.a
 WIDGETS+=widgets/hexview/libhexview.a
-WIDGETS+=widgets/segmentbar/libsegbar.a
 WIDGETS+=widgets/grabin/libgrabin.a
 WIDGETS+=widgets/grasm/libgrasm.a
 WIDGETS+=widgets/listw/liblistw.a
+WIDGETS+=widgets/segmentbar/libsegbar.a
 
 all: widgets.done
 	@${MAKE} vapi
@@ -86,7 +86,7 @@ gtkon:
 # hacky..conflicts with widgets:
 widgets.done:
 	#cd widgets/hexview && ${MAKE} lib
-	cd widgets/segmentbar && ${MAKE}
+	cd widgets/segmentbar && ${MAKE} lib
 	cd widgets/codew && ${MAKE} lib
 	cd widgets/grasm && ${MAKE} lib
 	cd widgets/grava && ${MAKE} lib
