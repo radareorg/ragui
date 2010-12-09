@@ -15,7 +15,7 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 	public Widget() {
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
-		couriertag = code.buffer.create_tag ("cour", "font", "courier", "size", "6");
+		couriertag = code.buffer.create_tag ("cour", "family", "mono", "weight", "bold");
 		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
 		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);
 		//code.clicked.connect ((x)=> { print ("CLICK!!\n"); });
@@ -33,11 +33,9 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 		switch (args[0]) {
 		case "b":
 			tag.weight = Pango.Weight.BOLD;
-print ("BOLD\n");
 			break;
 		case "i":
 			tag.style = Pango.Style.ITALIC;
-print ("ITALIC\n");
 			break;
 		case "s":
 			if (args.length<2)
@@ -50,7 +48,7 @@ print ("ITALIC\n");
 			if (args[1] != "?")
 				tag.foreground = args[1];
 			if (args.length>2 && args[2] != "?")
-				tag.background = args[1];
+				tag.background = args[2];
 			break;
 		}
 		return true;
@@ -135,6 +133,10 @@ print ("TAG get %p\n", curtag);
 				break;
 			}
 		}
+		append_text (s);
+		c = 0;
+		s = "";
+
 	}
 
 	public void append_text(string str) {
@@ -147,15 +149,18 @@ print ("TAG get %p\n", curtag);
 		Gtk.TextIter ei; 
 		Gtk.TextMark im;
 		code.buffer.get_end_iter (out ei); 
-		//code.buffer.insert (ei, str, -1);
 		var strs = str.split ("\n");
 		foreach (var s in strs) {
-			if (s.str ("mov") != null)
+print ("fooderz "+s+"\n");
+			if (s.str ("mov") != null) {
 				code.buffer.insert_with_tags (ei, s, -1, couriertag, bluetag, undertag);
-			else code.buffer.insert_with_tags (ei, s, -1, couriertag);
+			} else {
+				code.buffer.insert_with_tags (ei, s, -1, couriertag);
+			}
 			code.buffer.insert (ei, "\n", -1);
 		//code.buffer.insert_with_tags (ei, str, -1); //, couriertag, bluetag, undertag);
 		}
+		//code.buffer.insert (ei, str, -1);
 		/* Autoscroll */
 		code.buffer.get_end_iter (out ei); 
 		im = code.buffer.get_insert (); 

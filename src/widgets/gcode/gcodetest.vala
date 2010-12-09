@@ -8,7 +8,8 @@ static int main (string[] args) {
 	var gcode = new Gcode.Widget ();
 	gcode.data_handler.connect ((x)=>{
 			if (x)
-				print ("I WANT MOAR DATA! (NEXT)\n");
+//				print ("I WANT MOAR DATA! (NEXT)\n");
+gcode.set_markup ("<c red>hello</c> <b>world</b> <i>jiji</i>\n\n\n\n\n<c green red>FUCK YEAH</c>forn\n");
 			else
 				print ("I WANT MOAR DATA! (PREV)\n");
 
