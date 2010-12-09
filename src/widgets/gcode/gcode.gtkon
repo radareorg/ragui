@@ -1,6 +1,6 @@
 /* gcode - Copyright(C) 2009-2010 - nibble<develsec.org> */
 
-HBox using=Gtk $Gcode.Widget {
+HBox using=Gtk using:p=Pango $Gcode.Widget {
 	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll {
 		TextView can-focus !editable $.code;
 	}
@@ -15,9 +15,10 @@ HBox using=Gtk $Gcode.Widget {
 	public Widget() {
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
-		couriertag = code.buffer.create_tag ("font", "font", "courier", "size", "8");
+		couriertag = code.buffer.create_tag ("cour", "font", "courier", "size", "6");
 		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
-		undertag = code.buffer.create_tag ("ul", "underline-set", "True", "underline", "low");
+		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);
+		//code.clicked.connect ((x)=> { print ("CLICK!!\n"); });
 	}
 
 	private void scroll_change() {
@@ -28,6 +29,119 @@ HBox using=Gtk $Gcode.Widget {
 			data_handler (true);
 	}
 
+	public bool tag_parse(TextTag tag, string[] args) {
+		switch (args[0]) {
+		case "b":
+			tag.weight = Pango.Weight.BOLD;
+print ("BOLD\n");
+			break;
+		case "i":
+			tag.style = Pango.Style.ITALIC;
+print ("ITALIC\n");
+			break;
+		case "s":
+			if (args.length<2)
+				return false;
+			tag.size = args[1].to_int ();
+			break;
+		case "c":
+			if (args.length<2)
+				return false;
+			if (args[1] != "?")
+				tag.foreground = args[1];
+			if (args.length>2 && args[2] != "?")
+				tag.background = args[1];
+			break;
+		}
+		return true;
+	}
+
+	TextTag? curtag = null;
+
+	// TODO: stack with tag stuff
+	public void tag_push(TextTag tag) {
+		//tagstack.append (tag);
+		code.buffer.tag_table.add (tag);
+print ("TAG PUSH \n");
+		curtag = tag;
+	}
+
+	public void tag_pop() {
+		curtag = null;
+	}
+
+	public TextTag? tag_get() {
+print ("TAG get %p\n", curtag);
+		return curtag;
+		// generate new tag with all the stacked ones
+	}
+
+	public void set_markup(string str) {
+		char c = 0;
+		string s = "";
+		string s2 = "";
+		for (int i=0; i<str.length; i++) {
+			var ch = str.get_char (i);
+			switch (c) {
+			case '&':
+				if (ch==';') {
+					switch (s2) {
+					case "amp": s += "&"; break;
+					case "gt": s += ">"; break;
+					case "lt": s += "<"; break;
+					default: s += "&"+s2+";"; break;
+					}
+					c = 0;
+					s2 = "";
+				} else s2 += ch.to_string ();
+				break;
+			case '<':
+				if (ch=='>') {
+					if (s2[0]=='/') {
+						var t = tag_get ();
+						if (t != null) {
+							Gtk.TextIter ei; 
+							code.buffer.get_end_iter (out ei); 
+							code.buffer.insert_with_tags (ei, s, -1, t);
+						} else append_text (s);
+						// tag close
+						tag_pop ();
+						s = "";
+					} else {
+						var mytag = new TextTag ("tag%p".printf (s2));
+						var tags = s2.split (",");
+						foreach (var tag in tags) {
+							var tag_args = tag.split (" ");
+							if (!tag_parse (mytag, tag_args))
+								error ("Invalid tag parsed\n");
+						}
+						// TODO: we have to create a hashtable to tags in base of attributes
+						tag_push (mytag);
+					}
+					c = 0;
+					s2 = "";
+				} else s2 += ch.to_string ();
+				break;
+			default:
+				switch (ch) {
+				case '&':
+				case '<':
+					c = (char) ch;
+					break;
+				default:
+					s += ch.to_string ();
+					break;
+				}
+				break;
+			}
+		}
+	}
+
+	public void append_text(string str) {
+		Gtk.TextIter ei; 
+		code.buffer.get_end_iter (out ei); 
+		code.buffer.insert (ei, str, -1);
+	}
 
 	public void set_text(string str) {
 		Gtk.TextIter ei; 
@@ -40,7 +154,7 @@ HBox using=Gtk $Gcode.Widget {
 				code.buffer.insert_with_tags (ei, s, -1, couriertag, bluetag, undertag);
 			else code.buffer.insert_with_tags (ei, s, -1, couriertag);
 			code.buffer.insert (ei, "\n", -1);
-		//code.buffer.insert_with_tags (ei, str, -1, couriertag, bluetag, undertag);
+		//code.buffer.insert_with_tags (ei, str, -1); //, couriertag, bluetag, undertag);
 		}
 		/* Autoscroll */
 		code.buffer.get_end_iter (out ei); 

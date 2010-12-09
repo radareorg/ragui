@@ -43,6 +43,7 @@ static int main (string[] args) {
  `-----> 0x0000266b    8           bf0a000000  mov edi, 0xa
 """);
 	w.add (gcode);
+gcode.set_markup ("<c red>hello</c> <b>world</b> <i>jiji</i>");
 	w.show_all ();
 	Gtk.main ();
 	return 0;
