@@ -19,6 +19,8 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="gtk-save-as" activate=OnFileSaveAs;
 						ImageMenuItem stock-id="gtk-close" activate=OnFileClose;
 						SeparatorMenuItem;
+						ImageMenuItem stock-id="diff .." activate=menuProjectDiff;
+						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="OnQuit";
 					}
 				}
@@ -120,6 +122,12 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		private void OnQuit() {
 			on_quit();
+		}
+
+		private void menuProjectDiff() {
+			// open window to select target project
+			// show recents..
+			// open new ragui with diff UI
 		}
 
 		private void OnFileSave() {

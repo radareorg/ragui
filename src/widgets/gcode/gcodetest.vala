@@ -11,6 +11,7 @@ static int main (string[] args) {
 				print ("I WANT MOAR DATA! (NEXT)\n");
 			else
 				print ("I WANT MOAR DATA! (PREV)\n");
+
 		});
 	gcode.set_text("""
          0x0000261c    0                   55  push rbp

@@ -9,11 +9,15 @@ HBox using=Gtk $Gcode.Widget {
 	private Adjustment vadj;
 	private int maxlines;
 	private TextTag couriertag;
+	private TextTag bluetag;
+	private TextTag undertag;
 
 	public Widget() {
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
-		couriertag = code.buffer.create_tag ("font", "font", "courier");
+		couriertag = code.buffer.create_tag ("font", "font", "courier", "size", "8");
+		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
+		undertag = code.buffer.create_tag ("ul", "underline-set", "True", "underline", "low");
 	}
 
 	private void scroll_change() {
@@ -24,12 +28,20 @@ HBox using=Gtk $Gcode.Widget {
 			data_handler (true);
 	}
 
+
 	public void set_text(string str) {
 		Gtk.TextIter ei; 
 		Gtk.TextMark im;
 		code.buffer.get_end_iter (out ei); 
 		//code.buffer.insert (ei, str, -1);
-		code.buffer.insert_with_tags (ei, str, -1, couriertag);
+		var strs = str.split ("\n");
+		foreach (var s in strs) {
+			if (s.str ("mov") != null)
+				code.buffer.insert_with_tags (ei, s, -1, couriertag, bluetag, undertag);
+			else code.buffer.insert_with_tags (ei, s, -1, couriertag);
+			code.buffer.insert (ei, "\n", -1);
+		//code.buffer.insert_with_tags (ei, str, -1, couriertag, bluetag, undertag);
+		}
 		/* Autoscroll */
 		code.buffer.get_end_iter (out ei); 
 		im = code.buffer.get_insert (); 

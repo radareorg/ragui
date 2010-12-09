@@ -4,9 +4,17 @@ using Radare;
 public static Ragui.GuiCore gc;
 public static const string U64FMT = uint64.FORMAT_MODIFIER;
 
+public enum Ragui.GuiCoreType {
+	EDIT,
+	DIFF,
+	DEBUG
+}
+
 public class Ragui.GuiCore {
 	public RCore core;
+	public RCore core2;
 	public string arg0;
+	public GuiCoreType type;
 	public Window window;
 	public bool debugger;
 
