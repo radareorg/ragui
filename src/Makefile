@@ -6,7 +6,7 @@ GTKAMLC?=gtkamlc
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
-#Grabin
+# TODO grabin packages.. must be merged
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
 PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar
@@ -85,17 +85,8 @@ gtkon:
 
 # hacky..conflicts with widgets:
 widgets.done:
-	#cd widgets/hexview && ${MAKE} lib
-	cd widgets/segmentbar && ${MAKE} lib
-	cd widgets/codew && ${MAKE} lib
-	cd widgets/grasm && ${MAKE} lib
-	cd widgets/grava && ${MAKE} lib
-	cd widgets/listw && ${MAKE} lib
-	cd widgets/grabin && ${MAKE} lib
-	:> widgets.done
-
-stuff:
 	cd widgets && ${MAKE}
+	:> widgets.done
 
 clean:
 	rm -f ${BIN} *.c *.h ${RMVALAFILES} ${RMGTKON_FILES}

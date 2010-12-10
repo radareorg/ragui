@@ -3,7 +3,7 @@ R2DIR?=${HOME}/prg/radare2
 BINDIST=`pwd`/bindist
 
 all:
-	cd src && ${MAKE} stuff
+	cd src && ${MAKE} widgets.done
 	cd src && ${MAKE} all
 
 clean:

@@ -2,6 +2,9 @@ http://people.gnome.org/~gjc/htmltextview.py
 
 * We have to create a simple widget that understand few tags:
 
+Aliases:
+(a:b,c blue/>
+
 <a>..</a>          link
 <a /call/foo>..</a>  link
 <b>..</b>          bold

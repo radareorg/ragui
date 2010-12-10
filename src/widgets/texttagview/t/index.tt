@@ -1,0 +1,13 @@
+Hello World!
+
+<b>This</> is just a set of files providing some basic
+textual rendering facilities for GTK+ using the TextTagView
+widget which parses, displays and makes interactive this
+kind of text files.
+
+<c yellow black>YOU</> should be happy about it.
+
+<f mono,c white black>
+This is so fucking funny
+</>
+<a xedni.tt>CLICK HERE FOR MOAR FUN</>

@@ -1,4 +1,4 @@
-/* gcode - Copyright(C) 2009-2010 - nibble<develsec.org> */
+/* gcode - Copyright(C) 2009-2010 - nibble<develsec.org> pancake<nopcode.org> */
 
 HBox using=Gtk using:p=Pango $Gcode.Widget {
 	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll {
@@ -6,11 +6,34 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 	}
 -{
 	public signal void data_handler(bool down);
+	public signal void link_clicked(string url);
 	private Adjustment vadj;
-	private int maxlines;
 	private TextTag couriertag;
 	private TextTag bluetag;
 	private TextTag undertag;
+
+	private string word { get; set; }
+
+	private string getword(char *txt, int off) {
+		char *p = (char*)(txt)+off;
+		for (;p>(char*)txt;p--) {
+			if (is_separator (*p)) {
+				p++;
+				break;
+			}
+		}
+		char *p2 = p;
+		for (;*p2!=0;p2++) {
+			if (is_separator (*p2))
+				break;
+		}
+		int wrdlen = (int)(p2-p);
+		return ((string)p)[0:wrdlen];
+	}
+
+	private inline bool is_separator (char p) {
+		return (p==' '||p=='\n'||p=='\r'||p=='\t'||p==',');
+	}
 
 	public Widget() {
 		vadj = scroll.get_vadjustment();
@@ -18,21 +41,53 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 		couriertag = code.buffer.create_tag ("cour", "family", "mono", "weight", "bold");
 		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
 		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);
-		//code.clicked.connect ((x)=> { print ("CLICK!!\n"); });
+		code.cursor_visible = false;
+		code.button_release_event.connect((x)=> {
+			var is_selected = code.buffer.has_selection;
+			var cur = code.buffer.cursor_position;
+			var txt = code.buffer.text;
+			TextIter ti;
+			code.buffer.get_iter_at_offset (out ti, cur);
+			var off = ti.get_offset ();
+			var lof = ti.get_line_offset ();
+			var len = ti.get_chars_in_line ();
+			var idx = ti.get_visible_line_index ();
+			var linetxt = txt[idx:idx+len];
+
+			word = getword (txt, off);
+			foreach (var a in ti.get_tags ()) {
+			//	print ("TAG: %s %d\n", a.name, a.size);
+				if (a.name[0] == 'a') {
+					var url = "";
+					if (a.name.length>2)
+						url = a.name[2:a.name.length];
+					print ("Link clicked '%s'\n", url);
+					link_clicked (url);
+				}
+			}
+			//print ("LINE (%d) off=%d lof=%d idx=%d (%s)\n", ti.get_line (), off, lof, idx, linetxt);
+			//print ("WORD (%s)\n", word);
+			return false;
+		});
 	}
 
 	private void scroll_change() {
 		var adjvalue = vadj.get_value ();
-		if (adjvalue == 0)
+		if (adjvalue == 0) {
+			vadj.set_value (100);
 			data_handler (false);
-		else if (adjvalue + vadj.get_page_size () == vadj.get_upper ())
+		} else if (adjvalue + vadj.get_page_size () == vadj.get_upper ()) {
 			data_handler (true);
+		}
 	}
 
 	public bool tag_parse(TextTag tag, string[] args) {
 		switch (args[0]) {
 		case "b":
 			tag.weight = Pango.Weight.BOLD;
+			break;
+		case "f":
+			tag.family = args[1];
 			break;
 		case "i":
 			tag.style = Pango.Style.ITALIC;
@@ -41,6 +96,11 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 			if (args.length<2)
 				return false;
 			tag.size = args[1].to_int ();
+			break;
+		case "a":
+			tag.weight = Pango.Weight.BOLD;
+			tag.underline = Pango.Underline.SINGLE;
+			tag.foreground = "blue";
 			break;
 		case "c":
 			if (args.length<2)
@@ -59,7 +119,7 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 	// TODO: stack with tag stuff
 	public void tag_push(TextTag tag) {
 		//tagstack.append (tag);
-		code.buffer.tag_table.add (tag);
+//		code.buffer.tag_table.add (tag);
 print ("TAG PUSH \n");
 		curtag = tag;
 	}
@@ -74,10 +134,20 @@ print ("TAG get %p\n", curtag);
 		// generate new tag with all the stacked ones
 	}
 
-	public void set_markup(string str) {
+	public void clear () {
+		// remove tags
+		// remove images
+		code.buffer.text = "";
+	}
+
+	public void set_markup(string str, bool append=true) {
 		char c = 0;
 		string s = "";
 		string s2 = "";
+		Gtk.TextIter ei; 
+		if (append) code.buffer.get_end_iter (out ei); 
+		else code.buffer.get_start_iter (out ei); 
+
 		for (int i=0; i<str.length; i++) {
 			var ch = str.get_char (i);
 			switch (c) {
@@ -97,24 +167,27 @@ print ("TAG get %p\n", curtag);
 				if (ch=='>') {
 					if (s2[0]=='/') {
 						var t = tag_get ();
-						if (t != null) {
-							Gtk.TextIter ei; 
-							code.buffer.get_end_iter (out ei); 
+						if (t != null)
 							code.buffer.insert_with_tags (ei, s, -1, t);
-						} else append_text (s);
+						else code.buffer.insert (ei, s, -1);
+						if (append) code.buffer.get_end_iter (out ei); 
+						else code.buffer.get_start_iter (out ei); 
 						// tag close
 						tag_pop ();
 						s = "";
 					} else {
-						var mytag = new TextTag ("tag%p".printf (s2));
-						var tags = s2.split (",");
-						foreach (var tag in tags) {
-							var tag_args = tag.split (" ");
-							if (!tag_parse (mytag, tag_args))
-								error ("Invalid tag parsed\n");
-						}
-						// TODO: we have to create a hashtable to tags in base of attributes
-						tag_push (mytag);
+						var foo = code.buffer.tag_table.lookup (s2);
+						if (foo == null) {
+							var mytag = new TextTag (s2); //"tag%p".printf (s2));
+							var tags = s2.split (",");
+							foreach (var tag in tags) {
+								var tag_args = tag.split (" ");
+								if (!tag_parse (mytag, tag_args))
+									error ("Invalid tag parsed\n");
+							}
+							code.buffer.tag_table.add (mytag);
+							tag_push (mytag);
+						} else tag_push (foo);
 					}
 					c = 0;
 					s2 = "";
@@ -133,10 +206,16 @@ print ("TAG get %p\n", curtag);
 				break;
 			}
 		}
-		append_text (s);
+		code.buffer.insert (ei, s, -1);
 		c = 0;
 		s = "";
+	}
 
+/* XXX HACKY */
+	public void prepend_text(string str) {
+		Gtk.TextIter ei; 
+		code.buffer.get_start_iter (out ei); 
+		code.buffer.insert (ei, str, -1);
 	}
 
 	public void append_text(string str) {
@@ -144,14 +223,15 @@ print ("TAG get %p\n", curtag);
 		code.buffer.get_end_iter (out ei); 
 		code.buffer.insert (ei, str, -1);
 	}
+/* XXX HACKY */
 
-	public void set_text(string str) {
+	public void set_text(string str, bool append = true) {
 		Gtk.TextIter ei; 
 		Gtk.TextMark im;
-		code.buffer.get_end_iter (out ei); 
+		if (append) code.buffer.get_end_iter (out ei); 
+		else code.buffer.get_start_iter (out ei); 
 		var strs = str.split ("\n");
 		foreach (var s in strs) {
-print ("fooderz "+s+"\n");
 			if (s.str ("mov") != null) {
 				code.buffer.insert_with_tags (ei, s, -1, couriertag, bluetag, undertag);
 			} else {
@@ -166,10 +246,6 @@ print ("fooderz "+s+"\n");
 		im = code.buffer.get_insert (); 
 		code.buffer.place_cursor (ei); 
 		code.scroll_to_mark (im, 0.0, true, 0.0, 1.0);
-	}
-
-	public void set_maxlines(int l) {
-		maxlines = l;
 	}
 }-
 }

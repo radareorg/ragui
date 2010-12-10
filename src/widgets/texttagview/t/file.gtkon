@@ -1,0 +1,29 @@
+Window $FileTagView using=Gtk using:Gcode=Gcode title="TextTag browser" {
+	Gcode.Widget $gcode;
+	-{
+		public void set_markup_from_file (string file) {
+			try {
+				string data;
+				if (FileUtils.get_contents (file, out data)) {
+					gcode.clear ();
+					gcode.set_markup (data);
+				}
+			} catch (FileError err) {
+				warning (err.message);
+			}
+		}
+
+		static int main (string[] args) {
+			Gtk.init (ref args);
+			var w = new FileTagView ();
+			w.gcode.link_clicked.connect ((x)=>{
+				// perform shit here
+				w.set_markup_from_file (x);
+			});
+			w.set_markup_from_file ("index.tt");
+			w.show_all ();
+			Gtk.main ();
+			return 0;
+		}
+	}-
+}
