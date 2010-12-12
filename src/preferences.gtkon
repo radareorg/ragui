@@ -6,8 +6,10 @@ Window using=Gtk $Ragui.PreferencesWindow
 		Notebook {
 			VBox {
 				tab-label { Label label="Disassembly"; }
-				CheckButton !expand label="Hide bytes" toggled=cbBytes;
-				CheckButton !expand label="Hide comments";
+				CheckButton !expand label="Hide bytes" toggled=cbBytes $hidebytes;
+				CheckButton !expand label="Hide comments" toggled=cbComments;
+				CheckButton !expand label="Flag in line";
+				CheckButton !expand label="Hide stack pointer" toggled=cbStackptr $hidestck;
 				HSeparator !expand;
 				CheckButton !expand label="Hide metadata";
 			}
@@ -24,11 +26,20 @@ Window using=Gtk $Ragui.PreferencesWindow
 	}
 -{
 	private void cbBytes() {
+		gc.core.config.set ("asm.bytes", (!hidebytes.active).to_string ());
+	}
+
+	private void cbStackptr() {
+		gc.core.config.set ("asm.stackptr", (!hidestck.active).to_string ());
+	}
+
+	private void cbComments() {
 		gc.core.config.set ("asm.bytes", "false");
 	}
 
 	public PreferencesWindow () {
-		resize (400,300);
+		resize (400, 300);
+		window_position = WindowPosition.CENTER;
 	}
 
 	private void OnButtonCloseClicked() {

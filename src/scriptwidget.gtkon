@@ -1,0 +1,19 @@
+/* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+VBox using=Gtk $Script.Widget construct=init() {
+	HBox !expand {
+		ComboBox $cb !expand;
+		Label label="";
+		Button label="run" $run !expand;
+	}
+	TextView $tv;
+-{
+	private void init () {
+		cb.append_text ("python");
+		cb.append_text ("perl");
+		cb.append_text ("ruby");
+		cb.append_text ("lua");
+		cb.append_text ("go");
+		cb.set_active (0);
+	}
+}-
+}

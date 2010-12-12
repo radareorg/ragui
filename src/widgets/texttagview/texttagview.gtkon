@@ -7,7 +7,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 -{
 	public signal bool data_handler(bool down);
 	public signal void link_clicked(string url);
-	public signal void control_key(int key); // TODO implement
+	public signal bool control_key(uint key);
 	public signal void menu_handler(string action, string word);
 	public signal void menu_construct();
 	[Widget]
@@ -69,6 +69,10 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		return (p==' '||p=='\n'||p=='\r'||p=='\t'||p==',');
 	}
 
+	private Gdk.Cursor cursor = new Gdk.Cursor (Gdk.CursorType.XTERM);
+	private Gdk.Cursor pointer = new Gdk.Cursor (Gdk.CursorType.HAND2);
+	private TextIter? lastiter = null;
+
 	public TextTagView() {
 		code.button_press_event.connect (button_release);
 		reset_style ();
@@ -78,6 +82,41 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
 		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);
 		code.cursor_visible = false;
+		code.key_press_event.connect ((x, evkey) => {
+			if (evkey.state == Gdk.ModifierType.CONTROL_MASK)
+				return control_key (evkey.keyval);
+			return false;
+		});
+		code.motion_notify_event.connect ((w, event) => {
+			int x, y;
+			code.window_to_buffer_coords (TextWindowType.WIDGET,
+				(int)event.x, (int)event.y, out x, out y);
+			// TODO: This is ultra slow
+			TextIter? iter = null;
+			code.get_iter_at_location (out iter, x, y);
+			bool hovering = false;
+			if (iter != null) {
+				if ((lastiter != null) && (iter.get_offset () != lastiter.get_offset ())) {
+					foreach (var tag in lastiter.get_tags ()) {
+						tag.underline = Pango.Underline.NONE;
+				//		tag.foreground = "#54A4DE";
+					}
+				}
+				foreach (var tag in iter.get_tags ()) {
+					if (tag.name[0] == 'a')
+						hovering = true;
+				}
+				if (hovering) {
+					foreach (var tag in iter.get_tags ()) {
+						tag.underline = Pango.Underline.SINGLE;
+				//		tag.foreground = "#206BA4";
+					}
+				}
+				lastiter = iter;
+			}
+			code.get_window (TextWindowType.TEXT).set_cursor (hovering?pointer:cursor);
+			return false;
+		});
 		code.button_release_event.connect((x)=> {
 			var is_selected = code.buffer.has_selection;
 			var cur = code.buffer.cursor_position;
@@ -135,8 +174,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 			break;
 		case "a":
 			tag.weight = Pango.Weight.BOLD;
-			tag.underline = Pango.Underline.SINGLE;
-			tag.foreground = "blue";
+			//tag.underline = Pango.Underline.SINGLE;
+			tag.foreground = "#206BA4";
 			break;
 		case "u":
 			tag.underline = Pango.Underline.SINGLE;
@@ -185,7 +224,6 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		} else warning ("cant pop");
 		//curtag = null; // XXX UGLY HACK HACK HACK
 #endif
-
 		curtag = null;
 	}
 
@@ -198,6 +236,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		// remove tags
 		// remove images
 		code.buffer.text = "";
+		lastiter = null;
 	}
 
 	private TextTag tag_create (string s) {

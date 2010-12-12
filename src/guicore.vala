@@ -85,6 +85,7 @@ public class Ragui.GuiCore {
 	}
 
 // TODO: we need the MainWindow instance here..
+// XXX: This is not working, no entry anywhere?
 	public string show_input (string question) {
 		var e = new Entry ();
 		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,

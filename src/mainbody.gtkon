@@ -3,6 +3,7 @@
 VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Radare="Radare"
 	using:Ragui="Ragui"
+	using:Script="Script"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
@@ -57,9 +58,17 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 									Grava:Widget $grava;
 								}
 							}
+							VBox {
+								tab-label {
+									Label label="script";
+								}
+								VBox {
+									Script:Widget $script;
+								}
+							}
 							VBox $vbheaders {
 								tab-label {
-									Label label="Headers";
+									Label label="headers";
 								}
 							}
 							/*Label label="hash-foo" {
@@ -164,6 +173,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				//print ("m=%p\n", m);
 				var action = m.to_string ();
 				uint64 offset = d.offset;
+				lv.menu_construct ();
 				switch (action) {
 				case "dump":
 					var w = new DumpData ();

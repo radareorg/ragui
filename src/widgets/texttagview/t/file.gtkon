@@ -21,8 +21,8 @@ Window $FileTagView using=Gtk using:Ragui=Ragui title="TextTag browser" {
 			w.gcode.link_clicked.connect ((x)=> {
 				w.set_markup_from_file (x);
 			});
-			//w.set_markup_from_file ("index.tt");
-			w.set_markup_from_file ("test.tt");
+			w.set_markup_from_file ("index.tt");
+			//w.set_markup_from_file ("test.tt");
 			w.show_all ();
 			Gtk.main ();
 			return 0;

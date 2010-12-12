@@ -52,6 +52,7 @@ public class Ragui.Main {
 		gc = new GuiCore (mw, args[0]);
 		gc.core.config.set ("io.va", "true");
 		gc.core.config.set ("scr.color", "false");
+		gc.core.config.set ("asm.stackptr", "false");
 		gc.debugger = debugger; // set gui mode in debugger mode
 		if (files != null) {
 			gc.core.file_open (files[0], 0);
