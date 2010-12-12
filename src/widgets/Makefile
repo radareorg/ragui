@@ -7,10 +7,15 @@ all:
 	cd hexview && ${MAKE} lib
 	cd listw && ${MAKE} lib
 	cd grabin && ${MAKE} lib
+	cd texttagview && ${MAKE} lib
 
 clean:
 	rm -f include/*
-	cd codew && ${MAKE} clean
-	cd grava && ${MAKE} clean
-	cd grasm && ${MAKE} clean
-	cd grabin && ${MAKE} clean
+	cd segmentbar && ${MAKE} lib
+	cd grava && ${MAKE} lib
+	cd grasm && ${MAKE} lib
+	cd codew && ${MAKE} lib
+	cd hexview && ${MAKE} lib
+	cd listw && ${MAKE} lib
+	cd grabin && ${MAKE} lib
+	cd texttagview && ${MAKE} lib

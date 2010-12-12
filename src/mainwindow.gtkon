@@ -287,9 +287,8 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		public void setup_view () {
-			if (body != null) {
+			if (body != null)
 				body.setup_view ();
-			}
 		}
 	}-
 }

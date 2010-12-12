@@ -9,7 +9,7 @@ PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
 # TODO grabin packages.. must be merged
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
-PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar
+PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar --pkg texttagview
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
 PKG+=--vapidir=widgets/include
 PKG+=--Xcc=-Iwidgets/include
@@ -23,6 +23,7 @@ WIDGETS+=widgets/grabin/libgrabin.a
 WIDGETS+=widgets/grasm/libgrasm.a
 WIDGETS+=widgets/listw/liblistw.a
 WIDGETS+=widgets/segmentbar/libsegbar.a
+WIDGETS+=widgets/texttagview/libtexttagview.a
 
 all: widgets.done
 	@${MAKE} vapi
@@ -32,7 +33,7 @@ all: widgets.done
 
 .PHONY: gtkaml gtkon vala vapi link widgets
 
-GTKONFILES=newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
+GTKONFILES=disasm.gtkon newproject.gtkon openfile.gtkon openproject.gtkon preferences.gtkon console.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
 # TODO: GTKONFILES+=datadump.gtkon

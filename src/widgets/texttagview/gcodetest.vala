@@ -17,6 +17,7 @@ gcode.set_markup ("<s 20>BIG</s><c red>hello</c> <b>world</b> <i>jiji</i>\n\n\n\
 gcode.set_markup ("<s 20>BIG</s><c red>hello</c> <b>world</b> <i>jiji</i>\n\n\n\n\n<c green red>FUCK YEAH</c>forn\n", false);
 //gcode.prepend_text ("PREPEND STUFF\nPREPREND SHIT\n\n\n\njiji\n\n\njejej\n\nPWNZ\n");
 	//			print ("I WANT MOAR DATA! (PREV)\n");
+return true;
 
 		});
 	gcode.set_text("""

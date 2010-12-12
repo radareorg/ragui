@@ -50,6 +50,8 @@ public class Ragui.Main {
 		Gtk.init (ref args);
 		mw = new MainWindow ();
 		gc = new GuiCore (mw, args[0]);
+		gc.core.config.set ("io.va", "true");
+		gc.core.config.set ("scr.color", "false");
 		gc.debugger = debugger; // set gui mode in debugger mode
 		if (files != null) {
 			gc.core.file_open (files[0], 0);
@@ -78,8 +80,6 @@ public class Ragui.Main {
 				mw.OnMenuHelpAPI ();
 			});
 		}
-		gc.core.config.set ("io.va", "true");
-		gc.core.config.set ("scr.color", "false");
 		//print ("==> %s\n", typeof (mw.leftbox));
 		mw.on_quit.connect (quit_program);
 		mw.resize (800, 600);

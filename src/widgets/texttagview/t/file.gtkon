@@ -17,11 +17,12 @@ Window $FileTagView using=Gtk using:Ragui=Ragui title="TextTag browser" {
 			Gtk.init (ref args);
 			var w = new FileTagView ();
 			//w.gcode.set_style ("b", "u,c red");
-			w.gcode.set_style_string ("b:u,c red");
+			//w.gcode.set_style_string ("b:u,c red;*:c yellow");
 			w.gcode.link_clicked.connect ((x)=> {
 				w.set_markup_from_file (x);
 			});
-			w.set_markup_from_file ("index.tt");
+			//w.set_markup_from_file ("index.tt");
+			w.set_markup_from_file ("test.tt");
 			w.show_all ();
 			Gtk.main ();
 			return 0;

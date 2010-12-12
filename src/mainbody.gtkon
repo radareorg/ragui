@@ -38,12 +38,16 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 						Notebook expand scrollable tab-vborder=1 {
 							VBox {
 								tab-label {
-									Label label="code/data";
+									Label label="code";
 								}
-								VPaned $codhex position=300 {
-									Codeview:Widget $codeview;
-									Hexview:Widget $hexview add2;
+								/* Codeview:Widget $codeview; */
+								Ragui:Disasm $disasm;
+							}
+							VBox {
+								tab-label {
+									Label label="data";
 								}
+								Hexview:Widget $hexview;
 							}
 							VBox {
 								tab-label {
@@ -174,7 +178,8 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					gc.seek (offset);
 					gc.cmd ("ab");
 					gc.cmd ("af");
-					console.cmd (@"pdf");
+					//console.cmd (@"pdf");
+					disasm.goto (offset);
 					break;
 				case "see code":
 					gc.show_error ("Not yet implemented");

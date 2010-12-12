@@ -1,0 +1,135 @@
+/* Dialogs to open programs to debug */
+VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm border_width=5 spacing=5 {
+	HBox !expand {
+		Button label="&lt;" !expand clicked=undo_seek;
+		Button label=">" !expand clicked=redo_seek;
+		Label label="offset: " !expand;
+		Entry text="" $entry activate=entry_activated;
+	}
+	Ragui.TextTagView $ttv;
+	-{
+		unowned SList<uint64?> offs;
+		uint offi = 0;
+
+		public uint64 off = 0;
+
+		public void entry_activated () {
+			goto (entry.text.to_uint64 ());
+		}
+
+		public void undo_seek() {
+			offi--;
+			if (offi<0)
+				offi = 0;
+			off = offs.nth_data (offi);
+			goto (off);
+		}
+
+		public void redo_seek() {
+			offi++;
+			if (offi<offs.length ())
+				off = offs.nth_data (offi);
+			goto (off);
+		}
+
+		public void goto (uint64 addr) {
+/*
+			if (offi != offs.length ()) {
+				SList<uint64?> tl = new SList<uint64?>();
+				foreach (var a in offs) {
+					if (offi == 0)
+						break;
+					offi--;
+					tl.append (a);
+				}
+				offs = tl;
+			}
+*/
+			offs.append (addr);
+			offi = offs.length ();
+			ttv.clear ();
+			off = addr;
+			dodis (addr, true);
+		}
+
+		public void dodis (uint64 addr, bool app=true) {
+			gc.seek (addr);
+			gc.cmd ("e asm.bytes=0");
+			gc.cmd ("e io.va=1");
+			gc.cmd (@"s $addr");
+			var dis = gc.cmdstr ("pD 512");
+			dis = dis.replace ("&", "&amp;");
+			dis = dis.replace ("<", "&lt;");
+			dis = dis.replace (">", "&gt;");
+			dis = dis.replace ("&lt;", "<c magenta,b>&lt;</>");
+			dis = dis.replace ("&gt;", "<c magenta,b>&gt;</>");
+			dis = dis.replace ("|", "<c magenta,b>|</>");
+			dis = dis.replace ("-", "<c magenta,b>-</>");
+			dis = dis.replace ("=", "<c magenta,b>=</>");
+			try {
+				var regex = new Regex ("(0x[a-zA-Z\\d]+)");
+				dis = regex.replace (dis, -1, 0, "<a \\1>\\1</>");
+
+				regex = new Regex ("(;.*$)");
+				dis = regex.replace (dis, -1, 0, "<c red>;\\1</>\n");
+			} catch (RegexError e) {
+				warning ("%s", e.message);
+			}
+			//dis = dis.replace ("mov", "<c green>mov</c>");
+			ttv.set_markup (dis, app);
+			entry.text = ((string)("0x%"+uint64.FORMAT_MODIFIER+"x")).printf (addr);
+		}
+
+		public Disasm() {
+			ttv.set_style ("*", "f mono");
+			ttv.control_key.connect ((k) => {
+				switch (k) {
+				case 'g':
+					// TODO: ask for goto
+					print ("TODO\n");
+					break;
+				}
+			});
+			ttv.menu_construct.connect ((m) => {
+				ttv.set_actions ("goto", "goto ..", "breakpoint", "assemble", "write bytes", "refresh", "copy", "undo seek", "redo seek");
+			});
+			ttv.menu_handler.connect ((m, w) => {
+				print ("WORD (%s)\n", w);
+				switch (m.to_string ()){
+				case "goto":
+					goto (w.to_uint64 ());
+					break;
+				case "goto ..":
+					goto (gc.show_input ("offset?").to_uint64 ());
+					break;
+				case "breakpoint":
+					gc.cmd ("bp w");
+					break;
+				case "undo seek":
+					break;
+				case "redoseek":
+					break;
+				}
+				print ("menu handler");
+			});
+			ttv.data_handler.connect ((x)=>{
+				if (x) {
+					dodis (off+512); //, true);
+				} else {
+					//dodis (off-512, false);
+					return false;
+				}
+				return true;
+			});
+			ttv.link_clicked.connect ((x)=>{
+				goto (x.to_uint64 ());
+			});
+			// seek to entrypoint
+			var entries = gc.core.bin.get_entries();
+			foreach (var e in entries) {
+				goto (e.rva);
+				break;
+			}
+		}
+	}-
+}

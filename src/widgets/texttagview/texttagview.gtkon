@@ -5,14 +5,48 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		TextView can-focus !editable $.code;
 	}
 -{
-	public signal void data_handler(bool down);
+	public signal bool data_handler(bool down);
 	public signal void link_clicked(string url);
+	public signal void control_key(int key); // TODO implement
+	public signal void menu_handler(string action, string word);
+	public signal void menu_construct();
+	[Widget]
+	public SList<string> actions;
+
+	private bool button_release (Gtk.Widget _w, Gdk.EventButton eb) {
+		if (eb.button != 3)
+			return false;
+
+		var menu = new Menu();
+		menu_construct ();
+		foreach (var str in this.actions) {
+			var imi = new ImageMenuItem.with_label (str);
+			imi.activate.connect ((x)=> { menu_handler (x.label, word); });
+			menu.append (imi);
+		}
+		menu.show_all ();
+		menu.popup (null, null, null, 0, 0);
+		return true;
+	}
+
+	public void set_actions(string x, ...) {
+		this.actions = new SList<string> ();
+		this.actions.append (x);
+		var l = va_list();
+		for (;;) {
+			string? k = l.arg ();
+			if (k == null)
+				break;
+			this.actions.append (k);
+		}
+	}
+	
 	private Adjustment vadj;
 	private TextTag couriertag;
 	private TextTag bluetag;
 	private TextTag undertag;
 
-	private string word { get; set; }
+	public string word { get; set; }
 
 	private string getword(char *txt, int off) {
 		char *p = (char*)(txt)+off;
@@ -36,10 +70,11 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	}
 
 	public TextTagView() {
+		code.button_press_event.connect (button_release);
 		reset_style ();
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
-		couriertag = code.buffer.create_tag ("cour", "family", "mono", "weight", "bold");
+		couriertag = code.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
 		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
 		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);
 		code.cursor_visible = false;
@@ -75,8 +110,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	private void scroll_change() {
 		var adjvalue = vadj.get_value ();
 		if (adjvalue == 0) {
-			vadj.set_value (100);
-			data_handler (false);
+			if (data_handler (false))
+				vadj.set_value (100);
 		} else if (adjvalue + vadj.get_page_size () == vadj.get_upper ()) {
 			data_handler (true);
 		}
@@ -128,14 +163,29 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 
 	TextTag? curtag = null;
 
+	public SList<TextTag?> stack;
+
 	// TODO: implement stack for tags?
 	public void tag_push(TextTag tag) {
+#if 0
+		stack.append (tag);
+#endif
 		//tagstack.append (tag);
 		//code.buffer.tag_table.add (tag);
 		curtag = tag;
 	}
 
 	public void tag_pop() {
+#if 0
+		if (curtag != null) {
+			stack.remove (curtag);
+			if (stack.length ()>0) {
+				curtag = (TextTag?)stack.last ().data;
+			} else curtag = null;
+		} else warning ("cant pop");
+		//curtag = null; // XXX UGLY HACK HACK HACK
+#endif
+
 		curtag = null;
 	}
 
@@ -150,14 +200,33 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		code.buffer.text = "";
 	}
 
-	public HashTable<string,string> styles;
-
-	public void set_style(string key, string val) {
-		styles.replace (key, val);
+	private TextTag tag_create (string s) {
+		var mytag = new TextTag (s);
+		mytag.family = "mono"; // HACK
+		var style = styles.lookup ("*");
+		if (style != null) {
+			var root = style.split (",");
+			foreach (var tag in root) {
+				var tag_args = tag.split (" ");
+				if (!tag_parse (mytag, tag_args))
+					error ("Invalid tag parsed\n");
+			}
+		}
+		return mytag;
 	}
+
+	public HashTable<string,string> styles;
 
 	public void reset_style() {
 		styles = new HashTable<string,string>(str_hash, str_equal);
+	}
+
+	public void set_style(string key, string val) {
+		styles.replace (key, val);
+		if (stack.length () == 0 && key == "*") {
+			var tag = tag_create ("root");
+			tag_push (tag);
+		}
 	}
 
 	public void set_style_string(string str) {
@@ -198,17 +267,22 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 						var t = tag_get ();
 						if (t != null)
 							code.buffer.insert_with_tags (ei, s, -1, t);
-						else code.buffer.insert (ei, s, -1);
+						else { //code.buffer.insert (ei, s, -1);
+							code.buffer.insert_with_tags (ei, s, -1, couriertag);
+						}
 						if (append) code.buffer.get_end_iter (out ei); 
 						else code.buffer.get_start_iter (out ei); 
 						// tag close
 						tag_pop ();
 						s = "";
 					} else {
+						bool openclose = s2[s2.length-1]=='/';
+						if (openclose)
+							s2 = s2[0:s2.length-1];
 						var foo = code.buffer.tag_table.lookup (s2);
 						if (foo == null) {
 							if (s2[1]!=':') {
-								var mytag = new TextTag (s2); //"tag%p".printf (s2));
+								var mytag = tag_create (s2);
 								var tags = s2.split (",");
 								foreach (var tag in tags) {
 									var tag_args = tag.split (" ");
@@ -219,10 +293,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 								tag_push (mytag);
 							} else set_style_string (s2);
 						} else tag_push (foo);
-						if (s2[s2.length-1]=='/') {
-							// OPEN AND CLOSE TAG
+						if (openclose)
 							tag_pop ();
-						}
 					}
 					c = 0;
 					s2 = "";
@@ -233,7 +305,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 				case '&':
 				case '<':
 					if (tag_get () == null) {
-						code.buffer.insert (ei, s, -1);
+						//code.buffer.insert (ei, s, -1);
+						code.buffer.insert_with_tags (ei, s, -1, couriertag);
 						s="";
 					}
 					c = (char) ch;
@@ -245,7 +318,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 				break;
 			}
 		}
-		code.buffer.insert (ei, s, -1);
+		//code.buffer.insert (ei, s, -1);
+		code.buffer.insert_with_tags (ei, s, -1, couriertag);
 		c = 0;
 		s = "";
 	}

@@ -5,6 +5,9 @@ all: main
 
 lib:
 	gtkamlc -C --library texttagview --vapi=../include/texttagview.vapi -H ../include/texttagview.h ${VALAFLAGS} texttagview.gtkon
+	gcc -c -I../include `pkg-config --cflags gtk+-2.0 r_core` ${CFILES}
+	rm -f libtexttagview.a
+	ar -q libtexttagview.a texttagview.o
 
 main: lib
 	valac -C ${VALAFLAGS} --pkg texttagview gcodetest.vala

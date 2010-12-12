@@ -85,6 +85,17 @@ public class Ragui.GuiCore {
 	}
 
 // TODO: we need the MainWindow instance here..
+	public string show_input (string question) {
+		var e = new Entry ();
+		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,
+				MessageType.QUESTION, ButtonsType.CLOSE, question);
+		//md.add_action_widget (new Label (question));
+		//md.label = e; //add_action_widget (e, 0);
+		md.run ();
+		md.destroy ();
+		return e.text;
+	}
+
 	public bool show_yesno (string question) {
 		MessageDialog md = new MessageDialog (window,
 				DialogFlags.DESTROY_WITH_PARENT,
