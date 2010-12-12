@@ -1,5 +1,11 @@
 Hello World!
 
+<b,f mono>MONO CONSOLE</>
+
+<image />
+
+<a #root>JUMP TO ROOT</>
+
 <b>This</> is just a set of files providing some basic
 textual rendering facilities for GTK+ using the TextTagView
 widget which parses, displays and makes interactive this
@@ -11,3 +17,5 @@ kind of text files.
 This is so fucking funny
 </>
 <a xedni.tt>CLICK HERE FOR MOAR FUN</>
+
+<# root/>

@@ -2,6 +2,13 @@ http://people.gnome.org/~gjc/htmltextview.py
 
 * We have to create a simple widget that understand few tags:
 
+StyleShit:
+*:f mono,s 8
+b:s 1024,c red
+
+code.set_style ("*:f mono,s 8");
+code.reset_style ();
+
 Aliases:
 (a:b,c blue/>
 
@@ -15,6 +22,8 @@ Aliases:
 <c ? red>..</c>    background color
 <c blue red>..</c> foreground and background color
 <f courier>..</f>  change font
+
+// why this tag needs body? we need to support <i wl.png/>
 <i wl.png>..</i>   insert image
 
 <u,a /call/foo,i>Hello world</u>

@@ -1,11 +1,12 @@
 using Gtk;
+using Ragui;
 using Radare;
 
 static int main (string[] args) {
 	Gtk.init (ref args);
 	var w = new Window (WindowType.TOPLEVEL);
 	w.title = "gcode";
-	var gcode = new Gcode.Widget ();
+	var gcode = new Ragui.TextTagView ();
 	gcode.data_handler.connect ((x)=>{
 // if text is TOO short, cannot scroll or so..
 			if (x)

@@ -1,6 +1,6 @@
 /* gcode - Copyright(C) 2009-2010 - nibble<develsec.org> pancake<nopcode.org> */
 
-HBox using=Gtk using:p=Pango $Gcode.Widget {
+HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll {
 		TextView can-focus !editable $.code;
 	}
@@ -35,7 +35,8 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 		return (p==' '||p=='\n'||p=='\r'||p=='\t'||p==',');
 	}
 
-	public Widget() {
+	public TextTagView() {
+		reset_style ();
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
 		couriertag = code.buffer.create_tag ("cour", "family", "mono", "weight", "bold");
@@ -81,7 +82,7 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 		}
 	}
 
-	public bool tag_parse(TextTag tag, string[] args) {
+	private bool tag_parse_internal(TextTag tag, string[] args) {
 		switch (args[0]) {
 		case "b":
 			tag.weight = Pango.Weight.BOLD;
@@ -102,6 +103,9 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 			tag.underline = Pango.Underline.SINGLE;
 			tag.foreground = "blue";
 			break;
+		case "u":
+			tag.underline = Pango.Underline.SINGLE;
+			break;
 		case "c":
 			if (args.length<2)
 				return false;
@@ -114,13 +118,20 @@ HBox using=Gtk using:p=Pango $Gcode.Widget {
 		return true;
 	}
 
+	public bool tag_parse(TextTag tag, string[] args) {
+		var style = styles.lookup (args[0]);
+		if (style != null)
+			foreach (var stu in style.split (","))
+				tag_parse_internal (tag, stu.split (" "));
+		return tag_parse_internal (tag, args);
+	}
+
 	TextTag? curtag = null;
 
-	// TODO: stack with tag stuff
+	// TODO: implement stack for tags?
 	public void tag_push(TextTag tag) {
 		//tagstack.append (tag);
-//		code.buffer.tag_table.add (tag);
-print ("TAG PUSH \n");
+		//code.buffer.tag_table.add (tag);
 		curtag = tag;
 	}
 
@@ -129,7 +140,6 @@ print ("TAG PUSH \n");
 	}
 
 	public TextTag? tag_get() {
-print ("TAG get %p\n", curtag);
 		return curtag;
 		// generate new tag with all the stacked ones
 	}
@@ -138,6 +148,25 @@ print ("TAG get %p\n", curtag);
 		// remove tags
 		// remove images
 		code.buffer.text = "";
+	}
+
+	public HashTable<string,string> styles;
+
+	public void set_style(string key, string val) {
+		styles.replace (key, val);
+	}
+
+	public void reset_style() {
+		styles = new HashTable<string,string>(str_hash, str_equal);
+	}
+
+	public void set_style_string(string str) {
+		foreach (var kv in str.split (";")) {
+			var a = kv.split (":");
+			if (a.length == 2)
+				set_style (a[0], a[1]);
+			else warning ("kv split fail\n");
+		}
 	}
 
 	public void set_markup(string str, bool append=true) {
@@ -178,16 +207,22 @@ print ("TAG get %p\n", curtag);
 					} else {
 						var foo = code.buffer.tag_table.lookup (s2);
 						if (foo == null) {
-							var mytag = new TextTag (s2); //"tag%p".printf (s2));
-							var tags = s2.split (",");
-							foreach (var tag in tags) {
-								var tag_args = tag.split (" ");
-								if (!tag_parse (mytag, tag_args))
-									error ("Invalid tag parsed\n");
-							}
-							code.buffer.tag_table.add (mytag);
-							tag_push (mytag);
+							if (s2[1]!=':') {
+								var mytag = new TextTag (s2); //"tag%p".printf (s2));
+								var tags = s2.split (",");
+								foreach (var tag in tags) {
+									var tag_args = tag.split (" ");
+									if (!tag_parse (mytag, tag_args))
+										error ("Invalid tag parsed\n");
+								}
+								code.buffer.tag_table.add (mytag);
+								tag_push (mytag);
+							} else set_style_string (s2);
 						} else tag_push (foo);
+						if (s2[s2.length-1]=='/') {
+							// OPEN AND CLOSE TAG
+							tag_pop ();
+						}
 					}
 					c = 0;
 					s2 = "";
@@ -197,6 +232,10 @@ print ("TAG get %p\n", curtag);
 				switch (ch) {
 				case '&':
 				case '<':
+					if (tag_get () == null) {
+						code.buffer.insert (ei, s, -1);
+						s="";
+					}
 					c = (char) ch;
 					break;
 				default:
@@ -211,7 +250,7 @@ print ("TAG get %p\n", curtag);
 		s = "";
 	}
 
-/* XXX HACKY */
+/* XXX DEPRECATED */
 	public void prepend_text(string str) {
 		Gtk.TextIter ei; 
 		code.buffer.get_start_iter (out ei); 
@@ -223,7 +262,6 @@ print ("TAG get %p\n", curtag);
 		code.buffer.get_end_iter (out ei); 
 		code.buffer.insert (ei, str, -1);
 	}
-/* XXX HACKY */
 
 	public void set_text(string str, bool append = true) {
 		Gtk.TextIter ei; 
@@ -247,5 +285,6 @@ print ("TAG get %p\n", curtag);
 		code.buffer.place_cursor (ei); 
 		code.scroll_to_mark (im, 0.0, true, 0.0, 1.0);
 	}
+/* XXX DEPRECATED */
 }-
 }

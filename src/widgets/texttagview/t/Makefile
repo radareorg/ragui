@@ -1,5 +1,5 @@
 all:
-	gtkamlc --pkg gtk+-2.0 ../gcode.gtkon file.gtkon
+	gtkamlc -o test --pkg gtk+-2.0 ../texttagview.gtkon file.gtkon
 
 clean:
-	rm -f gcode
+	rm -f test
