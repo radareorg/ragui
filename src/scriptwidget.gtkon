@@ -3,10 +3,36 @@ VBox using=Gtk $Script.Widget construct=init() {
 	HBox !expand {
 		ComboBox $cb !expand;
 		Label label="";
-		Button label="run" $run !expand;
+		Button label="new" !expand activate=click_new released=click_new;
+		Button label="load" !expand activate=click_load released=click_load;
+		Button label="save" !expand activate=click_save released=click_save;
+		Label label="  " !expand;
+		Button label="run" !expand activate=click_run released=click_run;
 	}
 	TextView $tv;
 -{
+	private void click_new () {
+		tv.buffer.text = "";
+		init ();
+		file = null;
+	}
+
+	private void click_load () {
+		gc.show_error ("TODO: load");
+	}
+
+	private void click_save () {
+		gc.show_error ("TODO: load");
+	}
+
+	private void click_run () {
+		if (file == null)
+			click_save ();
+		gc.show_error ("TODO: load");
+	}
+
+	string? file = null;
+
 	private void init () {
 		cb.append_text ("python");
 		cb.append_text ("perl");

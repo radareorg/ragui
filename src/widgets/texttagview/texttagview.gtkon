@@ -281,6 +281,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		char c = 0;
 		string s = "";
 		string s2 = "";
+		lastiter = null;
 		Gtk.TextIter ei; 
 		if (append) code.buffer.get_end_iter (out ei); 
 		else code.buffer.get_start_iter (out ei); 

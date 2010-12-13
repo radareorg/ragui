@@ -5,13 +5,18 @@
      |_|   \__,_| \__, | \__,_||_|
                   |___/           
 
+pancake TODO
+* Fix Dialog widget for show_input ()
+* Templates for data
+  - add tab in main window to display templated data (pm)
+
 TODO
 * In Grabin.All the RBin must be updateable.. else we cannot
   load more than one file in a session
 * rarc2 widget 
   - left panel code, right panel asm
   - downside a list of bytes
-* Templates for data
+
 * configurable keybindings to run r2 commands
 * Running visual command in gui makes gui useless
   - we have to be able to disable visual mode
