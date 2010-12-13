@@ -84,15 +84,14 @@ public class Ragui.GuiCore {
 		return true;
 	}
 
-// TODO: we need the MainWindow instance here..
-// XXX: This is not working, no entry anywhere?
 	public string show_input (string question) {
 		var e = new Entry ();
 		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,
-				MessageType.QUESTION, ButtonsType.CLOSE, question);
-		//md.add_action_widget (new Label (question));
-		//md.label = e; //add_action_widget (e, 0);
-		md.run ();
+				MessageType.QUESTION, ButtonsType.YES_NO, question);
+		var foo = (VBox)md.get_content_area ();
+		foo.pack_start (e, false, false, 5);
+		md.show_all ();
+		var ret = md.run ();
 		md.destroy ();
 		return e.text;
 	}
@@ -156,4 +155,10 @@ public class Ragui.GuiCore {
 	}
 
 	public static const string VERSION = "0.1";
+
+	static void main(string[] args) {
+		Gtk.init (ref args);
+		var gc = new GuiCore (new Window (WindowType.TOPLEVEL), args[0]);
+		gc.show_input ("jiji");
+	}
 }

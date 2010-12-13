@@ -82,7 +82,9 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm border_width=5 spacing=5 {
 			ttv.control_key.connect ((k) => {
 				switch (k) {
 				case 'g':
-					goto (gc.core.num.get (gc.show_input ("offset?")));
+					var foo = gc.show_input ("offset?")));
+					if (foo != null)
+						goto (gc.core.num.get (foo));
 					return true;
 				}
 				return false;
@@ -102,10 +104,12 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm border_width=5 spacing=5 {
 					break;
 				case "goto ..":
 					var str = gc.show_input ("offset?");
-					newoff = gc.core.num.get (str);
-					if (newoff == 0)
-						newoff = off;
-					goto (newoff);
+					if (str != null) {
+						newoff = gc.core.num.get (str);
+						if (newoff == 0)
+							newoff = off;
+						goto (newoff);
+					}
 					break;
 				case "analyze":
 					gc.cmd ("af");

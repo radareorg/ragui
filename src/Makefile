@@ -59,6 +59,9 @@ link: ${OFILES}
 		fi ; \
 	done
 
+guicore:
+	valac guicore.vala --pkg r_core --pkg gtk+-2.0
+
 vapi:
 	valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
 
