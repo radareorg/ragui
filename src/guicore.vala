@@ -156,9 +156,11 @@ public class Ragui.GuiCore {
 
 	public static const string VERSION = "0.1";
 
+#if TEST
 	static void main(string[] args) {
 		Gtk.init (ref args);
 		var gc = new GuiCore (new Window (WindowType.TOPLEVEL), args[0]);
 		gc.show_input ("jiji");
 	}
+#endif
 }
