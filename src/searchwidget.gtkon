@@ -1,0 +1,15 @@
+/* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+VBox using=Gtk $Search.Widget {
+	HBox !expand {
+		Entry text="";
+		Button label="search" !expand activate=click_run released=click_run;
+	}
+	TreeView $tv;
+-{
+	private void click_run () {
+	}
+
+	private void init () {
+	}
+}-
+}

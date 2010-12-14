@@ -84,7 +84,48 @@ public class Ragui.GuiCore {
 		return true;
 	}
 
-	public string show_input (string question) {
+	// TODO: rename show_ -> dialog_
+
+	public string? slurp (string file) {
+		try {
+			string data;
+			if (FileUtils.get_contents (file, out data))
+				return data;
+		} catch (FileError err) {
+			return null;
+		}
+		return null;
+	}
+
+	public string? show_file_save (string title, string? filepath) {
+		var fcd = new FileChooserDialog (title, this.window, FileChooserAction.SAVE,
+				"gtk-cancel", 0, "gtk-ok", 1);
+		if (filepath != null)
+			fcd.set_current_folder_uri (filepath);
+		string? ret = null;
+		if (fcd.run () == 1)
+			ret = fcd.get_filename ();
+		fcd.hide ();
+		fcd.destroy ();
+		fcd = null;
+		return ret;
+	}
+
+	public string? show_file_open (string title, string? path) {
+		var fcd = new FileChooserDialog (title, this.window, FileChooserAction.OPEN,
+				"gtk-cancel", 0, "gtk-ok", 1);
+		if (path != null)
+			fcd.set_current_folder (path);
+		string? ret = null;
+		if (fcd.run () == 1)
+			ret = fcd.get_filename ();
+		fcd.hide ();
+		fcd.destroy ();
+		fcd = null;
+		return ret;
+	}
+
+	public string? show_input (string question) {
 		var e = new Entry ();
 		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,
 				MessageType.QUESTION, ButtonsType.YES_NO, question);
@@ -93,6 +134,8 @@ public class Ragui.GuiCore {
 		md.show_all ();
 		var ret = md.run ();
 		md.destroy ();
+		if (ret == 0)
+			return null;
 		return e.text;
 	}
 
@@ -116,9 +159,7 @@ public class Ragui.GuiCore {
 	public void show_error (string msg) {
 		MessageDialog md = new MessageDialog (window,
 				DialogFlags.DESTROY_WITH_PARENT,
-				MessageType.ERROR,
-				ButtonsType.CLOSE,
-				msg);
+				MessageType.ERROR, ButtonsType.CLOSE, msg);
 		md.run ();
 		md.destroy ();
 	}
@@ -153,6 +194,10 @@ public class Ragui.GuiCore {
 		vb.pack_start (new Label (msg), false, false, 3);
 		vb.pack_start (pb, false, false, 8);
 		ipw.show_all ();
+	}
+
+	public int system (string str) {
+		return RSystem.cmd (str);
 	}
 
 	public static const string VERSION = "0.1";

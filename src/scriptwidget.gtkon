@@ -19,10 +19,34 @@ VBox using=Gtk $Script.Widget construct=init() {
 	}
 
 	private void click_load () {
-		gc.show_error ("TODO: load");
+		var f = gc.show_file_open ("Open script file..", null);
+		if (f == null)
+			return;
+		tv.buffer.text = gc.slurp (f);
+		if (f == null) {
+			gc.show_error ("Cannot read file");
+			return;
+		}
+		file = f;
+		var ext = f[f.length-3:f.length];
+		switch (ext) {
+		case ".py":
+			set_language ("python");
+			break;
+		case ".rb":
+			set_language ("ruby");
+			break;
+		case "lua":
+			set_language ("lua");
+			break;
+		default:	
+			set_language ("radare");
+			break;
+		}
 	}
 
 	private void click_save () {
+		var f = gc.show_file_open ("Save script file", null);
 		gc.show_error ("TODO: save");
 	}
 
@@ -36,7 +60,7 @@ VBox using=Gtk $Script.Widget construct=init() {
 
 		switch (lang) {
 		case "radare":
-			for (var line in text.split ("\n"))
+			foreach (var line in text.split ("\n"))
 				gc.cmd (line);
 			break;
 		default:
@@ -45,6 +69,10 @@ VBox using=Gtk $Script.Widget construct=init() {
 		}
 		gc.show_error ("TODO: run");
 		gc.cmd ("");
+	}
+
+	private void set_language (string file) {
+		// TODO
 	}
 
 	private string get_language () {

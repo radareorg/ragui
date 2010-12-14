@@ -4,6 +4,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Radare="Radare"
 	using:Ragui="Ragui"
 	using:Script="Script"
+	using:Search="Search"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
@@ -64,6 +65,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 								}
 								VBox {
 									Script:Widget $script;
+								}
+							}
+							VBox {
+								tab-label {
+									Label label="search";
+								}
+								VBox {
+									Search:Widget $search;
 								}
 							}
 							VBox $vbheaders {
@@ -347,6 +356,11 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 			grabin.fat.set_actions ("Load", "Extract");
 			grabin.fat.menu_handler.connect ((m, d) => {
 					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
+					var str = gc.show_file_save ("Dump sub-bin", "bin_"+d);
+					if (str != null) {
+						var outfile = gc.core.file.filename; // TODO: rename
+						gc.system ("rabin2 -a %s -x %s".printf (d, outfile));
+					}
 				});
 			vbheaders.add (grabin);
 		}
