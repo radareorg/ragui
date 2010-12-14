@@ -1,8 +1,9 @@
 /* ragui - copyright(C) 2010 - pancake<nopcode.org> */
 VBox using=Gtk $Script.Widget construct=init() {
 	HBox !expand {
-		ComboBox $cb !expand;
-		Label label="";
+		ComboBox text $cb !expand;
+		Label label=" file:" !expand;
+		Entry text="" $filename;
 		Button label="new" !expand activate=click_new released=click_new;
 		Button label="load" !expand activate=click_load released=click_load;
 		Button label="save" !expand activate=click_save released=click_save;
@@ -22,24 +23,51 @@ VBox using=Gtk $Script.Widget construct=init() {
 	}
 
 	private void click_save () {
-		gc.show_error ("TODO: load");
+		gc.show_error ("TODO: save");
 	}
 
 	private void click_run () {
-		if (file == null)
-			click_save ();
-		gc.show_error ("TODO: load");
+		var lang = get_language ();
+		var text = tv.buffer.text;
+
+		if (lang != "radare") // XXX: TODO: remove, radare scripts also need to be saved?
+			if (file == null)
+				click_save ();
+
+		switch (lang) {
+		case "radare":
+			for (var line in text.split ("\n"))
+				gc.cmd (line);
+			break;
+		default:
+			gc.cmd (@"#!$lang $file");
+			break;
+		}
+		gc.show_error ("TODO: run");
+		gc.cmd ("");
+	}
+
+	private string get_language () {
+		var model = cb.get_model ();
+		TreeIter ti;
+		cb.get_active_iter (out ti);
+		Value val;
+		model.get_value (ti, 0, out val);
+		return (string)val;
 	}
 
 	string? file = null;
 
 	private void init () {
+		// TODO: generate this list by using the plugin API
+		cb.append_text ("radare");
 		cb.append_text ("python");
 		cb.append_text ("perl");
 		cb.append_text ("ruby");
 		cb.append_text ("lua");
 		cb.append_text ("go");
 		cb.set_active (0);
+		cb.show_all ();
 	}
 }-
 }

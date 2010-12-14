@@ -1,5 +1,5 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
-Window using=Gtk $Ragui.PreferencesWindow
+Window using=Gtk $Ragui.PreferencesWindow type=WindowType.POPUP
 	modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
 {
 	VBox border-width=1 {
@@ -10,7 +10,7 @@ Window using=Gtk $Ragui.PreferencesWindow
 				CheckButton !expand label="Hide comments" toggled=cbComments;
 				CheckButton !expand label="Flag in line";
 				CheckButton !expand label="Hide stack pointer" toggled=cbStackptr $hidestck;
-				HSeparator !expand;
+				//HSeparator !expand;
 				CheckButton !expand label="Hide metadata";
 			}
 			Label label=todo { tab-label {

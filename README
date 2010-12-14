@@ -2,47 +2,20 @@
 RADARE GUI
 ==========
 
-* Written in Vala
-* Using GTK
+Brainstorm
 
-Widgets we need to do:
+* Rename to RIDE?
+  RIDE /raid/
 
-* Hexadecimal viewer
-  - should support editing
-  - text selection
-* Disassembly treeview
-  - Supports folding of code
-
-+-----------------------------------------------------+
-| radare-gui                                      -ox |
-+-----------------------------------------------------+
-|_File___Edit_________________________________________|
-|  _________  |         \--------.--------.           |
-| |_________| |  tabs    |_______|________|__________ |
-|             |                                      ||
-| .-----------| .----------------------------------. ||
-| |         |^| |                                  | ||
-| | flag    |-| | 0x8048000  mov eax, 0x8320       | ||
-| |   list  | | | 0x8048005  push ebp              | ||
-| |         | | | 0x8048006  mov ebp, esp          | ||
-| |         | | | 0x8048008  sub esp, 0x20         | ||
-| |         | | |__________________________________| ||
-| |         | |______________________________________:|
-| |         | |                                      ||
-| |         |-| console                              ||
-| |_________|v|---------------------------------------|
-|_____________|_input prompt______________________|_>_|
-|___statusbar_________________________________________|
-
-
+* All widgets must be retiled by keybindings, like in dwm
   - tabs can be detached
   - tabs can contain graphs, code, zoomed view ...
   - code can be edited if write mode enabled
-  - statusbar shows active opened file information (rwx, ..)
-  - left panel provides access to flags
+* statusbar shows active opened file information (rwx, ..)
+  - do we really need it?
 
 
 Projects
 ========
-
-A project 
+- use sqlite?
+- use rdb?
