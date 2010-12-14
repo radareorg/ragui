@@ -71,7 +71,9 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 
 	private Gdk.Cursor cursor = new Gdk.Cursor (Gdk.CursorType.XTERM);
 	private Gdk.Cursor pointer = new Gdk.Cursor (Gdk.CursorType.HAND2);
-	private TextIter? lastiter = null;
+	private TextTag? lasttag = null;
+	private double ox = 0;
+	private double oy = 0;
 
 	public TextTagView() {
 		code.button_press_event.connect (button_release);
@@ -88,31 +90,24 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 			return false;
 		});
 		code.motion_notify_event.connect ((w, event) => {
+			bool hovering = false;
 			int x, y;
 			code.window_to_buffer_coords (TextWindowType.WIDGET,
 				(int)event.x, (int)event.y, out x, out y);
-			// TODO: This is ultra slow
 			TextIter? iter = null;
 			code.get_iter_at_location (out iter, x, y);
-			bool hovering = false;
 			if (iter != null) {
-				if ((lastiter != null) && (iter.get_offset () != lastiter.get_offset ())) {
-					foreach (var tag in lastiter.get_tags ()) {
-						tag.underline = Pango.Underline.NONE;
-				//		tag.foreground = "#54A4DE";
-					}
-				}
-				foreach (var tag in iter.get_tags ()) {
+				var tags = iter.get_tags ();
+				if (tags != null) {
+					var tag = tags.data;
 					if (tag.name[0] == 'a')
 						hovering = true;
-				}
-				if (hovering) {
-					foreach (var tag in iter.get_tags ()) {
+					if (hovering)
 						tag.underline = Pango.Underline.SINGLE;
-				//		tag.foreground = "#206BA4";
-					}
+					if (lasttag != tag && lasttag != null)
+						lasttag.underline = Pango.Underline.NONE;
+					lasttag = tag;
 				}
-				lastiter = iter;
 			}
 			code.get_window (TextWindowType.TEXT).set_cursor (hovering?pointer:cursor);
 			return false;
@@ -138,6 +133,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 						url = a.name[2:a.name.length];
 					print ("Link clicked '%s'\n", url);
 					link_clicked (url);
+					code.get_window (TextWindowType.TEXT).set_cursor (cursor);
 				}
 			}
 			//print ("LINE (%d) off=%d lof=%d idx=%d (%s)\n", ti.get_line (), off, lof, idx, linetxt);
@@ -236,7 +232,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		// remove tags
 		// remove images
 		code.buffer.text = "";
-		lastiter = null;
+		lasttag = null;
 	}
 
 	private TextTag tag_create (string s) {
@@ -281,7 +277,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		char c = 0;
 		string s = "";
 		string s2 = "";
-		lastiter = null;
+		lasttag = null;
 		Gtk.TextIter ei; 
 		if (append) code.buffer.get_end_iter (out ei); 
 		else code.buffer.get_start_iter (out ei); 
@@ -364,7 +360,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		s = "";
 	}
 
-/* XXX DEPRECATED */
+#if DEPRECATED
 	public void prepend_text(string str) {
 		Gtk.TextIter ei; 
 		code.buffer.get_start_iter (out ei); 
@@ -399,6 +395,6 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		code.buffer.place_cursor (ei); 
 		code.scroll_to_mark (im, 0.0, true, 0.0, 1.0);
 	}
-/* XXX DEPRECATED */
+#endif
 }-
 }
