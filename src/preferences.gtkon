@@ -13,12 +13,15 @@ Window using=Gtk $Ragui.PreferencesWindow type=WindowType.POPUP
 				//HSeparator !expand;
 				CheckButton !expand label="Hide metadata";
 			}
-			Label label=todo { tab-label {
-				Label label="Analysis";
-			} }
-			Label label=todo { tab-label {
-				Label label="Keys";
-			} }
+			Label label=todo {
+				tab-label { Label label="Analysis"; }
+			}
+			Label label=todo {
+				tab-label { Label label="Keys"; }
+			}
+			Label label=todo {
+				tab-label { Label label="Debug"; }
+			}
 		}
 		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
 			Button label=gtk-ok use-stock clicked=OnButtonCloseClicked;

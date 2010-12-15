@@ -113,6 +113,7 @@ public class Listview.Widget : ScrolledWindow {
 		view.button_press_event.connect ((e)=> {
 		// TODO: we have to use this callback!! view.row_activated.connect ((x,y)=> {
 			if (e.type == EventType.2BUTTON_PRESS) {
+				menu_construct ();
 				var data = get_listviewdata ();
 				var action = actions.nth_data (0);
 				print (@"DOUBLE LICK! $action\n");

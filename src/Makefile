@@ -34,7 +34,7 @@ all: widgets.done
 .PHONY: gtkaml gtkon vala vapi link widgets
 
 GTKONFILES=scriptwidget.gtkon searchwidget.gtkon disasm.gtkon newproject.gtkon openfile.gtkon
-GTKONFILES+=openproject.gtkon preferences.gtkon console.gtkon
+GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
 # TODO: GTKONFILES+=datadump.gtkon

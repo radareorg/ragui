@@ -19,7 +19,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="gtk-save-as" activate=OnFileSaveAs;
 						ImageMenuItem stock-id="gtk-close" activate=OnFileClose;
 						SeparatorMenuItem;
-						ImageMenuItem stock-id="diff .." activate=menuProjectDiff;
+						ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="OnQuit";
 					}
@@ -36,17 +36,34 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 					}
 				}
 			}
+			// used to hook keybindings
 			MenuItem $menu_view label="_View" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="left panel" activate="menuViewLeftpanel";
-						ImageMenuItem stock-id="console";
-						ImageMenuItem stock-id="graph";
-						ImageMenuItem stock-id="code";
-						ImageMenuItem stock-id="hexdump";
-						ImageMenuItem stock-id="headers";
+						ImageMenuItem stock-id="Left panel" activate="menuViewLeftpanel";
+						ImageMenuItem stock-id="Console";
+						ImageMenuItem stock-id="Graph";
+						ImageMenuItem stock-id="Code";
+						ImageMenuItem stock-id="Hexdump";
+						ImageMenuItem stock-id="Headers";
 						SeparatorMenuItem;
-						ImageMenuItem stock-id="reset";
+						ImageMenuItem stock-id="Reset";
+					}
+				}
+			}
+			MenuItem $menu_debug label="_Debug" with-mnemonic {
+				submenu {
+					Menu {
+						ImageMenuItem stock-id="Step";
+						ImageMenuItem stock-id="Interrupt";
+						ImageMenuItem stock-id="Continue";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="Breakpoints";
+						ImageMenuItem stock-id="Registers";
+						ImageMenuItem stock-id="Libraries";
+						ImageMenuItem stock-id="Memory";
+						SeparatorMenuItem;
+						ImageMenuItem stock-id="Traces";
 					}
 				}
 			}

@@ -6,6 +6,8 @@
                   |___/           
 
 pancake TODO
+* Keybindings configuration
+  - define global, wm, per-widget actions
 * first double click in left panel fails with null pointer
 * If passing a directory to ragui, just open it and ask for file
 * Debugger panel? where?

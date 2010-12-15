@@ -5,6 +5,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Ragui="Ragui"
 	using:Script="Script"
 	using:Search="Search"
+	using:Debug="Debug"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
@@ -80,6 +81,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 									Label label="headers";
 								}
 							}
+							VBox {
+								tab-label {
+									Label label="debug";
+								}
+								VBox {
+									Debug:Widget $debug;
+								}
+							}
 							/*Label label="hash-foo" {
 							  tab-label {
 							  Label label="data analysis";
@@ -99,7 +108,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 
 	AboutDialog gtkaml:standalone $.aboutdialog delete-event="aboutdialog.hide_on_delete"
 		border-width=5 title="About ragui" !resizable modal !has-separator
-		window-position="{WindowPosition.CENTER_ON_PARENT}"
+		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name="ragui" version="0.1"
 		copyright="Copyright (c) 2009-2010 pancake/nibble"
 		comments="Graphical hexeditor, disassembler and debugger"

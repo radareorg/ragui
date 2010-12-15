@@ -1,0 +1,6 @@
+/* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+VBox using=Gtk $Debug.Widget {
+	HBox !expand {
+		Label label="TODO";
+	}
+}

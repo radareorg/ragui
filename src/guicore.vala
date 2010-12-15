@@ -85,6 +85,15 @@ public class Ragui.GuiCore {
 	}
 
 	// TODO: rename show_ -> dialog_
+	public bool dump (string file, string contents) {
+		try {
+			if (FileUtils.set_contents (file, contents))
+				return true;
+		} catch (FileError err) {
+			return false;
+		}
+		return false;
+	}
 
 	public string? slurp (string file) {
 		try {

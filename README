@@ -2,8 +2,14 @@
 RADARE GUI
 ==========
 
-Brainstorm
-
+* Project types: 
+  - Forensics
+    * need to add API's to read/write any filesystem
+      - interface for Linux kernel code into userland FUSE-like api?
+  - Static analysis
+  - Debugger
+  - Bindiffing
+* Add notepad widget (left panel)
 * Rename to RIDE?
   RIDE /raid/
 

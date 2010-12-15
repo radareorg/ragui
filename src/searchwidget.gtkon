@@ -7,9 +7,7 @@ VBox using=Gtk $Search.Widget {
 	TreeView $tv;
 -{
 	private void click_run () {
-	}
-
-	private void init () {
+		gc.cmd ("/x 89e8"); // XXX
 	}
 }-
 }
