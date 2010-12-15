@@ -147,11 +147,13 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		}
 
 		public void setup_view () {
+/*
 			if (this.get_has_window ()) {
 				int h = 0, w = 0;
 				this.window.get_size (out w, out h);
 				body.position = h/2;
 			}
+*/
 		}
 
 		private void setup_leftlist () {

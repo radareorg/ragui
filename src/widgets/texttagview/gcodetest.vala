@@ -20,6 +20,7 @@ gcode.set_markup ("<s 20>BIG</s><c red>hello</c> <b>world</b> <i>jiji</i>\n\n\n\
 return true;
 
 		});
+#if 0
 	gcode.set_text("""
          0x0000261c    0                   55  push rbp
          0x0000261d    8+              4889e5  mov rbp, rsp
@@ -75,8 +76,8 @@ return true;
  |||     0x00002664    8           bf09000000  mov edi, 0x9
  |||     0x00002669    8                 eb50  jmp 0x26bb [?]
  `-----> 0x0000266b    8           bf0a000000  mov edi, 0xa
-
 """);
+#endif
 	w.add (gcode);
 gcode.set_markup ("<c red>hello</c> <b>world</b> <i>jiji</i>\n");
 gcode.set_markup ("<a /call/0x8048000>0x8048000</>\n");

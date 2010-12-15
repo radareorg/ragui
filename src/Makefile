@@ -54,7 +54,7 @@ link: ${OFILES}
 			echo "  CC ${OFILES}" ; \
 			echo "  LD ragui" ; \
 			${CC} ${CFLAGS} -Iwidgets/include \
-				`pkg-config --cflags --libs gtk+-2.0 ${R2DEPS}` \
+				`pkg-config --cflags --libs gthread-2.0 gtk+-2.0 ${R2DEPS}` \
 				${OFILES} ${WIDGETS} -o ${BIN} ; \
 			break ; \
 		fi ; \
