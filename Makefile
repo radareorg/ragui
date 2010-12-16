@@ -40,3 +40,7 @@ push:
 	pancake@radare.org:/home/www/radarenopcode/ragui/get
 
 .PHONY: all clean mrproper bindist push
+
+install:
+	cp src/ragui ${PREFIX}/bin/ragui.bin
+	cp bin/ragui.sh ${PREFIX}/bin/ragui
