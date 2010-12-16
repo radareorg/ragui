@@ -184,7 +184,7 @@ public class Ragui.GuiCore {
 
 	public void show_infprogress (string msg) {
 		// TODO: handle on-window_close here... to stop gracefully..
-		ipw = new Window (WindowType.POPUP);
+		ipw = new Window ();
 		ipw.window_position = WindowPosition.CENTER;
 		ipw.modal = true;
 		ipw.parent = window;

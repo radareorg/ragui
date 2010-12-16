@@ -1,8 +1,9 @@
 /* ragui - Copyright(C) 2009-2010 - pancake<nopcode.org> */
 
 VBox using=Gtk $Ragui.Console {
-	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" {
-		TextView can-focus !editable $.console;
+	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
+		// can-focus
+		TextView !editable $.console;
 	}
 	HBox !expand {
 		Entry expand $.line;

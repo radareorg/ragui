@@ -1,6 +1,5 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
-Window using=Gtk $Ragui.PreferencesWindow type=WindowType.POPUP
-	modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
+Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
 {
 	VBox border-width=1 {
 		Notebook {

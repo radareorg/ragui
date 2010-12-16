@@ -26,10 +26,8 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					ComboBox text !expand $leftbox;
 					VBox $vb0 {
 						ScrolledWindow can-focus expand
-							hscrollbar-policy="{PolicyType.AUTOMATIC}"
-							vscrollbar-policy="{PolicyType.AUTOMATIC}" {
-
-							// TODO: move listview inside leftvb.. or we toggle visibility? do we need leftvb?
+								hscrollbar-policy=PolicyType.AUTOMATIC
+								vscrollbar-policy=PolicyType.AUTOMATIC {
 							Listview:Widget $listview;
 						}
 					}
@@ -38,23 +36,23 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				VPaned $body position=500 add2 {
 					VBox {
 						// TODO: set each tab to a var, and use it from see code/graph
-						Notebook expand scrollable tab-vborder=1 {
+						Notebook $nb expand scrollable tab-vborder=1 focus-tab=chtab {
 							VBox {
 								tab-label {
-									Label label="code";
+									Label label="code" grab-focus='{now="disasm"}';
 								}
 								/* Codeview:Widget $codeview; */
 								Ragui:Disasm $disasm;
 							}
 							VBox {
 								tab-label {
-									Label label="data";
+									Label label="data" grab-focus='{now="data"}';
 								}
 								Hexview:Widget $hexview;
 							}
 							VBox {
 								tab-label {
-									Label label="graph";
+									Label label="graph" grab-focus='{now="graph"}';
 								}
 								VBox {
 									Grava:Widget $grava;
@@ -116,6 +114,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble@develsec.org)", null}}';
 
 	-{
+		private string now = "disasm"; // selected tab // TODO: rename
+
+		public bool chtab (Gtk.NotebookTab off) {
+			var p = nb.get_current_page ();
+			print (@"This is fucking funny! $p\n");
+			return false;
+		}
+
 		public MainBody () {
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 			setup_console ();
@@ -147,7 +153,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		}
 
 		public void setup_view () {
-/*
+/* THIS IS NOT WORKING ON OLD GTK VERSIONS:.maybe we can just ignore this
 			if (this.get_has_window ()) {
 				int h = 0, w = 0;
 				this.window.get_size (out w, out h);
@@ -190,10 +196,15 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
 			});
 			lv.menu_handler.connect ((m, d) => {
-				//print ("m=%p\n", m);
-				var action = m.to_string ();
 				uint64 offset = d.offset;
-				lv.menu_construct ();
+				string action;
+				if (m != null) {
+					action = m.to_string ();
+					lv.menu_construct ();
+				} else {
+					action = now;
+				}
+print (@"ACTION $action AND $m\n");
 				switch (action) {
 				case "dump":
 					var w = new DumpData ();

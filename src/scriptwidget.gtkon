@@ -10,7 +10,9 @@ VBox using=Gtk $Script.Widget construct=init() {
 		Label label="  " !expand;
 		Button label="run" !expand activate=click_run released=click_run;
 	}
-	TextView $tv;
+	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
+		TextView $tv;
+	}
 -{
 	private void click_new () {
 		tv.buffer.text = "";
@@ -49,10 +51,9 @@ VBox using=Gtk $Script.Widget construct=init() {
 		var f = gc.show_file_save ("Save script file", null);
 		if (f != null) {
 			var txt = tv.buffer.text;
-			if (FileUtils.test (f, FileTest.EXISTS)) {
+			if (FileUtils.test (f, FileTest.EXISTS))
 				if (!gc.show_yesno ("Overwrite?"))
 					return;
-			}
 			if (!gc.dump (f, txt))
 				gc.show_error ("Cannot save");
 		}

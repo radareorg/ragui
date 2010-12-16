@@ -18,7 +18,8 @@ public class Listview.Widget : ScrolledWindow {
 	[Widget]
 	public SList<string> actions;
 
-	public signal void menu_handler(string action, ListviewData row);
+	// if action is null then we are doing double click, so default action is performed
+	public signal void menu_handler(string? action, ListviewData row);
 	public signal void menu_construct();
 
 	private ListviewData? get_listviewdata () {
@@ -113,11 +114,11 @@ public class Listview.Widget : ScrolledWindow {
 		view.button_press_event.connect ((e)=> {
 		// TODO: we have to use this callback!! view.row_activated.connect ((x,y)=> {
 			if (e.type == EventType.2BUTTON_PRESS) {
-				menu_construct ();
+				//print (@"DOUBLE LICK! $action\n");
 				var data = get_listviewdata ();
-				var action = actions.nth_data (0);
-				print (@"DOUBLE LICK! $action\n");
-				menu_handler (action, data);
+			//	menu_construct ();
+			//	var action = actions.nth_data (0);
+				menu_handler (null, data); //action, data);
 				return true;
 			}
 			return false;

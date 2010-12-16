@@ -1,7 +1,7 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
 /* add 'modal' as Window attribute if wanted to be modal */
-Window using=Gtk $Ragui.Analyze title="Analyze code" destroy-event=OnWindowCloseEvent
-		type=WindowType.POPUP window-position=WindowPosition.CENTER_ON_PARENT {
+Window using=Gtk $Ragui.Analyze title="Analyze code" destroy-event=OnWindowCloseEvent {
+		//type=WindowType.POPUP window-position=WindowPosition.CENTER_ON_PARENT {
 	VBox border-width=1 {
 		VBox border-width=3 spacing=3 {
 			Label !expand label="analyze code... TODO: add options";
