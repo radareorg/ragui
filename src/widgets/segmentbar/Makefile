@@ -1,3 +1,4 @@
+CC?=gcc
 all:
 	valac -C --library segmentbar --vapi=../include/segmentbar.vapi --use-header -H ../include/segmentbar.h --pkg gtk+-2.0 segmentedbar.vala
 	#valac -C --library grabin --vapi=../include/grabin.vapi -H ../include/grabin.h ${VALAFLAGS} grabin.vala
@@ -6,7 +7,7 @@ all:
 	valac --pkg gtk+-2.0 *.vala
 
 
-CFLAGS=-I../include `pkg-config --cflags gtk+-2.0`
+CFLAGS+=-I../include `pkg-config --cflags gtk+-2.0`
 
 objs: segmentedbar.o
 

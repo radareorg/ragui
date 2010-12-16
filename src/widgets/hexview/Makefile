@@ -11,7 +11,7 @@ lib: $(OUT_HFILE)
 	#@cp .vala-aux/hexview*.vapi ../include/
 	valac --vapi ../include/hexview.vapi --library hexview -Cc --pkg gtk+-2.0 hexviewbuffer.vala hexview.vala
 	#cp hexview.vapi ../include
-	${CC} -c hexview.c hexviewbuffer.c `pkg-config --cflags gtk+-2.0`
+	${CC} ${CFLAGS} -c hexview.c hexviewbuffer.c `pkg-config --cflags gtk+-2.0`
 	rm -f libhexview.a
 	ar -q libhexview.a hexviewbuffer.o hexview.o
 

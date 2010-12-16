@@ -1,5 +1,5 @@
 /* Dialogs to open files */
-VBox using=Gtk $OpenFile border_width=5 spacing=5 {
+VBox using=Gtk $Ragui.OpenFile border_width=5 spacing=5 {
 	HBox !expand spacing=5 {
 		Label fill !expand label="Select file";
 		FileChooserButton expand title="Select file" action={FileChooserAction.OPEN} $fc;

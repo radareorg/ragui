@@ -1,5 +1,6 @@
 CC?=gcc
 BIN=ragui
+#BIN=ragui.exe
 R2DEPS=r_asm r_util r_core
 VALAC?=valac
 GTKAMLC?=gtkamlc
@@ -20,10 +21,10 @@ WIDGETS+=widgets/grava/libgrava.a
 WIDGETS+=widgets/codew/libcodew.a
 WIDGETS+=widgets/hexview/libhexview.a
 WIDGETS+=widgets/grabin/libgrabin.a
-WIDGETS+=widgets/grasm/libgrasm.a
 WIDGETS+=widgets/listw/liblistw.a
 WIDGETS+=widgets/segmentbar/libsegbar.a
 WIDGETS+=widgets/texttagview/libtexttagview.a
+WIDGETS+=widgets/grasm/libgrasm.a
 
 all: widgets.done
 	@${MAKE} vapi
@@ -46,16 +47,16 @@ VALAFILES+=${RMVALAFILES}
 VALAFILES+=${RMGTKON_FILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
 OFILES=$(subst .vala,.o,$(VALAFILES))
-
 CFLAGS+=-Iwidgets/include `pkg-config --cflags gtk+-2.0 ${R2DEPS}`
+
 link: ${OFILES}
 	@for a in ${CFILES}; do \
 		if [ ! -e ${BIN} -o $$a -nt ${BIN} ]; then \
 			echo "  CC ${OFILES}" ; \
 			echo "  LD ragui" ; \
-			${CC} ${CFLAGS} -Iwidgets/include \
+			${CC} ${CFLAGS} -Iwidgets/include ${OFILES} ${WIDGETS}  \
 				`pkg-config --cflags --libs gthread-2.0 gtk+-2.0 ${R2DEPS}` \
-				${OFILES} ${WIDGETS} -o ${BIN} ; \
+				${LDFLAGS} -o ${BIN} ; \
 			break ; \
 		fi ; \
 	done

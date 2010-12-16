@@ -1,5 +1,5 @@
 /* Dialogs to open programs to debug */
-VBox using=Gtk $OpenProcess border_width=5 spacing=5 {
+VBox using=Gtk $Ragui.OpenProcess border_width=5 spacing=5 {
 	HBox !expand spacing=5 {
 		Label fill !expand label="Select process";
 		ComboBox text $pids expand;

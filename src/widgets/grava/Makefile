@@ -1,4 +1,5 @@
 #include ../../config.mk
+CC?=gcc
 
 VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg posix -g
 
@@ -9,10 +10,10 @@ SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
 grava: $(SOURCES:.vala=.o) cmain.o
 	#[ "${HAVE_VALAC}" = 1 ] && valac -c -g --save-temps *.vala --pkg gtk+-2.0 --pkg cairo -o grava
 	# only for releases (not development)
-	${CC} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.o $(SOURCES:.vala=.o) -o grava
+	${CC} ${CFLAGS} ${LDFLAGS} -I../include `pkg-config gtk+-2.0 cairo --cflags --libs` cmain.o $(SOURCES:.vala=.o) -o grava
 
 cmain.o: cmain.c ../include/grava.h
-	${CC} -I../include -o cmain.o -c `pkg-config --cflags gtk+-2.0 cairo` cmain.c
+	${CC} ${CFLAGS} -I../include -o cmain.o -c `pkg-config --cflags gtk+-2.0 cairo` cmain.c
 
 
 valadot:
@@ -21,7 +22,7 @@ valadot:
 lib:
 	-valac -H ../include/grava.h --library grava -Cc ${VALAFLAGS} ${SOURCES}
 	cp grava.vapi ../include
-	${CC} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
+	${CC} ${CFLAGS} -c `pkg-config gtk+-2.0 cairo --cflags` $(SOURCES:.vala=.c)
 	rm -f libgrava.a
 	ar -q libgrava.a $(SOURCES:.vala=.o)
 
@@ -32,7 +33,7 @@ c:
 	valac --save-temps *.c --pkg gtk+-2.0 --pkg cairo -o grava
 
 novala:
-	${CC} `pkg-config gtk+-2.0 cairo --cflags --libs` -I../include -c *.c
+	${CC} ${CFLAGS} `pkg-config gtk+-2.0 cairo --cflags --libs` -I../include -c *.c
 	-rm -f cmain.o
 
 gdot:
