@@ -111,3 +111,7 @@ test:
 
 widgets:
 	cd widgets && ${MAKE} all
+
+install:
+	cp src/ragui ${PREFIX}/bin/ragui.bin
+	cp bin/ragui.sh ${PREFIX}/bin/ragui
