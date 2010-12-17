@@ -169,7 +169,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				print (@"Choosen menu is $cbtext\n");
 				switch (cbtext) {
 				case "Information":
-					listview.set_actions ("backup");
+					listview.set_actions ("copy");
 					break;
 				case "Relocations":
 					listview.set_actions ("see code", "see data");
@@ -196,16 +196,19 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
 			});
 			lv.menu_handler.connect ((m, d) => {
-				uint64 offset = d.offset;
+				uint64 offset = (d!=null)?d.offset:0;
 				string action;
 				if (m != null) {
-					action = m.to_string ();
 					lv.menu_construct ();
+					action = m.to_string ();
 				} else {
 					action = now;
 				}
-print (@"ACTION $action AND $m\n");
+print (@"ACTION $action\n");
 				switch (action) {
+				case "copy":
+					gc.show_message ("TODO: copy stuff into clipboard");
+					break;
 				case "dump":
 					var w = new DumpData ();
 					w.transient_for = gc.window;
@@ -258,6 +261,7 @@ print (@"ACTION $action AND $m\n");
 					gc.cmd (@"dbd @ $offset");
 					break;
 				}
+				if (d != null)
 				print ("clicked "+m.to_string ()+": "+
 					d.name+"at addr"+d.offset.to_string ()+"\n");
 			});

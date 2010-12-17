@@ -19,7 +19,7 @@ public class Listview.Widget : ScrolledWindow {
 	public SList<string> actions;
 
 	// if action is null then we are doing double click, so default action is performed
-	public signal void menu_handler(string? action, ListviewData row);
+	public signal void menu_handler(string? action, ListviewData? row);
 	public signal void menu_construct();
 
 	private ListviewData? get_listviewdata () {
