@@ -6,6 +6,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Script="Script"
 	using:Search="Search"
 	using:Debug="Debug"
+	using:Flags="Flags"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
@@ -56,6 +57,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 								}
 								VBox {
 									Grava:Widget $grava;
+								}
+							}
+							VBox {
+								tab-label {
+									Label label="flags";
+								}
+								VBox {
+									Flags:Widget $flags;
 								}
 							}
 							VBox {
@@ -184,7 +193,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				case "Strings":
 				case "Imports":
 				case "Symbols":
-					listview.set_actions ("disasm", "see data", "graph", "see code", "see data", "set breakpoint");
+					listview.set_actions ("disasm", "see data", "graph", "see code", "set breakpoint");
 					break;
 				case "Processes":
 					listview.set_actions ("attach", "stop", "continue", "kill");
@@ -236,13 +245,13 @@ print (@"ACTION $action\n");
 					gc.cmd ("pd 20");
 					gc.cmd ("ab");
 					gc.cmd ("af");
-					gc.cmd (@"ag $offset > /tmp/graph.xdot");
+					gc.cmd (@"ag $offset > graph.xdot");
 					bool use_xdot = false;
 					if (use_xdot) {
-						RSystem.cmd ("xdot /tmp/graph.xdot &");
+						RSystem.cmd ("xdot graph.xdot &");
 					} else {
 						grava.graph.init ();
-						Grava.XDot.import (grava.graph, "/tmp/graph.xdot");
+						Grava.XDot.import (grava.graph, "graph.xdot");
 						grava.graph.update ();
 						grava.draw ();
 					}
@@ -285,6 +294,7 @@ print (@"ACTION $action\n");
 			case "Information":
 				if (info != null) {
 					lv.add_row_s ("file", S(info.file));
+					lv.add_row_s ("size", gc.core.bin.curarch.size.to_string ());
 					lv.add_row_s ("class", S(info.rclass));
 					lv.add_row_s ("type", S(info.type));
 					lv.add_row_s ("OS", S(info.os));

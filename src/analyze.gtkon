@@ -23,7 +23,7 @@ Window using=Gtk $Ragui.Analyze title="Analyze code" destroy-event=OnWindowClose
 
 	private void OnButtonOkClicked() {
 		this.hide ();
-		gc.bgcmd ("aa");
+		gc.bgcmd ("aa", "analyzing code..");
 	}
 
 	private bool OnWindowCloseEvent(Gdk.Event ev) {

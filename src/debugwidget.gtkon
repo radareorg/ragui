@@ -1,6 +1,17 @@
 /* ragui - copyright(C) 2010 - pancake<nopcode.org> */
 VBox using=Gtk $Debug.Widget {
-	HBox !expand {
-		Label label="TODO";
+	Notebook $nb expand scrollable tab-vborder=1 {
+		VBox {
+			tab-label { Label label="maps"; }
+			Label label="TODO";
+		}
+		VBox {
+			tab-label { Label label="backtrace"; }
+			Label label="TODO";
+		}
+		VBox {
+			tab-label { Label label="registers"; }
+			Label label="TODO";
+		}
 	}
 }

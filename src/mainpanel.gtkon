@@ -46,32 +46,47 @@ VBox using=Gtk $Ragui.MainPanel {
 	public signal void onHelpAPI ();
 	public signal void onHelpAbout ();
 
-	public void onOpenProgram () {
-		onOpenFile (); // XXX: implement
-	}
-
-	public void onOpenFile () {
+	// TODO: centralize all open_file () calls here
+	private void handle_open (Dialog w, FileChooser fc, bool bin) {
 		int ret = 0;
-		var w = new Dialog.with_buttons ("Open file",
-				gc.window, DialogFlags.MODAL,
-				"autodetect", -1,
-				"gtk-cancel", 0,
-				"gtk-ok", 1
-			);
-		var of = new OpenFile ();
+		w.border_width = 6;
 		do {
-			w.vbox.add (of);
 			w.show_all ();
 			ret = w.run ();
 		} while (ret == -1);
 		w.hide ();
 		w = null;
 		if (ret == 1)
-			open_file (of.fc.get_filename ());
+			if (!open_file (fc.get_filename (), bin))
+				gc.show_error ("Cannot open file\n");
+	}
+
+	public void onOpenProgram () {
+		var w = new Dialog.with_buttons ("Open program",
+				gc.window, DialogFlags.MODAL,
+				"autodetect", -1,
+				"gtk-cancel", 0,
+				"gtk-ok", 1
+			);
+		var op = new OpenProgram ();
+		w.vbox.add (op);
+		handle_open (w, op.fc, true);
+		op.set_config ();
+	}
+
+	public void onOpenFile () {
+		var w = new Dialog.with_buttons ("Open file",
+				gc.window, DialogFlags.MODAL,
+				"gtk-cancel", 0,
+				"gtk-ok", 1
+			);
+		var of = new OpenFile ();
+		w.vbox.add (of);
+		w.resize (600, 400);
+		handle_open (w, of.fc, false);
 	}
 
 	public void onOpenProject () {
-		int ret = 0;
 		var w = new Dialog.with_buttons ("Open project",
 				gc.window, DialogFlags.MODAL,
 				"gtk-cancel", 0,
@@ -80,15 +95,8 @@ VBox using=Gtk $Ragui.MainPanel {
 		w.resize (600, 400);
 		var prjdir = Environment.get_home_dir () + "/.radare2/rdb";
 		var of = new OpenProject (prjdir);
-		do {
-			w.vbox.add (of);
-			w.show_all ();
-			ret = w.run ();
-		} while (ret == -1);
-		w.hide ();
-		w = null;
-		if (ret == 1)
-			open_file (of.fc.get_filename ());
+		w.vbox.add (of);
+		handle_open (w, of.fc, true);
 	}
 
 	public void onDebugProgram() {
@@ -109,7 +117,7 @@ VBox using=Gtk $Ragui.MainPanel {
 		w = null;
 		if (ret == 1) {
 			// TODO: setup all that shit
-			open_file ("dbg://"+of.fc.get_filename ());
+			open_file ("dbg://"+of.fc.get_filename (), true);
 		}
 	}
 
@@ -131,7 +139,7 @@ VBox using=Gtk $Ragui.MainPanel {
 		w = null;
 		if (ret == 1) {
 			// TODO: setup all that shit
-			open_file (of.get_url ());
+			open_file (of.get_url (), true);
 		}
 	}
 
@@ -153,10 +161,10 @@ VBox using=Gtk $Ragui.MainPanel {
 		w = null;
 		if (ret == 1) {
 			// TODO: setup all that debug shit
-			open_file ("attach://%d".printf (of.get_pid ()));
+			open_file ("attach://%d".printf (of.get_pid ()), false);
 		}
 	}
 
-	public signal bool open_file(string file);
+	public signal bool open_file(string file, bool analyze);
 }-
 }

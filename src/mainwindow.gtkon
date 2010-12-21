@@ -73,7 +73,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="Calculator";
 						ImageMenuItem stock-id="Assembler" activate="menuToolsAssembler";
 						ImageMenuItem stock-id="Headers" activate="menuToolsHeaders";
-						ImageMenuItem stock-id="Analyze" activate="menuToolsAnalyze";
+						ImageMenuItem stock-id="Analyze .." activate="menuToolsAnalyze";
 						ImageMenuItem stock-id="Scripting";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";

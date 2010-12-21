@@ -1,0 +1,11 @@
+/* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+
+VBox using=Gtk $Flags.Widget {
+	HBox !expand {
+		Label label=" FlagSpace: " !expand;
+		ComboBox text $cb !expand;
+	}
+	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
+		TextView $tv;
+	}
+}

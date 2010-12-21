@@ -4,6 +4,8 @@ BIN=ragui
 R2DEPS=r_asm r_util r_core
 VALAC?=valac
 GTKAMLC?=gtkamlc
+MD5=md5
+#MD5=md5sum
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
@@ -28,14 +30,16 @@ WIDGETS+=widgets/grasm/libgrasm.a
 
 all: widgets.done
 	@${MAKE} vapi
+	@${MAKE} tstamp_begin
 	@${MAKE} gtkon
 	@${MAKE} vala
+	@${MAKE} tstamp_end
 	@${MAKE} link
 
 .PHONY: gtkaml gtkon vala vapi link widgets
 
 GTKONFILES=scriptwidget.gtkon searchwidget.gtkon disasm.gtkon newproject.gtkon openfile.gtkon
-GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon
+GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon flagswidget.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
 # TODO: GTKONFILES+=datadump.gtkon
@@ -48,6 +52,10 @@ VALAFILES+=${RMGTKON_FILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
 OFILES=$(subst .vala,.o,$(VALAFILES))
 CFLAGS+=-Iwidgets/include `pkg-config --cflags gtk+-2.0 ${R2DEPS}`
+
+%.o:%.c
+	@echo "  CC -c $<"
+	@${CC} ${CFLAGS} -c $<
 
 link: ${OFILES}
 	@for a in ${CFILES}; do \
@@ -66,6 +74,18 @@ guicore:
 
 vapi:
 	valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
+
+tstamp_begin:
+	@${MD5} *.gtkon ${VALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp 2>/dev/null
+	@#-wc -c *.c > .tstamp
+
+tstamp_end:
+	@${MD5} *.gtkon ${VALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp2 2>/dev/null
+	@#-wc -c *.c > .tstamp2
+	@-if [ -e .tstamp ]; then \
+	[ -e main.o ] && touch *.o ; \
+	rm -f `diff -U 1 .tstamp .tstamp2 | grep ^+ | grep c$$ | awk '{print $$3}'|sed -e 's,c$$,o,'` ; \
+	fi
 
 vala:
 	@for a in ${VALAFILES}; do \
@@ -95,8 +115,8 @@ widgets.done:
 	:> widgets.done
 
 clean:
-	rm -f ${BIN} *.c *.h ${RMVALAFILES} ${RMGTKON_FILES}
-	rm -f guicore.vapi
+	rm -f ${BIN} *.o *.c *.h ${RMVALAFILES} ${RMGTKON_FILES}
+	rm -f guicore.vapi .tstamp .tstamp2
 
 clean-widgets:
 	cd widgets && ${MAKE} clean

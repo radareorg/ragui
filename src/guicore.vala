@@ -45,7 +45,7 @@ public class Ragui.GuiCore {
 
 	public bool bgtask = false;
 
-	public int bgcmd (string cmd) {
+	public int bgcmd (string cmd, string msg) {
 		// TODO: BLOCK UI with a modal popup, closed when thread is joined
 		try {
 			unowned Thread<void*> th = Thread.create <void*>( () => {
@@ -55,6 +55,7 @@ public class Ragui.GuiCore {
 				return null;
 			}, true);
 			//unowned Thread th2 = 
+			show_infprogress (msg);
 			// TODO: capture this thread somewhere..
 			Thread.create <void> ( () => {
 				th.join ();
@@ -66,7 +67,6 @@ public class Ragui.GuiCore {
 				});
 			}, true);
 			//show_message ("Working in background.. wait a bit");
-			show_infprogress ("analyzing code..");
 		} catch (ThreadError e) {
 			show_error (e.message);
 		}
@@ -82,6 +82,11 @@ public class Ragui.GuiCore {
 		gc.core.seek (addr, true);
 		gc.cmd (@"s $addr");
 		return true;
+	}
+
+	public void open_url (string url) {
+		// XXX: windows only
+		system ("start "+url);
 	}
 
 	// TODO: rename show_ -> dialog_
@@ -188,7 +193,9 @@ public class Ragui.GuiCore {
 		ipw.window_position = WindowPosition.CENTER;
 		ipw.modal = true;
 		ipw.parent = window;
-		var vb = new VBox (false, 5);
+		var vb = new VBox (false, 6);
+		//vb.spacing = 6;
+		vb.border_width = 10;
 		var pb = new ProgressBar ();
 		pb.pulse_fraction = 0.05;
 		pb.bar_style = ProgressBarStyle.CONTINUOUS;

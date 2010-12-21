@@ -26,7 +26,11 @@ public class Ragui.Main {
 		{ null }
 	};
 
-	public static void open_file (string uri) {
+	public static void open_file (string uri, bool loadstuff) {
+		if (loadstuff) {
+			// analyze code
+			// load symbols, imports, ...
+		}
 		gc.core.file_open (uri, 0);
 		gc.core.config.set ("io.va", "true");
 		gc.core.config.set ("scr.color", "false");

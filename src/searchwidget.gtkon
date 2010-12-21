@@ -1,13 +1,53 @@
 /* ragui - copyright(C) 2010 - pancake<nopcode.org> */
 VBox using=Gtk $Search.Widget {
 	HBox !expand {
-		Entry text="";
+		ComboBox text !expand $st;
+		Entry text="" $entry;
 		Button label="search" !expand activate=click_run released=click_run;
 	}
-	TreeView $tv;
+	HBox !expand spacing=3 {
+		Label label=" from: " !expand;
+		Entry editable text="" $from;
+		Label label=" to: " !expand;
+		Entry editable text="" $to;
+		Button label="reset" !expand activate=click_resetrange released=click_resetrange;
+		Button label="copy" !expand activate=click_copyrange released=click_copyrange;
+		Button label="paste" !expand activate=click_pasterange released=click_pasterange;
+	}
+	Notebook $nb expand scrollable tab-vborder=1 {
+		VBox {
+			tab-label {
+				Label label="Results";
+			}
+		}
+	}
 -{
+	public Widget() {
+		//nb.set_tab_reorderable (true);
+		nb.set_scrollable (true);
+		st.append_text ("string");
+		st.append_text ("wide string");
+		st.append_text ("hexpair");
+		st.append_text ("regexp");
+		st.append_text ("asm regexp");
+		st.set_active (0);
+		click_resetrange ();
+	}
+
 	private void click_run () {
-		gc.cmd ("/x 89e8"); // XXX
+		entry.text = "";
+		//gc.cmd ("/x 89e8"); // XXX
+	}
+
+	private void click_resetrange () {
+		from.text = "0";
+		to.text = gc.core.bin.curarch.size.to_string ();
+	}
+
+	private void click_copyrange () {
+	}
+
+	private void click_pasterange () {
 	}
 }-
 }

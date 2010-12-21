@@ -7,14 +7,18 @@ VBox using=Gtk $Ragui.OpenProcess border_width=5 spacing=5 {
 	}
 	-{
 		public void onRefresh() {
-			pids.append_text ("1024  vim");
-			pids.append_text ("1025  bash");
+			print ("Refreshing process list\n");
+			var procs = gc.core.dbg.pids (0);
+			foreach (var p in procs)
+				pids.append_text ("%d  %s".printf (p.pid, p.path));
 			pids.set_active (0);
 		}
+
 		public int get_pid () {
 			string pidstr = pids.get_active_text ();
 			return pidstr.to_int ();
 		}
+
 		public OpenProcess () {
 			onRefresh ();
 		}
