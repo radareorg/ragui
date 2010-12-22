@@ -59,7 +59,7 @@ public class Ragui.GuiCore {
 			//unowned Thread th2 = 
 			show_infprogress (msg);
 			// TODO: capture this thread somewhere..
-			unowned Thread<void*> th2 = Thread.create <void*> ( () => {
+			Thread.create <void*> ( () => {
 				th.join ();
 				bgtask = true;
 				Idle.add (() => {

@@ -3,23 +3,42 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 {
 	VBox border-width=10 spacing=10 {
 		Notebook {
-			VBox {
-				tab-label { Label label="Disassembly"; }
-				CheckButton !expand label="Hide bytes" toggled=cbBytes $hidebytes;
+			VBox spacing=5 border-width=5{
+				tab-label { Label label="Disassembler"; }
+
+				HBox spacing=5 !expand {
+					Label label="cpu" !expand;
+					ComboBox text $cb_cpu !expand;
+
+					Label label=" bits" !expand;
+					ComboBox text $cb_bits !expand;
+
+					Label label=" endian" !expand;
+					ComboBox text $cb_endian !expand;
+				}
+				CheckButton !expand label="Show bytes" toggled=cbBytes $hidebytes;
 				CheckButton !expand label="Hide comments" toggled=cbComments;
-				CheckButton !expand label="Flag in line";
-				CheckButton !expand label="Hide stack pointer" toggled=cbStackptr $hidestck;
+				CheckButton !expand label="Show stack pointer" toggled=cbStackptr $hidestck;
 				//HSeparator !expand;
-				CheckButton !expand label="Hide metadata";
+				//CheckButton !expand label="Hide metadata";
 			}
-			Label label=todo {
+			VBox spacing=5 border-width=5 {
 				tab-label { Label label="Analysis"; }
+				Label label="No options yet";
 			}
-			Label label=todo {
-				tab-label { Label label="Keys"; }
+			VBox spacing=5 border-width=5 {
+				tab-label { Label label="KeyBindings"; }
+
+				Label label="See menubar for keybindings";
+				// TODO: display a readonly list of keys+actions
 			}
-			Label label=todo {
-				tab-label { Label label="Debug"; }
+			VBox spacing=5 border-width=5 {
+				tab-label { Label label="Debugger"; }
+
+				HBox spacing=5 !expand {
+					Label label="Handler" !expand;
+					ComboBox text $cb_dbg !expand;
+				}
 			}
 		}
 		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
@@ -27,6 +46,27 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 		}
 	}
 -{
+	public void init_stuff() {
+		cb_cpu.append_text ("x86");
+		cb_cpu.append_text ("x86.olly");
+		cb_cpu.append_text ("arm");
+		cb_cpu.append_text ("mips");
+		cb_cpu.append_text ("powerpc");
+		cb_cpu.append_text ("java");
+		cb_cpu.append_text ("bf");
+		cb_cpu.set_active (0);
+
+		cb_bits.append_text ("8");
+		cb_bits.append_text ("16");
+		cb_bits.append_text ("32");
+		cb_bits.append_text ("64");
+		cb_bits.set_active (2);
+
+		cb_endian.append_text ("big");
+		cb_endian.append_text ("little");
+		cb_endian.set_active (1);
+	}
+
 	private void cbBytes() {
 		gc.core.config.set ("asm.bytes", (!hidebytes.active).to_string ());
 	}
@@ -42,6 +82,7 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 	public PreferencesWindow () {
 		resize (400, 300);
 		window_position = WindowPosition.CENTER;
+		init_stuff ();
 	}
 
 	private void OnButtonCloseClicked() {
