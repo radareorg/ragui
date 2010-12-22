@@ -114,7 +114,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name="ragui" version="0.1"
 		copyright="Copyright (c) 2009-2010 pancake/nibble"
-		comments="Graphical hexeditor, disassembler and debugger"
+		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
 		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble.ds@gmail.com)", null}}';
 
@@ -156,8 +156,8 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		private void OnFileSaveAs() {
-			/* TODO */
 			if (is_open) {
+				/* TODO */
 			} else gc.show_error ("Nothing to save");
 		}
 
@@ -244,18 +244,12 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		public void OnMenuHelpAPI () {
-			// check if vdoc exist
- 			gc.open_url ("vdoc/index.html");
- 			gc.open_url ("http://www.radare.org/vdoc");
+			// TODO check if vdoc exist in installation directory
+			if (FileUtils.test ("vdoc", FileTest.IS_DIR)) {
+ 				gc.open_url ("vdoc/index.html");
+			} else gc.open_url ("http://www.radare.org/vdoc");
 		}
 
-		/* user defined window constructor */
-		/*
-		   public MainWindow() {
-		   leftbox.append_text ("Hello world");
-		   leftbox.append_text ("bar low");
-		   }
-		 */
 		public MainPanel panel;
 		public MainBody body;
 

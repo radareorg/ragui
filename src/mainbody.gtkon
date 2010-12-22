@@ -37,23 +37,23 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				VPaned $body position=500 add2 {
 					VBox {
 						// TODO: set each tab to a var, and use it from see code/graph
-						Notebook $nb expand scrollable tab-vborder=1 focus-tab=chtab {
-							VBox {
+						Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
+							VBox $.page_code {
 								tab-label {
-									Label label="code" grab-focus='{now="disasm"}';
+									Label label="code";
 								}
 								/* Codeview:Widget $codeview; */
 								Ragui:Disasm $disasm;
 							}
-							VBox {
+							VBox $.page_data {
 								tab-label {
-									Label label="data" grab-focus='{now="data"}';
+									Label label="data";
 								}
 								Hexview:Widget $hexview;
 							}
-							VBox {
+							VBox $.page_graph {
 								tab-label {
-									Label label="graph" grab-focus='{now="graph"}';
+									Label label="graph";
 								}
 								VBox {
 									Grava:Widget $grava;
@@ -90,6 +90,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 							}
 							VBox {
 								tab-label {
+									Label label="files";
+								}
+								VBox {
+									Label label="TODO";
+								}
+							}
+							VBox {
+								tab-label {
 									Label label="debug";
 								}
 								VBox {
@@ -118,17 +126,38 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name="ragui" version="0.1"
 		copyright="Copyright (c) 2009-2010 pancake/nibble"
-		comments="Graphical hexeditor, disassembler and debugger"
+		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
 		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble@develsec.org)", null}}';
 
 	-{
 		private string now = "disasm"; // selected tab // TODO: rename
 
-		public bool chtab (Gtk.NotebookTab off) {
-			var p = nb.get_current_page ();
-			print (@"This is fucking funny! $p\n");
-			return false;
+		public void chtab (NotebookPage page, uint pnum) {
+			#if VALA_SUPPORTS_SWITCH_PTR
+			switch (page) {
+			case page_code:
+				now = "code";
+				break;
+			case page_data:
+				now = "data";
+				break;
+			case page_graph:
+				now = "graph";
+				break;
+			}
+			#endif
+			if ((void *)page == (void *)page_code) {
+				now = "disasm";
+			} else
+			if ((void *)page == (void *)page_data) {
+				now = "see data";
+			} else
+			if ((void *)page == (void *)page_graph) {
+				now = "graph";
+			}
+	//	print ("---> %d page=%p\n", p, page);
+	//	print ("===  > %p %p %p\n", page_code, page_data, page_graph);
 		}
 
 		public MainBody () {
@@ -142,6 +171,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 
 		private void setup_leftbox () {
 			leftbox.append_text ("Information");
+			leftbox.append_text ("Libraries");
 			leftbox.append_text ("Sections");
 			leftbox.append_text ("Imports");
 			leftbox.append_text ("Symbols");
@@ -189,6 +219,9 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				case "Sections":
 					listview.set_actions ("see code", "see data", "resize", "delete", "dump", "restore", "change perms");
 					break;
+				case "Functions":
+				case "Files":
+				case "Libraries":
 				case "Entry Points":
 				case "Strings":
 				case "Imports":
@@ -325,12 +358,18 @@ print (@"ACTION $action\n");
 				foreach (var rel in gc.core.bin.get_relocs ())
 					lv.add_row (baddr+rel.rva, rel.name);
 				break;
+			case "Functions":
+				foreach (var fun in gc.core.anal.get_fcns ())
+					lv.add_row (fun.addr, fun.name);
+				break;
 			case "Entry Points":
 				int i = 0;
 				foreach (var entry in gc.core.bin.get_entries ())
 					lv.add_row (baddr+entry.rva, "entry%i".printf (i++));
 				break;
+			case "Libraries":
 			case "Registers":
+				// TODO
 				break;
 			}
 		}

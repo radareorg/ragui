@@ -6,7 +6,9 @@
                   |___/           
 
 pancake TODO
-* first double click in left panel (information) fails with null pointer (or so)
+* mainwindow and mainbody have a about dialog ?!?? dupped??! wtf??
+* offset fails?!? wtf? click in leftbar
+* Add size in list (useful for ranges, dumping..)
 * Write hexdump widget based in textagview or similar... selection code must be hacked
 * Keybindings configuration
   - define global, wm, per-widget actions

@@ -53,6 +53,13 @@ CFILES=$(subst .vala,.c,$(VALAFILES))
 OFILES=$(subst .vala,.o,$(VALAFILES))
 CFLAGS+=-Iwidgets/include `pkg-config --cflags gtk+-2.0 ${R2DEPS}`
 
+include ../config.mk
+
+ifeq ($(DEBUG),1)
+CFLAGS+=-g
+VALAFLAGS+=-g
+endif
+
 %.o:%.c
 	@echo "  CC -c $<"
 	@${CC} ${CFLAGS} -c $<

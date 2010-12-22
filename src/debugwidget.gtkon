@@ -1,8 +1,17 @@
 /* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+
 VBox using=Gtk $Debug.Widget {
 	Notebook $nb expand scrollable tab-vborder=1 {
 		VBox {
 			tab-label { Label label="maps"; }
+			Label label="TODO";
+		}
+		VBox {
+			tab-label { Label label="files"; }
+			Label label="TODO";
+		}
+		VBox {
+			tab-label { Label label="libraries"; }
 			Label label="TODO";
 		}
 		VBox {
@@ -11,6 +20,10 @@ VBox using=Gtk $Debug.Widget {
 		}
 		VBox {
 			tab-label { Label label="registers"; }
+			Label label="TODO";
+		}
+		VBox {
+			tab-label { Label label="windows"; }
 			Label label="TODO";
 		}
 	}

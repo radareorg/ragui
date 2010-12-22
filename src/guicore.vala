@@ -4,7 +4,7 @@ using Radare;
 public static Ragui.GuiCore gc;
 public static const string U64FMT = uint64.FORMAT_MODIFIER;
 
-public enum Ragui.GuiCoreType {
+public enum Ragui.GuiCoreMode {
 	EDIT,
 	DIFF,
 	DEBUG
@@ -14,7 +14,7 @@ public class Ragui.GuiCore {
 	public RCore core;
 	public RCore core2;
 	public string arg0;
-	public GuiCoreType type;
+	public GuiCoreMode type;
 	public Window window;
 	public bool debugger;
 
@@ -43,12 +43,14 @@ public class Ragui.GuiCore {
 		return ret;
 	}
 
-	public bool bgtask = false;
+	public bool bgtask { get; set; }
 
+	private unowned Thread<void*> th;
 	public int bgcmd (string cmd, string msg) {
 		// TODO: BLOCK UI with a modal popup, closed when thread is joined
 		try {
-			unowned Thread<void*> th = Thread.create <void*>( () => {
+		//	unowned Thread<void*> 
+			th = Thread.create <void*>( () => {
 				bgtask = true;
 				int ret = gc.core.cmd0 (cmd);
 				gc.core.cons.flush ();
@@ -57,7 +59,7 @@ public class Ragui.GuiCore {
 			//unowned Thread th2 = 
 			show_infprogress (msg);
 			// TODO: capture this thread somewhere..
-			Thread.create <void> ( () => {
+			unowned Thread<void*> th2 = Thread.create <void*> ( () => {
 				th.join ();
 				bgtask = true;
 				Idle.add (() => {
@@ -65,7 +67,9 @@ public class Ragui.GuiCore {
 					show_message ("Task finished!\n");
 					return false;
 				});
+				return null;
 			}, true);
+
 			//show_message ("Working in background.. wait a bit");
 		} catch (ThreadError e) {
 			show_error (e.message);
@@ -215,10 +219,10 @@ public class Ragui.GuiCore {
 		ipw.modal = true;
 		ipw.parent = window;
 		var vb = new VBox (false, 6);
-		//vb.spacing = 6;
+		vb.spacing = 10;
 		vb.border_width = 10;
 		var pb = new ProgressBar ();
-		pb.pulse_fraction = 0.05;
+		pb.pulse_fraction = 0.02;
 		pb.bar_style = ProgressBarStyle.CONTINUOUS;
 		ipw.add (vb);
 		ipw_hide = false;
