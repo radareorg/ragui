@@ -90,7 +90,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm border_width=5 spacing=5 {
 				return false;
 			});
 			ttv.menu_construct.connect ((m) => {
-				ttv.set_actions ("goto", "goto ..", "analyze", "breakpoint",
+				ttv.set_actions ("goto", "goto ..", "analyze", "breakpoint", "add comment",
 					"drop breakpoint", "assemble", "write bytes", "refresh", "copy");
 			});
 			ttv.menu_handler.connect ((m, w) => {

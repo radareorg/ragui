@@ -64,7 +64,8 @@ public class Hexview.Widget : ScrolledWindow {
 	public enum Color {
 		HIGHLIGHT,
 		FOREGROUND,
-		BACKGROUND
+		BACKGROUND,
+		OFFSET
 	}
 
 	public void set_color (Color c) {
@@ -82,6 +83,9 @@ public class Hexview.Widget : ScrolledWindow {
 			}
 		else
 			switch (c) {
+			case Color.OFFSET:
+				ctx.set_source_rgb (0.125, 0.41, 0.64);
+				break;
 			case Color.FOREGROUND:
 				ctx.set_source_rgb (0, 0, 0);
 				break;
@@ -353,25 +357,30 @@ print ("HEIGHT %d\n", (int)h);
 	print ("PANY IS %d\n", (int)pany);
 		/* TODO: handle multipliers here!! */
 		int foo = K*((int)((pany/zoom)/K));
+//if (address>=foo) { 
+if (true) {
+print (@"FOO IS $foo\n");
+var pwn = (int)(pany/K);
 		if (pany>K) {
 			address -= (int)foo;
 			buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
 			pany = 0;
-			cursor += 1;
+			cursor += pwn;
 		} else
 		if (-pany>K) {
 			address-=(int)foo;
 			buffer.update (address, 16*80);
 			pany = 0;
-			cursor -= 1; // TODO move mult
+			cursor += pwn; // TODO move mult
 		}
+}
 
 #if 0
 		/* set offset */
 		//print ("PANY = %f\n", pany);
 #endif
 		int py = 0; //foo/2; //(-pany/zoom)/10;
-		print ("----- foo %d\n", foo);
+		//print ("----- foo %d\n", foo);
 		offset = (uint64)(address + py);
 		offset_click = offset + xcursor; // TODO: add Y
 		print ("click : %llx\n", offset_click);
@@ -443,7 +452,10 @@ print ("ROWS = %d\n", rows);
 				ctx.restore ();
 			}
 			ctx.move_to (20, y);
-			ctx.show_text ("0x%08llx".printf((uint64)address+(i*16)));
+			set_color (Color.OFFSET);
+			ctx.show_text ("0x%08llx".printf ((uint64)address+(i*16)));
+
+			set_color (Color.FOREGROUND);
 			uint8 *ptr = buffer.get_ptr (0, i);
 			if (ptr != null) {
 				for (int j=0;j<16;j+=2) {

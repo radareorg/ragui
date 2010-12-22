@@ -19,9 +19,36 @@ VBox using=Gtk using:r=Radare $Search.Widget {
 			tab-label {
 				Label label="Results";
 			}
+Label label="fun";
+			ScrolledWindow $sw {
+				TreeView $tv {
+					TreeViewColumn title="offset" clickable clicked="{sort_column(tv,0)}" {
+						CellRendererText $.col0 expand;
+						CellRendererText &col0 attribute="text" column=0;
+					}
+					TreeViewColumn title="context" clickable clicked="{sort_column(tv,1)}" {
+						CellRendererText $.col1 expand;
+						CellRendererText &col1 attribute="text" column=1;
+					}
+				}
+			}
 		}
 	}
 -{
+	// XXX copypasta from widgets/grabin/grabin.vala
+	private void sort_column(TreeView tv, int n) {
+		for (int i = 0; i < tv.get_columns ().length (); i++) {
+			var col = tv.get_column (i);
+			if (i == n) {
+				col.set_sort_indicator (true);
+				var order = (col.get_sort_order ()==SortType.ASCENDING)?
+					SortType.DESCENDING: SortType.ASCENDING;
+				col.sort_order = order;
+				//tv.get_model ().set_sort_column_id (i, order);
+			} else col.set_sort_indicator (false);
+		}
+	}
+
 	public Widget() {
 		//nb.set_tab_reorderable (true);
 		nb.set_scrollable (true);
@@ -35,33 +62,53 @@ VBox using=Gtk using:r=Radare $Search.Widget {
 		click_resetrange ();
 	}
 
+	const int BSIZE = 4096;
 	// XXX CREEPY!!1
 	public static int count { get; set; }
 	private void click_run () {
 		var txt = entry.text;
 		entry.text = "";
+		var mode = st.get_active_text ();
+		switch (mode) {
+		case "string":
+			gc.core.search.reset (RSearch.Mode.KEYWORD);
+			gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt));
+			break;
+		case "wide string":
+			gc.core.search.reset (RSearch.Mode.KEYWORD);
+			gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt));
+			break;
+		case "hexpair":
+			break;
+		case "dword":
+			break;
+		case "regexp":
+			break;
+		case "asm regexp":
+			break;
+		}
 		//gc.cmd ("/x 89e8"); // XXX
-		gc.core.search.reset (RSearch.Mode.KEYWORD);
-		gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt));
 		gc.core.search.begin ();
 		count = 0;
 		gc.core.search.set_callback ((x,y,z) => {
 				count = count + 1;
 				print (@"HIT FOUND!! OW YEAH! $z\n");
 				return 0;
-				}, null);
-		uint64 f = 0;
-		uint64 t = 0x9999; // XXX fit file size
+			}, null);
+		uint64 f = gc.core.num.get (from.text);
+		uint64 t = gc.core.num.get (to.text);
 		t = gc.core.bin.curarch.size;
-		uint8* buf = new uint8[4096];
+		uint8* buf = new uint8[BSIZE];
 		while (f<t) {
-			gc.core.io.read_at (f, buf, 4096);
-			var ret = gc.core.search.update (ref f, buf, 4096);
+			var readed = gc.core.io.read_at (f, buf, BSIZE);
+			// TODO: Handle readed..avoid silly bugs
+			print (@"readed = $readed\n");
+			var ret = gc.core.search.update (ref f, buf, readed);
 			if (ret == -1) {
 				gc.show_error ("search update error");
 				break;
 			}
-			f += 4096;
+			f += BSIZE;
 		}
 		gc.show_message (@"$count results!");
 	}
