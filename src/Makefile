@@ -5,7 +5,7 @@ R2DEPS=r_asm r_util r_core
 VALAC?=valac
 GTKAMLC?=gtkamlc
 MD5=md5
-#MD5=md5sum
+MD5=md5sum
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
@@ -43,7 +43,8 @@ GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon 
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
 # TODO: GTKONFILES+=datadump.gtkon
-VALAFILES=guicore.vala main.vala
+OVALAFILES=guicore.vala main.vala
+VALAFILES=${OVALAFILES}
 RMGTKON_FILES+=$(subst .gtkon,.vala,$(GTKONFILES))
 GTKON_C_FILES+=$(subst .gtkon,.c,$(GTKONFILES))
 GTKON_C_FILES+=mainwindow.c
@@ -83,11 +84,11 @@ vapi:
 	valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
 
 tstamp_begin:
-	@${MD5} *.gtkon ${VALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp 2>/dev/null
+	@${MD5} *.gtkon ${OVALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp 2>/dev/null
 	@#-wc -c *.c > .tstamp
 
 tstamp_end:
-	@${MD5} *.gtkon ${VALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp2 2>/dev/null
+	@${MD5} *.gtkon ${OVALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp2 2>/dev/null
 	@#-wc -c *.c > .tstamp2
 	@-if [ -e .tstamp ]; then \
 	[ -e main.o ] && touch *.o ; \

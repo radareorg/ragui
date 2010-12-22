@@ -34,80 +34,79 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					}
 				}
 
-				VPaned $body position=500 add2 {
-					VBox {
-						// TODO: set each tab to a var, and use it from see code/graph
-						Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
-							VBox $.page_code {
-								tab-label {
-									Label label="code";
-								}
-								/* Codeview:Widget $codeview; */
-								Ragui:Disasm $disasm;
+				VBox add2 {
+					// TODO: set each tab to a var, and use it from see code/graph
+					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
+						VBox $.page_code {
+							tab-label {
+								Label label="code";
 							}
-							VBox $.page_data {
-								tab-label {
-									Label label="data";
-								}
-								Hexview:Widget $hexview;
-							}
-							VBox $.page_graph {
-								tab-label {
-									Label label="graph";
-								}
-								VBox {
-									Grava:Widget $grava;
-								}
-							}
-							VBox {
-								tab-label { Label label="flags"; }
-								VBox { Flags:Widget; }
-							}
-							VBox {
-								tab-label {
-									Label label="script";
-								}
-								VBox {
-									Script:Widget $script;
-								}
-							}
-							VBox {
-								tab-label {
-									Label label="search";
-								}
-								VBox {
-									Search:Widget $search;
-								}
-							}
-							VBox $vbheaders {
-								tab-label {
-									Label label="headers";
-								}
-							}
-							VBox {
-								tab-label {
-									Label label="files";
-								}
-								VBox {
-									Label label="TODO";
-								}
-							}
-							VBox {
-								tab-label {
-									Label label="debug";
-								}
-								VBox {
-									Debug:Widget $debug;
-								}
-							}
-							/*Label label="hash-foo" {
-							  tab-label {
-							  Label label="data analysis";
-							  }
-							  }*/
+							/* Codeview:Widget $codeview; */
+							Ragui:Disasm $disasm;
 						}
+						VBox $.page_data {
+							tab-label {
+								Label label="data";
+							}
+							Hexview:Widget $hexview;
+						}
+						VBox $.page_graph {
+							tab-label {
+								Label label="graph";
+							}
+							VBox {
+								Grava:Widget $grava;
+							}
+						}
+						VBox {
+							tab-label { Label label="flags"; }
+							VBox { Flags:Widget; }
+						}
+						VBox {
+							tab-label {
+								Label label="script";
+							}
+							VBox {
+								Script:Widget $script;
+							}
+						}
+						VBox {
+							tab-label {
+								Label label="search";
+							}
+							VBox {
+								Search:Widget $search;
+							}
+						}
+						VBox $vbheaders {
+							tab-label {
+								Label label="headers";
+							}
+						}
+						VBox {
+							tab-label {
+								Label label="files";
+							}
+							VBox {
+								Label label="TODO";
+							}
+						}
+						VBox {
+							tab-label { Label label="debug"; }
+							VBox {
+								Debug:Widget $debug;
+							}
+						}
+						VBox {
+							tab-label { Label label="console"; }
+							Ragui:Console $console;
+						}
+						/*Label label="hash-foo" {
+						  tab-label {
+						  Label label="data analysis";
+						  }
+						  }*/
 					}
-					Ragui:Console $console add2;
 				}
 			}
 /*

@@ -16,20 +16,16 @@ VBox using=Gtk using:r=Radare $Search.Widget {
 	}
 	Notebook $nb expand scrollable tab-vborder=1 {
 		VBox {
-			tab-label {
-				Label label="Results";
-			}
-Label label="fun";
-			ScrolledWindow $sw {
-				TreeView $tv {
-					TreeViewColumn title="offset" clickable clicked="{sort_column(tv,0)}" {
-						CellRendererText $.col0 expand;
-						CellRendererText &col0 attribute="text" column=0;
-					}
-					TreeViewColumn title="context" clickable clicked="{sort_column(tv,1)}" {
-						CellRendererText $.col1 expand;
-						CellRendererText &col1 attribute="text" column=1;
-					}
+			tab-label { Label label="Results"; }
+
+			TreeView can-focus $tv headers-visible {
+				TreeViewColumn title="offset" clickable clicked="{sort_column(tv,0)}" {
+					CellRendererText $.col0 expand;
+					CellRendererText &col0 attribute="text" column=0;
+				}
+				TreeViewColumn title="context" clickable clicked="{sort_column(tv,1)}" {
+					CellRendererText $.col1 expand;
+					CellRendererText &col1 attribute="text" column=1;
 				}
 			}
 		}
@@ -37,6 +33,7 @@ Label label="fun";
 -{
 	// XXX copypasta from widgets/grabin/grabin.vala
 	private void sort_column(TreeView tv, int n) {
+print ("SORT COLUMN OR GTFO\n");
 		for (int i = 0; i < tv.get_columns ().length (); i++) {
 			var col = tv.get_column (i);
 			if (i == n) {
@@ -49,7 +46,17 @@ Label label="fun";
 		}
 	}
 
+	public static ListStore listmodel;
+
+	public static void add_row (string a, string b) {
+		TreeIter iter;
+		listmodel.append (out iter);
+		listmodel.set (iter, 0, a, 1, b, -1);
+	}
+
 	public Widget() {
+		listmodel = new ListStore (2, typeof (string), typeof (string));
+		tv.model = listmodel;
 		//nb.set_tab_reorderable (true);
 		nb.set_scrollable (true);
 		st.append_text ("string");
@@ -93,6 +100,8 @@ Label label="fun";
 		gc.core.search.set_callback ((x,y,z) => {
 				count = count + 1;
 				print (@"HIT FOUND!! OW YEAH! $z\n");
+				//add_row (@"$z", txt); // the use of txt here segfaults vala internally!!!1 report!!11
+				add_row (@"$z", "hit%d".printf (count));
 				return 0;
 			}, null);
 		uint64 f = gc.core.num.get (from.text);
