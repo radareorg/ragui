@@ -244,28 +244,9 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		public void OnMenuHelpAPI () {
-/* This is the theorically portable way.. but it doesnt works
-			try {
-				var file = File.new_for_path ("http://www.radare.org/vdoc");
-				var handler = file.query_default_handler (null);
-				var list = new List<File> ();
-				list.append (file);
-				var result = handler.launch (list, null);
-			} catch (GLib.Error err) {
-				print ("Error: %s\n", err.message);
-			}
-*/
-			Pid pid;
-			string[] runme = { "/usr/bin/xdg-open", "http://www.radare.org/vdoc" };
-			try {
-				if (!Process.spawn_async (null, runme, null,
-						SpawnFlags.DO_NOT_REAP_CHILD, null, out pid))
-					return;
-			} catch (GLib.SpawnError err) {
-				print ("Error: %s\n", err.message);
-			}
-			//public delegate void ChildWatchFunc (Pid pid, int status);
-			//ChildWatch.add (pid, (pid,status)=> {});
+			// check if vdoc exist
+ 			gc.open_url ("vdoc/index.html");
+ 			gc.open_url ("http://www.radare.org/vdoc");
 		}
 
 		/* user defined window constructor */

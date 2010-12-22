@@ -16,8 +16,8 @@ VBox using=Gtk $Ragui.MainPanel {
 			Label label="";
 			Label !expand label="Debugger";
 			Button !expand label="Debug local program" activate=onDebugProgram released=onDebugProgram;
-			Button !expand label="Remote debugger" activate=onDebugRemote released=onDebugRemote;
 			Button !expand label="Attach to process" activate=onDebugAttach released=onDebugAttach;
+			Button !expand label="Remote debugger" activate=onDebugRemote released=onDebugRemote;
 		}
 		Label label="";
 	}

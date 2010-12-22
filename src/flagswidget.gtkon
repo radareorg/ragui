@@ -2,10 +2,56 @@
 
 VBox using=Gtk $Flags.Widget {
 	HBox !expand {
-		Label label=" FlagSpace: " !expand;
-		ComboBox text $cb !expand;
+		Label label=" Space " !expand;
+		ComboBox text $cb !expand changed=cb_changed;
+		Label label="";
+		Button !expand label="refresh" activate=fs_del released=fs_refresh;
+		Button !expand label="remove" activate=fs_del released=fs_del;
+		Button !expand label="add" activate=fs_add released=fs_add;
+		Label label="";
+		Button !expand label="new flag" activate=fs_add released=fs_add;
 	}
+
 	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
 		TextView $tv;
 	}
+-{
+	public void cb_changed () {
+		// TODO: fill treeview with flags.. needs RFlags work
+	}
+
+	public void fs_add () {
+		string nam = gc.show_input ("flag space name?");
+		gc.cmd ("fs "+nam);
+		fs_refresh ();
+	}
+
+	public void fs_del () {
+		string nam = cb.get_active_text ();
+		gc.cmd ("fs-"+nam);
+		fs_refresh ();
+	}
+
+	public void fs_refresh () {
+		string old = cb.get_active_text ();
+		/* HACK */ for(int i=0;i<30;i++) cb.remove_text (0);
+		cb.append_text ("*");
+		cb.set_active (0);
+		for (int n=0; ; n++) {
+			var str = gc.core.flags.space_get (n);
+			if (str == "")
+				break;
+			cb.append_text (str);
+			if (old == str)
+				cb.set_active (n);
+		}
+	}
+
+	public Widget () {
+		//fs_refresh ();
+		cb.changed.connect (() => {
+			print ("CHANGED\n");
+		});
+	}
+}-
 }

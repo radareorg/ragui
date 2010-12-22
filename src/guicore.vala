@@ -87,6 +87,27 @@ public class Ragui.GuiCore {
 	public void open_url (string url) {
 		// XXX: windows only
 		system ("start "+url);
+
+		Pid pid;
+		string[] runme = { "/usr/bin/xdg-open", url };
+		try {
+			if (!Process.spawn_async (null, runme, null,
+					SpawnFlags.DO_NOT_REAP_CHILD, null, out pid))
+				return;
+		} catch (GLib.SpawnError err) {
+			print ("Error: %s\n", err.message);
+		}
+/* This is the theorically portable way.. but it doesnt works
+			try {
+				var file = File.new_for_path ("http://www.radare.org/vdoc");
+				var handler = file.query_default_handler (null);
+				var list = new List<File> ();
+				list.append (file);
+				var result = handler.launch (list, null);
+			} catch (GLib.Error err) {
+				print ("Error: %s\n", err.message);
+			}
+*/
 	}
 
 	// TODO: rename show_ -> dialog_
