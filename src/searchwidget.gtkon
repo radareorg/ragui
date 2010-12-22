@@ -1,5 +1,5 @@
 /* ragui - copyright(C) 2010 - pancake<nopcode.org> */
-VBox using=Gtk $Search.Widget {
+VBox using=Gtk using:r=Radare $Search.Widget {
 	HBox !expand {
 		ComboBox text !expand $st;
 		Entry text="" $entry;
@@ -28,15 +28,42 @@ VBox using=Gtk $Search.Widget {
 		st.append_text ("string");
 		st.append_text ("wide string");
 		st.append_text ("hexpair");
+		st.append_text ("dword");
 		st.append_text ("regexp");
 		st.append_text ("asm regexp");
 		st.set_active (0);
 		click_resetrange ();
 	}
 
+	// XXX CREEPY!!1
+	public static int count { get; set; }
 	private void click_run () {
+		var txt = entry.text;
 		entry.text = "";
 		//gc.cmd ("/x 89e8"); // XXX
+		gc.core.search.reset (RSearch.Mode.KEYWORD);
+		gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt));
+		gc.core.search.begin ();
+		count = 0;
+		gc.core.search.set_callback ((x,y,z) => {
+				count = count + 1;
+				print (@"HIT FOUND!! OW YEAH! $z\n");
+				return 0;
+				}, null);
+		uint64 f = 0;
+		uint64 t = 0x9999; // XXX fit file size
+		t = gc.core.bin.curarch.size;
+		uint8* buf = new uint8[4096];
+		while (f<t) {
+			gc.core.io.read_at (f, buf, 4096);
+			var ret = gc.core.search.update (ref f, buf, 4096);
+			if (ret == -1) {
+				gc.show_error ("search update error");
+				break;
+			}
+			f += 4096;
+		}
+		gc.show_message (@"$count results!");
 	}
 
 	private void click_resetrange () {

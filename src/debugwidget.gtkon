@@ -11,6 +11,10 @@ VBox using=Gtk $Debug.Widget {
 			Label label="TODO";
 		}
 		VBox {
+			tab-label { Label label="traces"; }
+			Label label="TODO: start /stop trace, list, display, etc..";
+		}
+		VBox {
 			tab-label { Label label="libraries"; }
 			Label label="TODO";
 		}

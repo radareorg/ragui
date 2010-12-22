@@ -136,6 +136,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm border_width=5 spacing=5 {
 				goto (gc.core.num.get (x));
 			});
 			// seek to entrypoint
+			goto (0);
 			var entries = gc.core.bin.get_entries();
 			foreach (var e in entries) {
 				goto (e.rva);

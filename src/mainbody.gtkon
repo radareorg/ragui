@@ -60,12 +60,8 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 								}
 							}
 							VBox {
-								tab-label {
-									Label label="flags";
-								}
-								VBox {
-									Flags:Widget $flags;
-								}
+								tab-label { Label label="flags"; }
+								VBox { Flags:Widget; }
 							}
 							VBox {
 								tab-label {
@@ -335,6 +331,8 @@ print (@"ACTION $action\n");
 					lv.add_row_s ("subsystem", S(info.subsystem));
 					lv.add_row_s ("bits", info.bits.to_string ());
 					lv.add_row_s ("endian", info.big_endian?"big":"little");
+				} else {
+					// TODO put file name and size!!
 				}
 				// TODO lv.add_row_s ("relocs", info.dbg_info.is_stripped ()?"true":"false");
 				break;
