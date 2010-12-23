@@ -1,9 +1,8 @@
 /* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
-Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destroy-event=OnWindowCloseEvent
-{
+Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destroy-event=OnWindowCloseEvent {
 	VBox border-width=10 spacing=10 {
 		Notebook {
-			VBox spacing=5 border-width=5{
+			VBox spacing=5 border-width=5 {
 				tab-label { Label label="Disassembler"; }
 
 				HBox spacing=5 !expand {

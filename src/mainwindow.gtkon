@@ -232,7 +232,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		private void OnMenuEditPreferences () {
-			Ragui.PreferencesWindow pw = new Ragui.PreferencesWindow();
+			var pw = new Ragui.PreferencesWindow ();
 			pw.transient_for = this;
 			pw.show_all();
 		}
@@ -240,7 +240,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		public void OnMenuHelpAbout () {
 			aboutdialog.transient_for = this;
 			aboutdialog.run ();
-			aboutdialog.hide();
+			aboutdialog.hide ();
 		}
 
 		public void OnMenuHelpAPI () {

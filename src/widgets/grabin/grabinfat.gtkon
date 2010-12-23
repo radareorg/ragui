@@ -1,6 +1,6 @@
 /* XXX: add support for the bar */
 Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Fat {
-	TreeView $view can-focus vscrollbar-policy={PolicyType.AUTOMATIC} {
+	TreeView $view can-focus {
 		TreeViewColumn title="Index" clickable clicked="{sort_column (view, 0)}" {
 			CellRendererText $.column0 expand;
 			CellRendererText &column0 attribute="text" column=0;
