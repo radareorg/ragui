@@ -38,76 +38,43 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					// TODO: set each tab to a var, and use it from see code/graph
 					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
 						VBox $.page_code {
-							tab-label {
-								Label label="code";
-							}
+							tab-label { Label label="code"; }
 							/* Codeview:Widget $codeview; */
-							Ragui:Disasm $disasm;
+							Ragui.SeekStack !expand $ss_code;
+							Ragui.Disasm $disasm;
 						}
 						VBox $.page_data {
-							tab-label {
-								Label label="data";
-							}
-							HBox !expand {
-								// TODO: add clicked= and activate events
-								Button label="&lt;" !expand $prev_button;
-								Button label=">" !expand $next_button;
-								Label label=" offset: " !expand;
-								Entry text="" $entry; // activate=entry_activated;
-							}
-							Hexview:Widget $hexview;
+							tab-label { Label label="data"; }
+							Ragui.SeekStack !expand $ss_data;
+							Hexview.Widget $hexview;
 						}
 						VBox $.page_graph {
-							tab-label {
-								Label label="graph";
-							}
-							HBox !expand {
-								// TODO: add clicked= and activate events
-								Button label="&lt;" !expand;
-								Button label=">" !expand;
-								Label label=" offset: " !expand;
-								Entry text=""; // activate=entry_activated;
-							}
-							Grava:Widget $grava;
+							tab-label { Label label="graph"; }
+							Ragui.SeekStack !expand $ss_graph;
+							Grava.Widget $grava;
 						}
 						VBox {
 							tab-label { Label label="flags"; }
-							VBox { Flags:Widget; }
+							Flags:Widget;
 						}
 						VBox {
-							tab-label {
-								Label label="script";
-							}
-							VBox {
-								Script:Widget $script;
-							}
+							tab-label { Label label="script"; }
+							Script:Widget $script;
 						}
 						VBox {
-							tab-label {
-								Label label="search";
-							}
-							VBox {
-								Search:Widget $search;
-							}
+							tab-label { Label label="search"; }
+							Search:Widget $search;
 						}
 						VBox $vbheaders {
-							tab-label {
-								Label label="headers";
-							}
+							tab-label { Label label="headers"; }
 						}
 						VBox {
-							tab-label {
-								Label label="files";
-							}
-							VBox {
-								Label label="TODO";
-							}
+							tab-label { Label label="files"; }
+							Label label="TODO";
 						}
 						VBox {
 							tab-label { Label label="debug"; }
-							VBox {
-								Debug:Widget $debug;
-							}
+							Debug:Widget $debug;
 						}
 						VBox {
 							tab-label { Label label="console"; }
@@ -168,13 +135,29 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		}
 
 		public MainBody () {
+			// TODO: remove because unnecesary {{{
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 			grava.graph.update ();
+			// }}}
 			setup_console ();
 			setup_leftbox ();
 			setup_leftlist ();
 			setup_io ();
 			setup_headers ();
+
+			/* scroll stacks */
+			ss_code.handle_goto.connect ((x) => {
+				gc.seek (x);
+				disasm.goto (x);
+			});
+			ss_data.handle_goto.connect ((x) => {
+				gc.seek (x);
+				hexview.seek (x);
+			});
+			ss_graph.handle_goto.connect ((x) => {
+				gc.seek (x);
+				grava_seek (x);
+			});
 		}
 
 		private void setup_leftbox () {
@@ -251,10 +234,8 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				if (m != null) {
 					lv.menu_construct ();
 					action = m.to_string ();
-				} else {
-					action = now;
-				}
-print (@"ACTION $action\n");
+				} else action = now;
+
 				switch (action) {
 				case "copy":
 					gc.show_message ("TODO: copy stuff into clipboard");
@@ -280,22 +261,8 @@ print (@"ACTION $action\n");
 					hexview.seek (offset);
 					break;
 				case "graph":
-					gc.cmd (@"s $offset");
-					gc.cmd ("pd 20");
-					gc.cmd ("ab");
-					gc.cmd ("af");
-					gc.cmd (@"ag $offset > graph.xdot");
-					bool use_xdot = false;
-					if (use_xdot) {
-						RSystem.cmd ("xdot graph.xdot &");
-					} else {
-						grava.graph.init ();
-						Grava.XDot.import (grava.graph, "graph.xdot");
-						grava.graph.update ();
-						grava.draw ();
-					}
+					grava_seek (offset);
 					break;
-				// breakpoints
 				case "set breakpoint":
 					gc.cmd (@"db $offset");
 					break;
@@ -309,16 +276,30 @@ print (@"ACTION $action\n");
 					gc.cmd (@"dbd @ $offset");
 					break;
 				}
-				if (d != null)
-				print ("clicked "+m.to_string ()+": "+
+				if (d != null) print ("clicked "+m.to_string ()+": "+
 					d.name+"at addr"+d.offset.to_string ()+"\n");
 			});
 		}
 
 		private inline string S(string str) {
-			if (str == null)
-				return "";
-			return str;
+			return (str==null)?"":str;
+		}
+
+		public void grava_seek (uint64 offset) {
+			gc.cmd (@"s $offset");
+			gc.cmd ("pd 20");
+			gc.cmd ("ab");
+			gc.cmd ("af");
+			gc.cmd (@"ag $offset > graph.xdot");
+			bool use_xdot = false;
+			if (use_xdot) {
+				RSystem.cmd ("xdot graph.xdot &");
+				return;
+			}
+			grava.graph.init ();
+			Grava.XDot.import (grava.graph, "graph.xdot");
+			grava.graph.update ();
+			grava.draw ();
 		}
 
 		private void change_leftlist (string type) {
