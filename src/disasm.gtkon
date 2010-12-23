@@ -14,7 +14,11 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm border_width=5 spacing=5 {
 		public uint64 off = 0;
 
 		public void entry_activated () {
-			goto (gc.core.num.get (entry.text));
+			var txt = entry.text;
+			if (txt[0] == ':') {
+				gc.cmd (txt[1:txt.length]);
+				goto (off);
+			} else goto (gc.core.num.get (txt));
 		}
 
 		public void undo_seek() {

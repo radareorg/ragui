@@ -5,7 +5,7 @@ R2DEPS=r_asm r_util r_core
 VALAC?=valac
 GTKAMLC?=gtkamlc
 MD5=md5
-MD5=md5sum
+#MD5=md5sum
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava

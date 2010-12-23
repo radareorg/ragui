@@ -48,15 +48,27 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 							tab-label {
 								Label label="data";
 							}
+							HBox !expand {
+								// TODO: add clicked= and activate events
+								Button label="&lt;" !expand $prev_button;
+								Button label=">" !expand $next_button;
+								Label label=" offset: " !expand;
+								Entry text="" $entry; // activate=entry_activated;
+							}
 							Hexview:Widget $hexview;
 						}
 						VBox $.page_graph {
 							tab-label {
 								Label label="graph";
 							}
-							VBox {
-								Grava:Widget $grava;
+							HBox !expand {
+								// TODO: add clicked= and activate events
+								Button label="&lt;" !expand;
+								Button label=">" !expand;
+								Label label=" offset: " !expand;
+								Entry text=""; // activate=entry_activated;
 							}
+							Grava:Widget $grava;
 						}
 						VBox {
 							tab-label { Label label="flags"; }
@@ -157,6 +169,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 
 		public MainBody () {
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
+			grava.graph.update ();
 			setup_console ();
 			setup_leftbox ();
 			setup_leftlist ();
@@ -221,7 +234,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				case "Strings":
 				case "Imports":
 				case "Symbols":
-					listview.set_actions ("disasm", "see data", "graph", "see code", "set breakpoint");
+					listview.set_actions ("disasm", "see data", "graph", "analyze", "set breakpoint");
 					break;
 				case "Processes":
 					listview.set_actions ("attach", "stop", "continue", "kill");
@@ -257,13 +270,11 @@ print (@"ACTION $action\n");
 					break;
 				case "disasm":
 					gc.seek (offset);
-					gc.cmd ("ab");
-					gc.cmd ("af");
-					//console.cmd (@"pdf");
 					disasm.goto (offset);
 					break;
-				case "see code":
-					gc.show_error ("Not yet implemented");
+				case "analyze":
+					gc.cmd ("ab");
+					gc.cmd ("af");
 					break;
 				case "see data":
 					hexview.seek (offset);
