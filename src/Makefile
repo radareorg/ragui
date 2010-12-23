@@ -4,7 +4,7 @@ BIN=ragui
 R2DEPS=r_asm r_util r_core
 VALAC?=valac
 GTKAMLC?=gtkamlc
-MD5=md5
+MD5=./chkts
 #MD5=md5sum
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
