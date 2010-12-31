@@ -38,7 +38,7 @@ all: widgets.done
 
 .PHONY: gtkaml gtkon vala vapi link widgets
 
-GTKONFILES=seekstack.gtkon
+GTKONFILES=seekstack.gtkon signatures.gtkon
 GTKONFILES+=scriptwidget.gtkon searchwidget.gtkon disasm.gtkon newproject.gtkon openfile.gtkon
 GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon flagswidget.gtkon
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon

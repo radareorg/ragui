@@ -1,11 +1,14 @@
 /* Dialogs to open programs to debug */
 VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
+/*
 	HBox !expand {
 		Button label="&lt;" !expand clicked=undo_seek $prev_button;
 		Button label=">" !expand clicked=redo_seek $next_button;
 		Label label=" offset: " !expand;
 		Entry text="" $entry activate=entry_activated;
 	}
+*/
+	Ragui.SeekStack !expand $ss_code;
 	Ragui.TextTagView $ttv;
 	-{
 		unowned SList<uint64?> offs;
@@ -14,7 +17,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 		public uint64 off = 0;
 
 		public void entry_activated () {
-			var txt = entry.text;
+			var txt = ss_code.entry.text;
 			if (txt[0] == ':') {
 				gc.cmd (txt[1:txt.length]);
 				goto (off);
@@ -39,26 +42,21 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 			goto (off, false);
 		}
 
-		public void goto (uint64 addr, bool clear=true) {
-			entry.text = ((string)("0x%"+uint64.FORMAT_MODIFIER+"x")).printf (addr);
-			//offi = offs.length ();
-			offs.append (off);
-			ttv.clear ();
-			off = addr;
+		public void goto(uint64 addr, bool clear=false) {
+			ss_code.goto (addr, clear);
 			dodis (addr, true);
-			if (clear)
-				offsredo = null;
-			/* set buttons */
-			prev_button.set_sensitive (offs.length () > 1);
-			next_button.set_sensitive (offsredo.length () > 0);
 		}
 
-		public void dodis (uint64 addr, bool app=true) {
+		public void dodis (uint64 addr, bool append=true) {
+stdout.printf ("DODIS!!!\n");
 			gc.seek (addr);
+			gc.cmd ("pd");
 			gc.cmd ("e asm.bytes=0");
 			gc.cmd ("e io.va=1");
-			gc.cmd (@"s $addr");
-			var dis = gc.cmdstr ("b 512 && pd");
+			gc.cmd ("s "+addr.to_string ());
+			gc.cmd ("b 512");
+			var dis = gc.cmdstr (@"pd @ $addr");
+stdout.printf ("DIS= "+dis+"\n");
 			dis = dis.replace ("&", "&amp;");
 			dis = dis.replace ("<", "&lt;");
 			dis = dis.replace (">", "&gt;");
@@ -77,11 +75,15 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 				warning ("%s", e.message);
 			}
 			//dis = dis.replace ("mov", "<c green>mov</c>");
-			ttv.set_markup (dis, app);
-			entry.text = ((string)("0x%"+uint64.FORMAT_MODIFIER+"x")).printf (addr);
+			ttv.set_markup (dis, append); //true); //app);
+			//ss_code.entry.text = ((string)("0x%"+uint64.FORMAT_MODIFIER+"x")).printf (addr);
 		}
 
 		public Disasm() {
+			ss_code.handle_goto.connect ((x) => {
+				ttv.clear ();
+				dodis (x, true);
+			});
 			ttv.set_style ("*", "f mono");
 			ttv.control_key.connect ((k) => {
 				switch (k) {
@@ -139,9 +141,10 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 			ttv.link_clicked.connect ((x)=>{
 				goto (gc.core.num.get (x));
 			});
-			// seek to entrypoint
-			goto (0);
 			var entries = gc.core.bin.get_entries();
+			if ((int)entries.length == 0)
+				goto (0);
+			else
 			foreach (var e in entries) {
 				goto (e.rva);
 				break;

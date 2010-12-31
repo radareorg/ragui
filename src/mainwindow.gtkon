@@ -71,9 +71,10 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 				submenu {
 					Menu {
 						ImageMenuItem stock-id="Calculator";
-						ImageMenuItem stock-id="Assembler" activate="menuToolsAssembler";
-						ImageMenuItem stock-id="Headers" activate="menuToolsHeaders";
-						ImageMenuItem stock-id="Analyze .." activate="menuToolsAnalyze";
+						ImageMenuItem stock-id="Assembler" activate=menuToolsAssembler;
+						ImageMenuItem stock-id="Headers" activate=menuToolsHeaders;
+						ImageMenuItem stock-id="Analyze .." activate=menuToolsAnalyze;
+						ImageMenuItem stock-id="Signatures .." activate=menuToolsSignatures;
 						ImageMenuItem stock-id="Scripting";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
@@ -172,6 +173,11 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		public MainWindow () {
 			panel = new MainPanel ();
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
+		}
+
+		private void menuToolsSignatures() {
+			var w = new Signatures ();
+			w.show_all ();
 		}
 
 		private void menuToolsAnalyze() {

@@ -6,6 +6,8 @@
                   |___/           
 
 pancake TODO
+* change hexdump zoom with +/-
+* define max zoom in hexdump
 * mainwindow and mainbody have a about dialog ?!?? dupped??! wtf??
 * offset fails?!? wtf? click in leftbar
 * Add size in list (useful for ranges, dumping..)

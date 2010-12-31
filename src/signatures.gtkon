@@ -1,0 +1,47 @@
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+
+/* add 'modal' as Window attribute if wanted to be modal */
+Window using=Gtk modal $Ragui.Signatures title="Signatures" destroy-event=OnWindowCloseEvent {
+	VBox border-width=5 spacing=5 {
+		VBox border-width=3 spacing=3 {
+			Label !expand label="Select signatures:";
+			ScrolledWindow hscrollbar-policy=PolicyType.AUTOMATIC {
+				TreeView $tv;
+			}
+			HButtonBox !expand layout-style=ButtonBoxStyle.START {
+				Button label=autodetect use-stock clicked=OnButtonAutodetectClicked;
+				Button label=gtk-remove;
+				Button label=gtk-add;
+			}
+		}
+		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
+			Button label=gtk-cancel use-stock clicked=OnButtonCloseClicked;
+			Button label=gtk-ok use-stock clicked=OnButtonOkClicked;
+		}
+	}
+-{
+	public Signatures() {
+		resize (400, 300);
+		window_position = WindowPosition.CENTER;
+	}
+
+	private void OnButtonCloseClicked() {
+		this.hide ();
+	}
+
+	private void OnButtonAutodetectClicked() {
+		this.hide ();
+		// TODO: run task to find selected signatures
+	}
+
+	private void OnButtonOkClicked() {
+		this.hide ();
+		// TODO: run task to find selected signatures
+	}
+
+	private bool OnWindowCloseEvent(Gdk.Event ev) {
+		this.hide ();
+		return true;
+	}
+}-
+}

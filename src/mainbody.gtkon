@@ -40,7 +40,6 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 						VBox $.page_code {
 							tab-label { Label label="code"; }
 							/* Codeview:Widget $codeview; */
-							Ragui.SeekStack !expand $ss_code;
 							Ragui.Disasm $disasm;
 						}
 						VBox $.page_data {
@@ -108,19 +107,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		private string now = "disasm"; // selected tab // TODO: rename
 
 		public void chtab (NotebookPage page, uint pnum) {
-			#if VALA_SUPPORTS_SWITCH_PTR
-			switch (page) {
-			case page_code:
-				now = "code";
-				break;
-			case page_data:
-				now = "data";
-				break;
-			case page_graph:
-				now = "graph";
-				break;
-			}
-			#endif
+			/* switch with pointers are no valid in vala */
 			if ((void *)page == (void *)page_code) {
 				now = "disasm";
 			} else
@@ -136,8 +123,10 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 
 		public MainBody () {
 			// TODO: remove because unnecesary {{{
+#if 0
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 			grava.graph.update ();
+#endif
 			// }}}
 			setup_console ();
 			setup_leftbox ();
@@ -146,10 +135,6 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 			setup_headers ();
 
 			/* scroll stacks */
-			ss_code.handle_goto.connect ((x) => {
-				gc.seek (x);
-				disasm.goto (x);
-			});
 			ss_data.handle_goto.connect ((x) => {
 				gc.seek (x);
 				hexview.seek (x);
@@ -158,6 +143,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				gc.seek (x);
 				grava_seek (x);
 			});
+			ss_graph.goto (gc.core.num.get ("entry0"));
 		}
 
 		private void setup_leftbox () {
@@ -229,14 +215,24 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
 			});
 			lv.menu_handler.connect ((m, d) => {
+print ("FUN FOR CLICK\n");
 				uint64 offset = (d!=null)?d.offset:0;
 				string action;
+print ("FUN FOR CLICK 1\n");
 				if (m != null) {
+print ("FUN FOR CLICK 2\n");
 					lv.menu_construct ();
+print ("FUN FOR CLICK 2.2\n");
 					action = m.to_string ();
+print ("FUN FOR CLICK 2.4\n");
 				} else action = now;
+print ("FUN FOR CLICK 3\n");
 
 				switch (action) {
+				case "analyze":
+					gc.cmd ("ab");
+					gc.cmd ("af");
+					break;
 				case "copy":
 					gc.show_message ("TODO: copy stuff into clipboard");
 					break;
@@ -250,18 +246,16 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				case "backup":
 					break;
 				case "disasm":
-					gc.seek (offset);
+print (@"Go disasm $offset\n");
 					disasm.goto (offset);
 					break;
-				case "analyze":
-					gc.cmd ("ab");
-					gc.cmd ("af");
-					break;
 				case "see data":
-					hexview.seek (offset);
+					ss_data.goto (offset);
+				//	hexview.seek (offset);
 					break;
 				case "graph":
-					grava_seek (offset);
+					ss_graph.goto (offset);
+					//grava_seek (offset);
 					break;
 				case "set breakpoint":
 					gc.cmd (@"db $offset");
@@ -364,7 +358,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		}
 
 		private void setup_io () {
-			hexview.seek (0);
+			ss_data.goto (0); //hexview.seek (0);
 			hexview.buffer.update.connect ((x, y)=> {
 				print ("READING FROM 0x%08llx\n", x);
 				hexview.buffer.start = x;

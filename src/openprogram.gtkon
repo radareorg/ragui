@@ -24,6 +24,7 @@ VBox using=Gtk $Ragui.OpenProgram border_width=5 spacing=5 {
 			CheckButton !expand label="Find strings" active;
 			CheckButton !expand label="Analyze code" $analcode;
 			CheckButton !expand label="Find signatures";
+			// TODO: add filechooser here to select signatures or so.
 		}
 	}
 
