@@ -394,7 +394,7 @@ var pwn = (int)(pany/K);
 			return;
 int ow = w;
 if (w>600)
-w= 700;
+w= 600;
 		sync ();
 		/* adapt zoom to size */
 		zoom = ((double)w)/500.0;

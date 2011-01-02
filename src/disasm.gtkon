@@ -51,7 +51,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 			gc.seek (addr);
 			gc.cmd ("x 10");
 			gc.cmd ("pd 10");
-			gc.cmd ("e asm.bytes=0");
+			//gc.cmd ("e asm.bytes=0");
 			gc.cmd ("e io.va=1");
 			gc.cmd ("s "+addr.to_string ());
 			gc.cmd ("b 512");
@@ -65,13 +65,22 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 			dis = dis.replace ("-", "<c red,b>-</>");
 			dis = dis.replace ("=", "<c red,b>=</>");
 			dis = dis.replace ("ret", "<c blue>ret</>");
-			dis = dis.replace ("int", "<c red>int</>");
+			//dis = dis.replace ("int", "<c red>int</>");
 			dis = dis.replace ("nop", "<c grey>nop</>");
-			dis = dis.replace ("call", "<c green>call</>");
+			//dis = dis.replace ("call", "<c green>call</>");
 			dis = dis.replace ("mov", "<c blue>mov</>");
-			dis = dis.replace ("push", "<c blue>push</>");
+			//dis = dis.replace ("push", "<c blue>push</>");
 			try {
-				var regex = new Regex ("(0x[a-zA-Z\\d]+)");
+				// TODO: recycle regex objects
+				Regex regex;
+
+				regex = new Regex ("call dword ([a-zA-Z].*)");
+				dis = regex.replace (dis, -1, 0, "<c green,b>call</> <a \\1>\\1</>");
+
+				regex = new Regex ("push dword ([a-zA-Z].*)");
+				dis = regex.replace (dis, -1, 0, "<c green>push</> <a \\1>\\1</>");
+
+				regex = new Regex ("(0x[a-zA-Z\\d]+)");
 				dis = regex.replace (dis, -1, 0, "<a \\1>\\1</>");
 
 				regex = new Regex (";(.*)$");
@@ -124,7 +133,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 					break;
 				case "analyze":
 					gc.cmd ("af");
-					goto (off);
+					goto (newoff);
 					break;
 				case "breakpoint":
 					gc.cmd ("bp $newoff");

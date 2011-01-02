@@ -23,6 +23,7 @@ public class Ragui.GuiCore {
 		this.debugger = false;
 		this.arg0 = arg0;
 		this.window = window;
+		core.config.set ("asm.bytes", "false");
 	}
 
 	public void project_open (string file) {
