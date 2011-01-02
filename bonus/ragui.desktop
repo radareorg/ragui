@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Name=ragui
+Comment=r2 user interface
+TryExec=ragui
+Exec=ragui
+Icon=ragui
+Type=Application
+Categories=GNOME;GTK;Development;
+StartupNotify=true
+X-Desktop-File-Install-Version=0.16
