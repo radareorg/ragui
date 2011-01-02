@@ -109,10 +109,11 @@ vala:
 
 gtkon:
 	@for a in ${GTKONFILES}; do \
-		vala=`echo $$a | sed -e s,gtkon,vala,g` ; \
+		vala=`echo $$a | sed -e s,gtkon,o,g` ; \
 		if [ ! -e $$vala -o $$a -nt $$vala ]; then \
 			echo "  GTKAMLC  ${GTKONFILES}" ; \
-			rm -f ${BIN} ${GTKON_C_FILES} ; \
+			echo "  RM  ragui $${vala}" ; \
+			rm -f $${vala} ${BIN} ${GTKON_C_FILES} ; \
 			${GTKAMLC} -V ${PKG} ${GTKAMLFLAGS} ${GTKONFILES} ; \
 			exit $? ; \
 		fi ; \

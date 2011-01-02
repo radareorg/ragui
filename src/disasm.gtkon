@@ -48,15 +48,14 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 		}
 
 		public void dodis (uint64 addr, bool append=true) {
-stdout.printf ("DODIS!!!\n");
 			gc.seek (addr);
-			gc.cmd ("pd");
+			gc.cmd ("x 10");
+			gc.cmd ("pd 10");
 			gc.cmd ("e asm.bytes=0");
 			gc.cmd ("e io.va=1");
 			gc.cmd ("s "+addr.to_string ());
 			gc.cmd ("b 512");
-			var dis = gc.cmdstr (@"pd @ $addr");
-stdout.printf ("DIS= "+dis+"\n");
+			var dis = gc.cmdstr ("pd");
 			dis = dis.replace ("&", "&amp;");
 			dis = dis.replace ("<", "&lt;");
 			dis = dis.replace (">", "&gt;");
@@ -65,6 +64,12 @@ stdout.printf ("DIS= "+dis+"\n");
 			dis = dis.replace ("|", "<c red,b>|</>");
 			dis = dis.replace ("-", "<c red,b>-</>");
 			dis = dis.replace ("=", "<c red,b>=</>");
+			dis = dis.replace ("ret", "<c blue>ret</>");
+			dis = dis.replace ("int", "<c red>int</>");
+			dis = dis.replace ("nop", "<c grey>nop</>");
+			dis = dis.replace ("call", "<c green>call</>");
+			dis = dis.replace ("mov", "<c blue>mov</>");
+			dis = dis.replace ("push", "<c blue>push</>");
 			try {
 				var regex = new Regex ("(0x[a-zA-Z\\d]+)");
 				dis = regex.replace (dis, -1, 0, "<a \\1>\\1</>");
@@ -119,6 +124,7 @@ stdout.printf ("DIS= "+dis+"\n");
 					break;
 				case "analyze":
 					gc.cmd ("af");
+					goto (off);
 					break;
 				case "breakpoint":
 					gc.cmd ("bp $newoff");

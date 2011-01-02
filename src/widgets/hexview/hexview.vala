@@ -354,6 +354,7 @@ print ("HEIGHT %d\n", (int)h);
 
 	private void sync () {
 		const int K = 16;
+
 	print ("PANY IS %d\n", (int)pany);
 		/* TODO: handle multipliers here!! */
 		int foo = K*((int)((pany/zoom)/K));
@@ -391,6 +392,9 @@ var pwn = (int)(pany/K);
 
 		if (w<128)
 			return;
+int ow = w;
+if (w>600)
+w= 700;
 		sync ();
 		/* adapt zoom to size */
 		zoom = ((double)w)/500.0;
@@ -483,7 +487,7 @@ print ("ROWS = %d\n", rows);
 		ctx.save ();
 		ctx.translate (0, 0);
 		ctx.set_source_rgba (0.5, 0.5, 0.5, 0.8);
-		square (ctx, w, 11*zoom);
+		square (ctx, ow, 11*zoom);
 		ctx.fill ();
 		//---
 		ctx.scale (zoom, zoom);
@@ -504,6 +508,8 @@ print ("ROWS = %d\n", rows);
 		ctx.show_text (("0x%08"+uint64.FORMAT_MODIFIER+"x").printf (offset));
 		ctx.restore ();
 
+#if 0
+		// do not draw arrows
 		set_color (Color.HIGHLIGHT);
 		/* arrows */
 		ctx.save ();
@@ -518,6 +524,7 @@ print ("ROWS = %d\n", rows);
 		triangle (ctx, 8*zoom, 8*zoom, false);
 		ctx.stroke ();
 		ctx.restore ();
+#endif
 	}
 
 	public void refresh(DrawingArea da) {

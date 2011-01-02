@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org>, nible<develsec.org> */
+/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org>, nibble<develsec.org> */
 
 VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Radare="Radare"
@@ -232,6 +232,8 @@ print ("FUN FOR CLICK 3\n");
 				case "analyze":
 					gc.cmd ("ab");
 					gc.cmd ("af");
+					disasm.goto (offset);
+					ss_graph.goto (offset);
 					break;
 				case "copy":
 					gc.show_message ("TODO: copy stuff into clipboard");
