@@ -215,18 +215,12 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
 			});
 			lv.menu_handler.connect ((m, d) => {
-print ("FUN FOR CLICK\n");
 				uint64 offset = (d!=null)?d.offset:0;
 				string action;
-print ("FUN FOR CLICK 1\n");
 				if (m != null) {
-print ("FUN FOR CLICK 2\n");
 					lv.menu_construct ();
-print ("FUN FOR CLICK 2.2\n");
 					action = m.to_string ();
-print ("FUN FOR CLICK 2.4\n");
 				} else action = now;
-print ("FUN FOR CLICK 3\n");
 
 				switch (action) {
 				case "analyze":
