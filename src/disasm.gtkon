@@ -161,7 +161,8 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 				goto (0);
 			else
 			foreach (var e in entries) {
-				goto (e.rva);
+				var baddr = gc.core.bin.get_baddr ();
+				goto (baddr+e.rva);
 				break;
 			}
 		}
