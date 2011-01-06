@@ -9,6 +9,7 @@ MD5=./chkts
 
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
+PKG+=--pkg posix
 # TODO grabin packages.. must be merged
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
@@ -44,7 +45,7 @@ GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon 
 GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
 # TODO: GTKONFILES+=datadump.gtkon
-OVALAFILES=guicore.vala main.vala
+OVALAFILES=guicore.vala guiconfig.vala main.vala
 VALAFILES=${OVALAFILES}
 RMGTKON_FILES+=$(subst .gtkon,.vala,$(GTKONFILES))
 GTKON_C_FILES+=$(subst .gtkon,.c,$(GTKONFILES))

@@ -1,11 +1,12 @@
 /* ragui - copyright(C) 2010 - pancake<nopcode.org> */
 
-VBox using=Gtk $Flags.Widget {
+VBox using=Gtk $Flags.Widget using:posix=Posix {
 	HBox !expand {
 		Label label=" Space " !expand;
 		ComboBox text $cb !expand changed=cb_changed;
+		Button !expand label="gtk-view" use-stock activate=cb_view released=cb_view;
+		Button !expand label="gtk-refresh" use-stock activate=fs_refresh released=fs_refresh;
 		Label label="";
-		Button !expand label="refresh" activate=fs_del released=fs_refresh;
 		Button !expand label="remove" activate=fs_del released=fs_del;
 		Button !expand label="add" activate=fs_add released=fs_add;
 		Label label="";
@@ -16,8 +17,21 @@ VBox using=Gtk $Flags.Widget {
 		TextView $tv;
 	}
 -{
-	public void cb_changed () {
+	public void cb_view () {
+		int space = gc.core.flags.space_idx;
+//Posix.exit (0);
 		// TODO: fill treeview with flags.. needs RFlags work
+		string nam = cb.get_active_text ();
+		foreach (var f in gc.core.flags.flags) {
+			if (space == f.space) {
+				print ("GO FLAG YOURSELF "+f.name+"\n");
+			}
+		}
+Posix.exit (0);
+	}
+
+	public void cb_changed () {
+		//cb_view ();
 	}
 
 	public void fs_add () {
@@ -48,10 +62,7 @@ VBox using=Gtk $Flags.Widget {
 	}
 
 	public Widget () {
-		//fs_refresh ();
-		cb.changed.connect (() => {
-			print ("CHANGED\n");
-		});
+		fs_refresh ();
 	}
 }-
 }
