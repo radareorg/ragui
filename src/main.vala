@@ -31,10 +31,13 @@ public class Ragui.Main {
 			// analyze code
 			// load symbols, imports, ...
 		}
-		gc.core.file_open (uri, 0);
-		gc.core.config.set ("io.va", "true");
-		gc.core.config.set ("scr.color", "false");
-		mw.view_body ();
+		gc.core.file_open (uri, 0, 0);
+		if (gc.core.file != null) {
+			gc.core.bin_load (null);
+			gc.core.config.set ("io.va", "true");
+			gc.core.config.set ("scr.color", "false");
+			mw.view_body ();
+		}
 	}
 
 	private static MainWindow mw;
@@ -59,8 +62,9 @@ public class Ragui.Main {
 		gc.core.config.set ("asm.stackptr", "false");
 		gc.debugger = debugger; // set gui mode in debugger mode
 		if (files != null) {
-			gc.core.file_open (files[0], 0);
+			gc.core.file_open (files[0], 0, 0);
 			if (gc.core.file != null) {
+				gc.core.bin_load (null);
 				mw.view_body ();
 				mw.title = "ragui : %s".printf (files[0]);
 			} else {
@@ -72,11 +76,15 @@ public class Ragui.Main {
 		if (mw.panel != null) {
 			mw.panel.open_file.connect ( (file) => {
 				mw.title = @"ragui : $file";
-				gc.core.file_open (file, 0);
-				gc.core.config.set ("io.va", "true");
-				gc.core.config.set ("scr.color", "false");
-				mw.view_body ();
-				return true; // XXX: must check if open fails or what
+				gc.core.file_open (file, 0, 0);
+				if (gc.core.file != null) {
+					gc.core.bin_load (null);
+					gc.core.config.set ("io.va", "true");
+					gc.core.config.set ("scr.color", "false");
+					mw.view_body ();
+					return true; // XXX: must check if open fails or what
+				}
+				return false;
 			});
 			mw.panel.onHelpAbout.connect ( () => {
 				mw.OnMenuHelpAbout ();

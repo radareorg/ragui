@@ -4,7 +4,9 @@ Window using=Gtk modal $Ragui.Analyze title="Analyze code" destroy-event=OnWindo
 		//type=WindowType.POPUP window-position=WindowPosition.CENTER_ON_PARENT {
 	VBox border-width=1 {
 		VBox border-width=3 spacing=3 {
-			Label !expand label="analyze code... TODO: add options";
+			Label label="Code analysis options" !expand;
+			HSeparator !expand;
+			CheckButton !expand label="Find function preludes" active=true $preludes;
 		}
 		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
 			Button label=gtk-cancel use-stock clicked=OnButtonCloseClicked;
@@ -23,6 +25,8 @@ Window using=Gtk modal $Ragui.Analyze title="Analyze code" destroy-event=OnWindo
 
 	private void OnButtonOkClicked() {
 		this.hide ();
+		if (preludes.get_active ())
+			gc.cmd ("ap");
 		gc.bgcmd ("aa", "analyzing code..");
 	}
 

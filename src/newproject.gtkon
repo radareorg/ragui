@@ -1,4 +1,4 @@
-/* ragui -- pancake 2010 */
+/* ragui -- pancake 2010-2011 */
 VBox using=Gtk $NewProject border_width=5 spacing=5 {
 	Label fill !expand label="Give me a name for the project file";
 	FileChooserWidget expand action={FileChooserAction.SAVE} $fc;

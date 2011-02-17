@@ -4,7 +4,7 @@ VBox using=Gtk $Flags.Widget using:posix=Posix {
 	HBox !expand {
 		Label label=" Space " !expand;
 		ComboBox text $cb !expand changed=cb_changed;
-		Button !expand label="gtk-view" use-stock activate=cb_view released=cb_view;
+		Button !expand label="gtk-open" use-stock activate=cb_view released=cb_view;
 		Button !expand label="gtk-refresh" use-stock activate=fs_refresh released=fs_refresh;
 		Label label="";
 		Button !expand label="remove" activate=fs_del released=fs_del;
@@ -27,7 +27,6 @@ VBox using=Gtk $Flags.Widget using:posix=Posix {
 				print ("GO FLAG YOURSELF "+f.name+"\n");
 			}
 		}
-Posix.exit (0);
 	}
 
 	public void cb_changed () {
@@ -52,7 +51,7 @@ Posix.exit (0);
 		cb.append_text ("*");
 		cb.set_active (0);
 		for (int n=0; ; n++) {
-			var str = gc.core.flags.space_get (n);
+			var str = gc.core.flags.space_get_i (n);
 			if (str == "")
 				break;
 			cb.append_text (str);

@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2010-2011 - pancake<nopcode.org> */
 VBox using=Gtk $Script.Widget construct=init() {
 	HBox !expand {
 		ComboBox text $cb !expand;
@@ -32,6 +32,12 @@ VBox using=Gtk $Script.Widget construct=init() {
 		file = f;
 		var ext = f[f.length-3:f.length];
 		switch (ext) {
+		case ".scm":
+			set_language ("guile");
+			break;
+		case ".vala":
+			set_language ("vala");
+			break;
 		case ".py":
 			set_language ("python");
 			break;
@@ -99,6 +105,8 @@ VBox using=Gtk $Script.Widget construct=init() {
 		cb.append_text ("python");
 		cb.append_text ("perl");
 		cb.append_text ("ruby");
+		cb.append_text ("guile");
+		cb.append_text ("vala");
 		cb.append_text ("lua");
 		cb.append_text ("go");
 		cb.set_active (0);
