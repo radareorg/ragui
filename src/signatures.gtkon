@@ -10,8 +10,8 @@ Window using=Gtk modal $Ragui.Signatures title="Signatures" destroy-event=OnWind
 			}
 			HButtonBox !expand layout-style=ButtonBoxStyle.START {
 				Button label=autodetect use-stock clicked=OnButtonAutodetectClicked;
-				Button label=gtk-remove;
-				Button label=gtk-add;
+				Button label=gtk-remove use-stock;
+				Button label=gtk-add use-stock;
 			}
 		}
 		HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {

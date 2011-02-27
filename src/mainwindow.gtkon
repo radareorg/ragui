@@ -7,6 +7,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 	using:Codeview="Codeview"
 	using:Hexview="Hexview"
 	using:Listview="Listview"
+	using:Gracalc="Gracalc"
 {
 	VBox border-width=1 {
 		MenuBar !expand {
@@ -70,7 +71,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			MenuItem label="_Tools" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="Calculator";
+						ImageMenuItem stock-id="Calculator" activate=menuToolsCalculator;
 						ImageMenuItem stock-id="Assembler" activate=menuToolsAssembler;
 						ImageMenuItem stock-id="Headers" activate=menuToolsHeaders;
 						ImageMenuItem stock-id="Analyze .." activate=menuToolsAnalyze;
@@ -217,6 +218,15 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
 				});
 			w.add (grabin);
+			w.show_all ();
+		}
+
+		private void menuToolsCalculator() {
+			var w = new Window (WindowType.TOPLEVEL);
+			w.title = "ragui: calculator";
+			var grac = new Gracalc.Widget ();
+			grac.num = gc.core.num;
+			w.add (grac);
 			w.show_all ();
 		}
 

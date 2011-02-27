@@ -1,0 +1,23 @@
+VBox $Gracalc.Widget using=Gtk using:Radare="Radare" {
+	HBox !expand {
+		Label label="input";
+		Entry $input activate=update;
+	}
+	HBox !expand {
+		Label label="output";
+		Entry $output !editable;
+	}
+	Label label="" expand;
+	HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
+		Button label="update";
+	}
+
+-{
+	public RNum *num = null;
+
+	public void update () {
+		if (num != null)
+			output.text = num->math (input.text).to_string ();
+	}
+}-
+}

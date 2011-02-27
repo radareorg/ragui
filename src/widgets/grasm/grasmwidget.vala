@@ -125,7 +125,7 @@ public class Grasmwidget.Widget : VBox {
 	}
 
 	public string? disassemble(string hex) {
-		RAsm.Aop aop;
+		RAsm.Op aop;
 		uint8 buffer[128];
 		uint8 *ptr = (uint8*)buffer;
 		int len = RHex.str2bin (hex, ptr);

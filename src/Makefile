@@ -11,7 +11,7 @@ PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
 PKG+=--pkg posix
 # TODO grabin packages.. must be merged
-PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols
+PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg gracalc
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
 PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar --pkg texttagview
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
@@ -21,6 +21,7 @@ PKG+=--pkg r_core
 VALAFLAGS=${PKG} --thread
 
 WIDGETS+=widgets/grava/libgrava.a
+WIDGETS+=widgets/gracalc/libgracalc.a
 WIDGETS+=widgets/codew/libcodew.a
 WIDGETS+=widgets/hexview/libhexview.a
 WIDGETS+=widgets/grabin/libgrabin.a
