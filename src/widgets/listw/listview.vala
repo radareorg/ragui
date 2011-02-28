@@ -29,8 +29,12 @@ public class Listview.Widget : ScrolledWindow {
 			TreeModel m;
 			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);
 			foreach (var row in list) {
-				var nth = row.to_string ();
-				data = rows.nth_data (nth.to_int ());
+				Value a;
+				TreeIter? it;
+				m.get_iter (out it, row);
+				m.get_value (it, 2, out a);
+				int pos = a.get_int ();
+				data = rows.nth_data (pos);
 				break;
 			}
 		}
@@ -67,7 +71,8 @@ public class Listview.Widget : ScrolledWindow {
 
 	enum Column {
 		OFFSET,
-		NAME
+		NAME,
+		INDEX
 	}
 
 	construct {
@@ -99,7 +104,7 @@ public class Listview.Widget : ScrolledWindow {
 		this.actions = new SList<string> ();
 		set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
 		view = new TreeView ();
-		model = new ListStore (2, typeof (string), typeof (string));
+		model = new ListStore (3, typeof (string), typeof (string), typeof (int));
 		view.set_model (model);
 		model.set_sort_func (Column.OFFSET, sort_offset);
 		model.set_sort_func (Column.NAME, sort_name);
@@ -177,17 +182,21 @@ public class Listview.Widget : ScrolledWindow {
 	}
 
 	public void add_row_s (string key, string val) {
+		uint nth = rows.length ();
 		TreeIter iter;
 		model.append (out iter);
-		model.set (iter, 0, key, 1, val);
+		model.set (iter, 0, key, 1, val, 2, nth);
 		//rows.append (ListviewData (off, name));
 	}
 
 	public void add_row (uint64 off, string name) {
 		TreeIter iter;
+		uint nth = rows.length ();
 		model.append (out iter);
-		model.set (iter, 0, off.to_string
-			("0x%"+uint64.FORMAT_MODIFIER+"x"), 1, name);
+		model.set (iter,
+			0, off.to_string ("0x%"+uint64.FORMAT_MODIFIER+"x"), 
+			1, name,
+			2, nth);
 		rows.append (ListviewData (off, name));
 	}
 

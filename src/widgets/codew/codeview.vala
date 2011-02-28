@@ -30,7 +30,8 @@ public class Codeview.Widget : ScrolledWindow {
 
 	const int SIZE = 30;
 	const double ZOOM_FACTOR = 0.1;
-	[Widget] public DrawingArea da;
+	[Widget]
+	public DrawingArea da;
 	public const double S = 96;
 	public double zoom = 1.4;
 	public int cursor = 0;

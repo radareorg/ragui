@@ -1,11 +1,13 @@
-VBox $Gracalc.Widget using=Gtk using:Radare="Radare" {
-	HBox !expand {
-		Label label="input";
-		Entry $input activate=update;
-	}
-	HBox !expand {
-		Label label="output";
-		Entry $output !editable;
+VBox $Gracalc.Widget using=Gtk using:Radare="Radare" border-width=5 {
+	HBox !expand spacing=3 {
+		VBox !expand {
+			Label label="input";
+			Label label="output";
+		}
+		VBox {
+			Entry $input activate=update;
+			Entry $output !editable;
+		}
 	}
 	Label label="" expand;
 	HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {

@@ -46,7 +46,7 @@ public class Hexview.Widget : ScrolledWindow {
 	private WheelAction wheel_action = WheelAction.PAN;
 	public Menu menu { set; get; }
 
-	public uint64 address = 0x4023000;
+	public uint64 address = 0;//0x4023000;
 	public uint64 offset;
 	public uint64 offset_click;
 	public int cursor = 0;

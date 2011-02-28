@@ -173,6 +173,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		public MainWindow () {
 			panel = new MainPanel ();
+			window_position = WindowPosition.CENTER;
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 		}
 
@@ -285,6 +286,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			if (body == null)
 				body = new MainBody ();
 			is_open = true;
+body.goto (gc.core.offset);
 			//box_body.children = null;
 			box_body.add (body);
 			box_body.show_all ();

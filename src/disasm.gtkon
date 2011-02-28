@@ -64,11 +64,11 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 			dis = dis.replace ("|", "<c red,b>|</>");
 			dis = dis.replace ("-", "<c red,b>-</>");
 			dis = dis.replace ("=", "<c red,b>=</>");
-			dis = dis.replace ("ret", "<c blue>ret</>");
+			//dis = dis.replace ("ret\n", "<c blue>ret</>\n");
 			//dis = dis.replace ("int", "<c red>int</>");
 			dis = dis.replace ("nop", "<c grey>nop</>");
 			//dis = dis.replace ("call", "<c green>call</>");
-			dis = dis.replace ("mov", "<c blue>mov</>");
+			dis = dis.replace ("mov ", "<c blue>mov</> ");
 			//dis = dis.replace ("push", "<c blue>push</>");
 			try {
 				// TODO: recycle regex objects

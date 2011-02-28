@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org>, nibble<develsec.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org>, nibble<develsec.org> */
 
 VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Radare="Radare"
@@ -143,9 +143,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				gc.seek (x);
 				grava_seek (x);
 			});
-			ss_graph.goto (gc.core.num.get ("entry0"));
+			ss_graph.goto (gc.core.offset);//num.get ("entry0"));
 		}
 
+public void goto (uint64 addr) {
+	ss_graph.goto (addr);
+	ss_data.goto (addr);
+	disasm.goto (addr);
+}
 		private void setup_leftbox () {
 			leftbox.append_text ("Information");
 			leftbox.append_text ("Libraries");
