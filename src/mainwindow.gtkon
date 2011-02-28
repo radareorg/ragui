@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 
 Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 	using:Ragui="Ragui"
@@ -184,6 +184,8 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		private void menuToolsAnalyze() {
 			var w = new Analyze ();
+			w.transient_for = this;
+			w.window_position = WindowPosition.CENTER;
 			w.show_all ();
 			// TODO: open dialog with options. write analyze.gtkon
 			//gc.bgcmd ("aa");
@@ -250,6 +252,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		private void OnMenuEditPreferences () {
 			var pw = new Ragui.PreferencesWindow ();
+			pw.window_position = WindowPosition.CENTER;
 			pw.transient_for = this;
 			pw.show_all();
 		}

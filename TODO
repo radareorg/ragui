@@ -6,6 +6,7 @@
                   |___/           
 
 pancake TODO
+* ESC key must close preferences/analyze window
 * change hexdump zoom with +/-
 * define max zoom in hexdump
 * mainwindow and mainbody have a about dialog ?!?? dupped??! wtf??

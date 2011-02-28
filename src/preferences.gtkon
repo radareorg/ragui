@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destroy-event=OnWindowCloseEvent {
 	VBox border-width=10 spacing=10 {
 		Notebook {
