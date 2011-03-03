@@ -56,9 +56,12 @@ VBox using=Gtk $Ragui.MainPanel {
 		} while (ret == -1);
 		w.hide ();
 		w = null;
-		if (ret == 1)
-			if (!open_file (fc.get_filename (), bin))
-				gc.show_error ("Cannot open file\n");
+		if (ret == 1) {
+			var filename = fc.get_filename ();
+			if (!open_file (filename, bin)) {
+				gc.show_error (@"Cannot open file $filename\n");
+			}
+		}
 	}
 
 	public void onOpenProgram () {

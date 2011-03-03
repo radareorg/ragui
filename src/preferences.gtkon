@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destroy-event=OnWindowCloseEvent {
 	VBox border-width=10 spacing=10 {
 		Notebook {
@@ -15,15 +15,28 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 					Label label=" endian" !expand;
 					ComboBox text $cb_endian !expand;
 				}
-				CheckButton !expand label="Show bytes" toggled=cbBytes $hidebytes;
 				CheckButton !expand label="Hide comments" toggled=cbComments;
 				CheckButton !expand label="Show stack pointer" toggled=cbStackptr $hidestck;
-				//HSeparator !expand;
+				HSeparator !expand;
+				CheckButton !expand label="Show branch lines" toggled=cbBranchlines $hidelines;
+				HBox !expand spacing=5 {
+					Label !expand label="Branch lines width";
+					Entry !expand $lineswidth;
+				}
+				HSeparator !expand;
+				CheckButton !expand label="Show bytes" toggled=cbBytes $hidebytes;
+				HBox !expand spacing=5 {
+					Label !expand label="Bytes per opcode";
+					Entry !expand $opcodebytes;
+				}
 				//CheckButton !expand label="Hide metadata";
 			}
 			VBox spacing=5 border-width=5 {
 				tab-label { Label label="Analysis"; }
 				Label label="No options yet";
+				HBox !expand spacing=5 {
+					CheckButton !expand label="Find function preludes"; // TODO: not used
+				}
 			}
 			VBox spacing=5 border-width=5 {
 				tab-label { Label label="KeyBindings"; }
@@ -34,6 +47,7 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 			VBox spacing=5 border-width=5 {
 				tab-label { Label label="Debugger"; }
 
+				CheckButton !expand label="Stop all threads"; // TODO: not used
 				HBox spacing=5 !expand {
 					Label label="Handler" !expand;
 					ComboBox text $cb_dbg !expand;
@@ -49,7 +63,12 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 		cb_cpu.append_text ("x86");
 		cb_cpu.append_text ("x86.olly");
 		cb_cpu.append_text ("arm");
+		cb_cpu.append_text ("armthumb");
 		cb_cpu.append_text ("mips");
+		cb_cpu.append_text ("msil");
+		cb_cpu.append_text ("avr");
+		cb_cpu.append_text ("csr");
+		cb_cpu.append_text ("dalvik");
 		cb_cpu.append_text ("powerpc");
 		cb_cpu.append_text ("java");
 		cb_cpu.append_text ("bf");
@@ -64,6 +83,9 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 		cb_endian.append_text ("big");
 		cb_endian.append_text ("little");
 		cb_endian.set_active (1);
+
+		lineswidth.text = gc.core.config.get_i ("asm.lineswidth").to_string ();
+		opcodebytes.text = gc.core.config.get_i ("asm.nbytes").to_string ();
 	}
 
 	private void cbBytes() {
@@ -72,6 +94,10 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 
 	private void cbStackptr() {
 		gc.core.config.set ("asm.stackptr", (!hidestck.active).to_string ());
+	}
+
+	private void cbBranchlines() {
+		gc.core.config.set ("asm.lines", (!hidelines.active).to_string ());
 	}
 
 	private void cbComments() {
@@ -85,6 +111,12 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 	}
 
 	private void OnButtonCloseClicked() {
+		/* save remaining changes */
+		var lw = lineswidth.text.to_int ();
+		if (lw>0) gc.core.config.set_i ("asm.lineswidth", lw);
+		var ob = opcodebytes.text.to_int ();
+		if (ob>0) gc.core.config.set_i ("asm.nbytes", ob);
+
 		this.hide ();
 	}
 

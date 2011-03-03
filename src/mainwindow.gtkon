@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 
 Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 	using:Ragui="Ragui"
@@ -20,12 +20,13 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="gtk-save-as" activate=OnFileSaveAs;
 						ImageMenuItem stock-id="gtk-close" activate=OnFileClose;
 						SeparatorMenuItem;
-						ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
+						ImageMenuItem stock-id="gtk-preferences" activate="OnMenuEditPreferences";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-quit" activate="OnQuit";
 					}
 				}
 			}
+			/*
 			MenuItem $menu_edit label="_Edit" with-mnemonic {
 				submenu {
 					Menu {
@@ -33,7 +34,6 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="gtk-copy";
 						ImageMenuItem stock-id="gtk-paste";
 						SeparatorMenuItem;
-						ImageMenuItem stock-id="gtk-preferences" activate="OnMenuEditPreferences";
 					}
 				}
 			}
@@ -68,6 +68,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 					}
 				}
 			}
+			*/
 			MenuItem label="_Tools" with-mnemonic {
 				submenu {
 					Menu {
@@ -77,11 +78,23 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="Analyze .." activate=menuToolsAnalyze;
 						ImageMenuItem stock-id="Signatures .." activate=menuToolsSignatures;
 						ImageMenuItem stock-id="Scripting";
+						ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
 					}
 				}
 			}
+			MenuItem $menu_debug label="_Mode" with-mnemonic {
+				submenu {
+					Menu {
+						RadioMenuItem with-label group=mode_group label=Editor $.mode_e; //toggled=mode_changed;
+						RadioMenuItem with-label group=mode_e.get_group() label=Bindiff $.mode_b toggled=mode_changed;
+						RadioMenuItem with-label group=mode_e.get_group() label=Debugger $.mode_d toggled=mode_changed;
+						RadioMenuItem with-label group=mode_e.get_group() label=Forensics $.mode_f toggled=mode_changed;
+					}
+				}
+			}
+
 			MenuItem label="_Help" with-mnemonic {
 				submenu {
 					Menu {
@@ -115,13 +128,29 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		border-width=5 title="About ragui" !resizable modal !has-separator
 		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name="ragui" version="0.1"
-		copyright="Copyright (c) 2009-2010 pancake/nibble"
+		copyright="Copyright (c) 2009-2011 pancake/nibble"
 		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
 		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble.ds@gmail.com)", null}}';
 
 	-{
+		SList <RadioMenuItem> mode_group;
 		public signal void on_quit();
+
+		public void mode_changed() {
+			if (mode_e.active) {
+				print ("Editor mode\n");
+			} else
+			if (mode_d.active) {
+				print ("Debugger mode\n");
+			} else
+			if (mode_f.active) {
+				print ("Forensics mode\n");
+			} else
+			if (mode_b.active) {
+				print ("Bindiff mode\n");
+			} else print ("Unknown mode\n");
+		}
 
 		private void OnNew() {
 			Pid pid;
@@ -130,7 +159,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 				Process.spawn_async (null, runme, null,
 						SpawnFlags.DO_NOT_REAP_CHILD, null, out pid);
 			} catch (GLib.SpawnError err) {
-				print ("Error: %s\n", err.message);
+				stderr.printf ("Error: %s\n", err.message);
 			}
 			//public delegate void ChildWatchFunc (Pid pid, int status);
 		}
@@ -172,6 +201,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		public MainWindow () {
+
 			panel = new MainPanel ();
 			window_position = WindowPosition.CENTER;
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
@@ -278,23 +308,58 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			box_body.add (panel);
 			box_body.show_all ();
 			body.hide ();
-			menu_view.sensitive = false;
-			menu_edit.sensitive = false;
+			//menu_view.sensitive = false;
+			//menu_edit.sensitive = false;
 		}
 
 		public void view_body () {
+			/* default view */
+			view_body_editor ();
+		}
+
+		public void view_body_editor () {
 			if (body == null)
 				body = new MainBody ();
 			is_open = true;
-body.goto (gc.core.offset);
+			body.goto (gc.core.offset);
+			//box_body.children = null;
+			box_body.add (body);
+			box_body.show_all ();
+			panel.hide ();
+			body.show_all ();
+			//menu_view.sensitive = true;
+			//menu_edit.sensitive = true;
+		}
+
+/*
+		public void view_body_debugger () {
+			if (body == null)
+				body = new MainDebugBody ();
+			is_open = true;
+			body.goto (gc.core.offset);
 			//box_body.children = null;
 			box_body.add (body);
 			box_body.show_all ();
 			panel.hide ();
 			body.show_all ();
 			menu_view.sensitive = true;
-			menu_edit.sensitive = true;
+			//menu_edit.sensitive = true;
 		}
+
+		public void view_body_forensics() {
+			if (body == null)
+				body = new MainBody ();
+			is_open = true;
+			body.goto (gc.core.offset);
+			//box_body.children = null;
+			box_body.add (body);
+			box_body.show_all ();
+			panel.hide ();
+			body.show_all ();
+			menu_view.sensitive = true;
+			//menu_edit.sensitive = true;
+		}
+*/
 
 		public void setup_view () {
 			if (body != null)

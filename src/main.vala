@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 
 using Hexview;
 using Ragui;
@@ -7,8 +7,7 @@ using Gtk;
 
 public class Ragui.Main {
 	public static void quit_program () {
-		stdout.printf("Thanks for watching :)\n");
-
+		print ("Thanks for watching :)\n");
 		Gtk.main_quit();
 	}
 

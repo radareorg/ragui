@@ -3,6 +3,7 @@ RANLIB?=ranlib
 all:
 	mkdir -p include
 	cd segmentbar && ${MAKE} lib
+	cd gracalc && ${MAKE} lib
 	cd grava && ${MAKE} lib
 	cd grasm && ${MAKE} lib
 	cd codew && ${MAKE} lib
@@ -18,6 +19,7 @@ clean:
 	rm -f include/*
 	cd segmentbar && ${MAKE} clean
 	cd grava && ${MAKE} clean
+	cd gracalc && ${MAKE} clean
 	cd grasm && ${MAKE} clean
 	cd codew && ${MAKE} clean
 	cd hexview && ${MAKE} clean
