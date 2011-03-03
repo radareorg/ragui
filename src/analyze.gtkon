@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 /* add 'modal' as Window attribute if wanted to be modal */
 Window using=Gtk modal $Ragui.Analyze title="Analyze code" destroy-event=OnWindowCloseEvent {
 		//type=WindowType.POPUP window-position=WindowPosition.CENTER_ON_PARENT {

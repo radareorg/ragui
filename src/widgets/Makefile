@@ -5,6 +5,7 @@ all:
 	cd segmentbar && ${MAKE} lib
 	cd gracalc && ${MAKE} lib
 	cd grava && ${MAKE} lib
+	cd gracalc && ${MAKE} lib
 	cd grasm && ${MAKE} lib
 	cd codew && ${MAKE} lib
 	cd hexview && ${MAKE} lib
@@ -23,6 +24,7 @@ clean:
 	cd gracalc && ${MAKE} clean
 	cd grasm && ${MAKE} clean
 	cd codew && ${MAKE} clean
+	cd gracalc && ${MAKE} clean
 	cd hexview && ${MAKE} clean
 	cd listw && ${MAKE} clean
 	cd grabin && ${MAKE} clean
