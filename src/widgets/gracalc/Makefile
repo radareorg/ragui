@@ -7,7 +7,7 @@ all: main
 # TODO: use a single gtkamlc line
 lib:
 	# generate the gracalcwidget library
-	gtkamlc -C --library gracalc --pkg segmentbar --vapi=../include/gracalc.vapi -H ../include/gracalc.h ${PKG} ${VALAFLAGS} gracalc.gtkon
+	gtkamlc -C --library gracalc --vapi=../include/gracalc.vapi -H ../include/gracalc.h ${PKG} ${VALAFLAGS} gracalc.gtkon
 	${CC} ${CFLAGS} -c -I../include `pkg-config --cflags gtk+-2.0 r_core` ${CFILES}
 	rm -f libgracalc.a
 	ar -q libgracalc.a ${OFILES}

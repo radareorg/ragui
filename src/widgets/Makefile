@@ -10,6 +10,7 @@ all:
 	cd hexview && ${MAKE} lib
 	cd listw && ${MAKE} lib
 	cd grabin && ${MAKE} lib
+	cd mounts && ${MAKE} lib
 	cd texttagview && ${MAKE} lib
 
 ranlib:
@@ -25,4 +26,5 @@ clean:
 	cd hexview && ${MAKE} clean
 	cd listw && ${MAKE} clean
 	cd grabin && ${MAKE} clean
+	cd mounts && ${MAKE} clean
 	cd texttagview && ${MAKE} clean

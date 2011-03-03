@@ -12,7 +12,7 @@ PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava
 PKG+=--pkg posix
 # TODO grabin packages.. must be merged
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg gracalc
-PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs
+PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs --pkg mounts
 PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar --pkg texttagview
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
 PKG+=--vapidir=widgets/include
@@ -29,6 +29,7 @@ WIDGETS+=widgets/listw/liblistw.a
 WIDGETS+=widgets/segmentbar/libsegbar.a
 WIDGETS+=widgets/texttagview/libtexttagview.a
 WIDGETS+=widgets/grasm/libgrasm.a
+WIDGETS+=widgets/mounts/libmounts.a
 
 all: widgets.done
 	@${MAKE} vapi

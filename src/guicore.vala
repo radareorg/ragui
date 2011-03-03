@@ -93,6 +93,9 @@ public class Ragui.GuiCore {
 		// XXX: windows only
 		system ("start "+url);
 
+		// XXX: OSX only
+		system ("open "+url);
+
 		Pid pid;
 		string[] runme = { "/usr/bin/xdg-open", url };
 		try {
@@ -151,7 +154,7 @@ public class Ragui.GuiCore {
 		return ret;
 	}
 
-	public string? show_file_open (string title, string? path) {
+	public string? show_file_open (string title, string? path = null) {
 		var fcd = new FileChooserDialog (title, this.window, FileChooserAction.OPEN,
 				"gtk-cancel", 0, "gtk-ok", 1);
 		if (path != null)

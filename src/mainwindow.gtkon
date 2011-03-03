@@ -6,6 +6,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
 	using:Hexview="Hexview"
+	using:Mounts="Mounts"
 	using:Listview="Listview"
 	using:Gracalc="Gracalc"
 {
@@ -84,7 +85,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 					}
 				}
 			}
-			MenuItem $menu_debug label="_Mode" with-mnemonic {
+			MenuItem $menu_mode label="_Mode" with-mnemonic {
 				submenu {
 					Menu {
 						RadioMenuItem with-label group=mode_group label=Editor $.mode_e; //toggled=mode_changed;
@@ -127,7 +128,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 	AboutDialog gtkaml:standalone $.aboutdialog delete-event="aboutdialog.hide_on_delete"
 		border-width=5 title="About ragui" !resizable modal !has-separator
 		window-position=WindowPosition.CENTER_ON_PARENT
-		program-name="ragui" version="0.1"
+		program-name=ragui version=0.1
 		copyright="Copyright (c) 2009-2011 pancake/nibble"
 		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
@@ -173,9 +174,9 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		private void menuProjectDiff() {
-			// open window to select target project
-			// show recents..
-			// open new ragui with diff UI
+			var file = gc.show_file_open ("Bindiff against...");
+			if (file != null)
+				gc.system (@"ragdiff2.py $file");
 		}
 
 		private void OnFileSave() {
@@ -201,7 +202,6 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		public MainWindow () {
-
 			panel = new MainPanel ();
 			window_position = WindowPosition.CENTER;
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
@@ -221,6 +221,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		private void menuToolsHeaders() {
 			var w = new Window (WindowType.TOPLEVEL);
+			w.resize (800, 400);
 			w.title = "ragui: grabin";
 			var grabin = new Grabin.All (gc.core.bin);
 			grabin.sections.set_actions ("Seek");
@@ -292,9 +293,9 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		public void OnMenuHelpAPI () {
 			// TODO check if vdoc exist in installation directory
-			if (FileUtils.test ("vdoc", FileTest.IS_DIR)) {
+			if (FileUtils.test ("vdoc", FileTest.IS_DIR))
  				gc.open_url ("vdoc/index.html");
-			} else gc.open_url ("http://www.radare.org/vdoc");
+			else gc.open_url ("http://www.radare.org/vdoc");
 		}
 
 		public MainPanel panel;
@@ -308,6 +309,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			box_body.add (panel);
 			box_body.show_all ();
 			body.hide ();
+			menu_mode.sensitive = false;
 			//menu_view.sensitive = false;
 			//menu_edit.sensitive = false;
 		}
@@ -329,6 +331,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			body.show_all ();
 			//menu_view.sensitive = true;
 			//menu_edit.sensitive = true;
+			menu_mode.sensitive = true;
 		}
 
 /*
@@ -360,7 +363,6 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			//menu_edit.sensitive = true;
 		}
 */
-
 		public void setup_view () {
 			if (body != null)
 				body.setup_view ();

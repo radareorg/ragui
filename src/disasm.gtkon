@@ -85,6 +85,14 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 
 				regex = new Regex (";(.*)$");
 				dis = regex.replace (dis, -1, 0, "<c green>;\\1</>\n");
+
+#if 0
+				regex = new Regex ("^/");
+				dis = regex.replace (dis, -1, 0, "<c red>/</>");
+
+				regex = new Regex ("^\\");
+				dis = regex.replace (dis, -1, 0, "<c red>\\</>");
+#endif
 			} catch (RegexError e) {
 				warning ("%s", e.message);
 			}

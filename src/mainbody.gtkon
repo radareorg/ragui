@@ -8,6 +8,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Debug="Debug"
 	using:Flags="Flags"
 	using:Grava="Grava"
+	using:Mounts="Mounts"
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
 	using:Hexview="Hexview"
@@ -69,7 +70,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 						}
 						VBox {
 							tab-label { Label label="files"; }
-							Label label="TODO";
+							Mounts:Widget $mounts;
 						}
 						VBox {
 							tab-label { Label label="debug"; }
@@ -146,11 +147,12 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 			ss_graph.goto (gc.core.offset);//num.get ("entry0"));
 		}
 
-public void goto (uint64 addr) {
-	ss_graph.goto (addr);
-	ss_data.goto (addr);
-	disasm.goto (addr);
-}
+		public void goto (uint64 addr) {
+			ss_graph.goto (addr);
+			ss_data.goto (addr);
+			disasm.goto (addr);
+		}
+
 		private void setup_leftbox () {
 			leftbox.append_text ("Information");
 			leftbox.append_text ("Libraries");

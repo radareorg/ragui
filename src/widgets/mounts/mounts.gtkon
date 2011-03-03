@@ -1,0 +1,39 @@
+VBox $Mounts.Widget using=Gtk border-width=5
+		using:Radare="Radare" 
+		using:Listview="Listview" {
+	HBox !expand spacing=3 {
+		ComboBox !expand $fstype text;
+		Entry $mountpoint;
+		Entry $offset;
+		Button !expand label=mount;
+		Button !expand label=umount;
+	}
+	VPaned position=200 {
+		Listview:Widget $listview;
+		Listview:Widget $dirs add2;
+	}
+-{
+	public Widget() {
+		fstype.append_text ("cpio");
+		fstype.append_text ("ext2");
+		fstype.append_text ("fat");
+		fstype.append_text ("fb");
+		fstype.append_text ("hfs");
+		fstype.append_text ("hfsplus");
+		fstype.append_text ("iso9660");
+		fstype.append_text ("jfs");
+		fstype.append_text ("minix");
+		fstype.append_text ("ntfs");
+		fstype.append_text ("posix");
+		fstype.append_text ("reiserfs");
+		fstype.append_text ("sfs");
+		fstype.append_text ("tar");
+		fstype.append_text ("udf");
+		fstype.append_text ("ufs");
+		fstype.append_text ("xfs");
+		fstype.set_active (0);
+		mountpoint.text = "/";
+		offset.text = "0";
+	}
+}-
+}
