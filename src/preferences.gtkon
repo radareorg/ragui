@@ -33,9 +33,19 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 			}
 			VBox spacing=5 border-width=5 {
 				tab-label { Label label="Analysis"; }
-				Label label="No options yet";
+				CheckButton !expand label="Find function preludes"; // TODO: not used
+				CheckButton $.analsplit !expand label="Split basic blocks"; // TODO: not used
 				HBox !expand spacing=5 {
-					CheckButton !expand label="Find function preludes"; // TODO: not used
+					Label !expand label="Depth";
+					Entry !expand $analdepth;
+				}
+				HBox !expand spacing=5 {
+					Label !expand label="Pointer depth";
+					Entry !expand $analptrdepth;
+				}
+				HBox spacing=5 !expand {
+					Label label="Plugin" !expand;
+					ComboBox text $cb_anal !expand;
 				}
 			}
 			VBox spacing=5 border-width=5 {
@@ -86,6 +96,21 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 
 		lineswidth.text = gc.core.config.get_i ("asm.lineswidth").to_string ();
 		opcodebytes.text = gc.core.config.get_i ("asm.nbytes").to_string ();
+
+		/* analysis */
+		analsplit.active = (gc.core.config.get_i ("anal.split") == 0)?false:true;
+		analdepth.text = gc.core.config.get_i ("anal.depth").to_string ();
+		analptrdepth.text = gc.core.config.get_i ("anal.ptrdepth").to_string ();
+		cb_anal.append_text ("x86");
+		cb_anal.append_text ("x86.simple");
+		cb_anal.append_text ("ppc");
+		cb_anal.append_text ("mips");
+		cb_anal.append_text ("java");
+		cb_anal.append_text ("dalvik");
+		cb_anal.append_text ("csr");
+		cb_anal.append_text ("avr");
+		cb_anal.append_text ("arm");
+		cb_anal.set_active (0);
 	}
 
 	private void cbBytes() {

@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose codewing library for Vala
- *  Copyright (C) 2007-2011  pancake <youterm.com>
+ *  Copyright (C) 2007-2011  pancake <nopcode.org>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -170,7 +170,6 @@ public class Hexview.Widget : ScrolledWindow {
 		this.grab_focus();
 
 		//print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
-
 		switch (ek.keyval) {
 		case 'i': // inverse colors
 			inverse = !inverse;
@@ -188,7 +187,6 @@ public class Hexview.Widget : ScrolledWindow {
 			pany += 20*zoom;
 			break;
 		case 65365: // re.pag
-print ("HEIGHT %d\n", (int)h);
 			pany += 100*zoom;
 			break;
 		case 65366: // av.pag
@@ -226,10 +224,7 @@ print ("HEIGHT %d\n", (int)h);
 			handled = false;
 			break;
 		}
-//print ("PANY = %f\n", pany);
-
-		refresh(da);
-
+		refresh (da);
 		return true;
 	}
 
@@ -267,15 +262,14 @@ print ("HEIGHT %d\n", (int)h);
 	}
 
 	private bool button_press (Gtk.Widget widget, Gdk.EventButton eb) {
+		var panydelta = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
 		if (eb.button == 3)
 			do_popup_generic ();
 		if (eb.x < 50)
-			breakpoint = address+16*(int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
-		if (eb.x > w-30) {
-			int mid = h/2;
-			if (eb.y <mid) pany+=40;
-			else pany-=40;
-		} else cursor = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
+			breakpoint = address+16*panydelta;
+		if (eb.x > w-30)
+			pany += (eb.y<(h/2))?40:-40;
+		else cursor = panydelta;
 
 		//print  ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		if ((eb.x/zoom)>100 && ((eb.x/zoom)<340)) {
@@ -286,19 +280,9 @@ print ("HEIGHT %d\n", (int)h);
 			double x = (eb.x/zoom)-350;
 			xcursor = (int)(x/7);
 		}
-
 		refresh (da);
 		return true;
 	}
-
-/*
-	private double abs(double x)
-	{
-		if (x>0)
-			return x;
-		return -x;
-	}
-*/
 
 	Node on = null;
 	private bool button_release(Gtk.Widget da, Gdk.EventButton em) {
@@ -321,8 +305,8 @@ print ("HEIGHT %d\n", (int)h);
 		return true;
 	}
 
-	int w;
-	int h;
+	private int w;
+	private int h;
 	private bool expose (Gtk.Widget widget, Gdk.EventExpose ev) {
 		da.window.get_size (out w, out h);
 		draw ();
@@ -355,33 +339,28 @@ print ("HEIGHT %d\n", (int)h);
 	private void sync () {
 		const int K = 16;
 
-	print ("PANY IS %d\n", (int)pany);
+		//print ("PANY IS %d\n", (int)pany);
 		/* TODO: handle multipliers here!! */
 		int foo = K*((int)((pany/zoom)/K));
-//if (address>=foo) { 
-if (true) {
-print (@"FOO IS $foo\n");
-var pwn = (int)(pany/K);
+		var pwn = (int)(pany/K);
 		if (pany>K) {
-			address -= (int)foo;
-			buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
+
+			if (foo>0 && foo>address) {
+				address=0;
+			} else {
+				address-=(int)foo;
+				//			address -= (int)foo;
+				buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
+				cursor += pwn;
+			}
 			pany = 0;
-			cursor += pwn;
-		} else
-		if (-pany>K) {
+		} else if (-pany>K) {
 			address-=(int)foo;
 			buffer.update (address, 16*80);
 			pany = 0;
 			cursor += pwn; // TODO move mult
 		}
-}
-
-#if 0
-		/* set offset */
-		//print ("PANY = %f\n", pany);
-#endif
 		int py = 0; //foo/2; //(-pany/zoom)/10;
-		//print ("----- foo %d\n", foo);
 		offset = (uint64)(address + py);
 		offset_click = offset + xcursor; // TODO: add Y
 		print ("click : %llx\n", offset_click);
@@ -389,12 +368,10 @@ var pwn = (int)(pany/K);
 
 	public void draw() {
 		da.window.get_size (out w, out h);
-
 		if (w<128)
 			return;
-int ow = w;
-if (w>600)
-w= 600;
+		int ow = w;
+		if (w>600) w = 600;
 		sync ();
 		/* adapt zoom to size */
 		zoom = ((double)w)/500.0;
@@ -409,13 +386,9 @@ w= 600;
 		ctx.scale (zoom, zoom);
 		set_color (Color.BACKGROUND);
 		ctx.paint ();
-		//		codew.draw(ctx);
-		//print ("widget.draw\n");
-		//da.expose(da, null);
-		//da.queue_draw_area(0,0,1000,1000);
+
 		set_color (Color.FOREGROUND);
 		int rows = (int)((h/zoom)/10);
-print ("ROWS = %d\n", rows);
 		for (int i=0;i<rows;i++) {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
@@ -508,8 +481,7 @@ print ("ROWS = %d\n", rows);
 		ctx.show_text (("0x%08"+uint64.FORMAT_MODIFIER+"x").printf (offset));
 		ctx.restore ();
 
-#if 0
-		// do not draw arrows
+#if DRAW_ARROWS
 		set_color (Color.HIGHLIGHT);
 		/* arrows */
 		ctx.save ();
