@@ -12,6 +12,7 @@ all:
 	cd listw && ${MAKE} lib
 	cd grabin && ${MAKE} lib
 	cd mounts && ${MAKE} lib
+	cd gradiff && ${MAKE} lib
 	cd texttagview && ${MAKE} lib
 
 ranlib:
@@ -29,4 +30,5 @@ clean:
 	cd listw && ${MAKE} clean
 	cd grabin && ${MAKE} clean
 	cd mounts && ${MAKE} clean
+	cd gradiff && ${MAKE} clean
 	cd texttagview && ${MAKE} clean

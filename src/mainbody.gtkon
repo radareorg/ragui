@@ -5,6 +5,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 	using:Ragui="Ragui"
 	using:Script="Script"
 	using:Search="Search"
+	using:Gradiff="Gradiff"
 	using:Debug="Debug"
 	using:Flags="Flags"
 	using:Grava="Grava"
@@ -71,6 +72,10 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 						VBox {
 							tab-label { Label label="files"; }
 							Mounts:Widget $mounts;
+						}
+						VBox {
+							tab-label { Label label="bindiff"; }
+							Gradiff.Widget $diff;
 						}
 						VBox {
 							tab-label { Label label="debug"; }
@@ -231,7 +236,6 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 
 				switch (action) {
 				case "analyze":
-					gc.cmd ("ab");
 					gc.cmd ("af");
 					disasm.goto (offset);
 					ss_graph.goto (offset);
@@ -285,7 +289,6 @@ print (@"Go disasm $offset\n");
 		public void grava_seek (uint64 offset) {
 			gc.cmd (@"s $offset");
 			gc.cmd ("pd 20");
-			gc.cmd ("ab");
 			gc.cmd ("af");
 			gc.cmd (@"ag $offset > graph.xdot");
 			bool use_xdot = false;

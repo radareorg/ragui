@@ -13,13 +13,14 @@ PKG+=--pkg posix
 # TODO grabin packages.. must be merged
 PKG+=--pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg gracalc
 PKG+=--pkg grabinimports --pkg grabinstrings --pkg grabinrelocs --pkg mounts
-PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar --pkg texttagview
+PKG+=--pkg grabinfat --pkg grabinall --pkg segmentbar --pkg texttagview --pkg gradiff
 #GTKAMLFLAGS=--implicitsdir=/usr/share/gtkamlc/implicits/
 PKG+=--vapidir=widgets/include
 PKG+=--Xcc=-Iwidgets/include
 PKG+=--pkg r_core
 VALAFLAGS=${PKG} --thread
 
+WIDGETS+=widgets/gradiff/libgradiff.a
 WIDGETS+=widgets/grava/libgrava.a
 WIDGETS+=widgets/gracalc/libgracalc.a
 WIDGETS+=widgets/codew/libcodew.a

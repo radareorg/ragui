@@ -1,0 +1,55 @@
+VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" {
+	VPaned position=400 {
+		HBox spacing=3 {
+			Grava.Widget $g_one;
+			Grava.Widget $g_two;
+		}
+		TreeView $view add2 can-focus {
+			TreeViewColumn title="Address1" clickable clicked="{sort_column (view, 0)}" {
+				CellRendererText $.column0 expand;
+				CellRendererText &column0 attribute="text" column=0;
+			}
+			TreeViewColumn title="Name 1" clickable clicked="{sort_column (view, 1)}" {
+				CellRendererText $.column1 expand;
+				CellRendererText &column1 attribute="text" column=1;
+			}
+			TreeViewColumn title="Address2" clickable clicked="{sort_column (view, 2)}" {
+				CellRendererText $.column2 expand;
+				CellRendererText &column2 attribute="text" column=2;
+			}
+			TreeViewColumn title="Name 2" clickable clicked="{sort_column (view, 3)}" {
+				CellRendererText $.column3 expand;
+				CellRendererText &column3 attribute="text" column=3;
+			}
+			TreeViewColumn title="Diff" clickable clicked="{sort_column (view, 4)}" {
+				CellRendererText $.column4 expand;
+				CellRendererText &column4 attribute="text" column=4;
+			}
+		}
+	}
+-{
+	public enum COLUMN {
+		Addr0 = 0,
+		Name0,
+		Addr1,
+		Name1,
+		Match,
+	}
+
+	public void sort_column (Gtk.TreeView tv, int n) {
+		// TODO
+	}
+
+	public Widget() {
+		fill ();
+	}
+
+	public void fill() {
+		listmodel = new ListStore (5, typeof (string), typeof (string),
+				typeof (string), typeof (string), typeof (string));
+		view.model = listmodel;
+		//view.button_release_event.connect (button_press);
+	}
+	public ListStore listmodel;
+}-
+}
