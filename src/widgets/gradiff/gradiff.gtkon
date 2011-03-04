@@ -1,8 +1,17 @@
-VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" {
+VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" using:Radare="Radare" {
 	VPaned position=400 {
 		HBox spacing=3 {
-			Grava.Widget $g_one;
-			Grava.Widget $g_two;
+			VBox {
+				Label !expand label="" $l_one;
+				Grava.Widget $g_one;
+			}
+			VBox {
+				HBox !expand {
+					Label label="" $l_two;
+					Button !expand label="Open" clicked={file_open()} activate={file_open()};
+				}
+				Grava.Widget $g_two;
+			}
 		}
 		TreeView $view add2 can-focus {
 			TreeViewColumn title="Address1" clickable clicked="{sort_column (view, 0)}" {
@@ -35,9 +44,52 @@ VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" {
 		Name1,
 		Match,
 	}
+	
+	private RCore *core_one;
+	private RCore *core_two;
+	public ListStore listmodel;
+	public TreeIter iter;
+	public signal void file_open(); 
 
-	public void sort_column (Gtk.TreeView tv, int n) {
-		// TODO
+	public void sort_column(TreeView tv, int n) {
+		for (int i = 0; i < tv.get_columns ().length (); i++) {
+			var col = tv.get_column (i);
+			if (i == n) {
+				col.set_sort_indicator (true);
+				var order = (col.get_sort_order ()==SortType.ASCENDING)?
+					SortType.DESCENDING: SortType.ASCENDING;
+				col.sort_order = order;
+				listmodel.set_sort_column_id (i, order);
+			} else col.set_sort_indicator (false);
+		}
+	}
+
+	public void button_press (Gtk.TreePath p, Gtk.TreeViewColumn c) {
+		string? addr_one = null, addr_two = null;
+		TreeModel model;
+		TreeIter iter;
+		GLib.Value val;
+
+		var sel = view.get_selection ();
+		if (sel.get_selected (out model, out iter)) {
+			model.get_value (iter, 0, out val);
+			addr_one = val.get_string ();
+			model.get_value (iter, 2, out val);
+			addr_two = val.get_string ();
+		}
+		if (addr_one != "") {
+			core_one->cmd0 (@"agd $addr_one > /tmp/diff_one.dot");
+			XDot.import (g_one.graph, "/tmp/diff_one.dot");
+		}
+
+		if (addr_two != "") {
+			core_two->cmd0 (@"agd $addr_two > /tmp/diff_two.dot");
+			XDot.import (g_two.graph, "/tmp/diff_two.dot");
+		}
+	}
+
+	public void clear () {
+		listmodel.clear ();
 	}
 
 	public Widget() {
@@ -48,8 +100,51 @@ VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" {
 		listmodel = new ListStore (5, typeof (string), typeof (string),
 				typeof (string), typeof (string), typeof (string));
 		view.model = listmodel;
-		//view.button_release_event.connect (button_press);
+		view.row_activated.connect (button_press);
 	}
-	public ListStore listmodel;
+
+	public void set_core(RCore core) {
+		core_one = core;
+		l_one.label = core.file.filename;
+	}
+
+	public void set_core_two(RCore core) {
+		core_two = core;
+		l_two.label = core.file.filename;
+	}
+
+	private void add_row(uint64 addr_one, string name_one, uint64 addr_two, string name_two, string diff) {
+		listmodel.append (out iter);
+		listmodel.set (iter,
+				0, addr_one.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+				1, name_one,
+				2, addr_two.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"),
+				3, name_two,
+				4, diff);
+
+	}
+
+	public void diff_bins() {
+		clear ();
+		core_one->gdiff (core_two);
+		var fcns = core_one->anal.get_fcns ();
+		foreach (var f in fcns) {
+			if (f.type == RAnal.FcnType.FCN || f.type == RAnal.FcnType.SYM) {
+				string match;
+				if (f.diff.type == RAnal.BlockDiff.MATCH)
+					match = "MATCH";
+				else if (f.diff.type == RAnal.BlockDiff.UNMATCH)
+					match = "UNMATCH";
+				else match = "NEW";
+				add_row (f.addr, f.name, f.diff.addr, f.diff.name, match);
+			}
+		}
+		fcns = core_two->anal.get_fcns ();
+		foreach (var f in fcns) {
+			if ((f.type == RAnal.FcnType.FCN || f.type == RAnal.FcnType.SYM) &&
+				f.diff.type == RAnal.BlockDiff.NULL)
+				add_row (f.addr, f.name, f.diff.addr, f.diff.name, "NEW");
+		}
+	}
 }-
 }

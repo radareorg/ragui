@@ -1,6 +1,7 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 
 Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
+	using:Radare="Radare"
 	using:Ragui="Ragui"
 	using:Grava="Grava"
 	using:Grasmwidget="Grasmwidget"
@@ -176,7 +177,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		private void menuProjectDiff() {
 			var file = gc.show_file_open ("Bindiff against...");
 			if (file != null)
-				gc.system (@"ragdiff2.py $file");
+				gc.system ("ragdiff2 %s %s &".printf (gc.core.file.filename, file));
 		}
 
 		private void OnFileSave() {
@@ -338,6 +339,19 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 				body = new MainBody ();
 			is_open = true;
 			body.goto (gc.core.offset);
+			body.diff.set_core (gc.core);
+			body.diff.file_open.connect (() => {
+						var ret = gc.show_file_open ("Select second file");
+						if (ret != null) {
+							var core = new RCore();
+							core.file_open (ret, 0, 0);
+							if (core.file != null) {
+								core.bin_load (null);
+								body.diff.set_core_two (core);
+								body.diff.diff_bins ();
+							}
+						}
+					});
 			//box_body.children = null;
 			box_body.add (body);
 			box_body.show_all ();
