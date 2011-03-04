@@ -78,7 +78,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 						ImageMenuItem stock-id="Headers" activate=menuToolsHeaders;
 						ImageMenuItem stock-id="Analyze .." activate=menuToolsAnalyze;
 						ImageMenuItem stock-id="Signatures .." activate=menuToolsSignatures;
-						ImageMenuItem stock-id="Scripting";
+						ImageMenuItem stock-id="Scripting" activate=menuToolsScripting;
 						ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
@@ -138,7 +138,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		SList <RadioMenuItem> mode_group;
 		public signal void on_quit();
 
-		public void mode_changed() {
+		public void mode_changed () {
 			if (mode_e.active) {
 				print ("Editor mode\n");
 			} else
@@ -209,6 +209,17 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 
 		private void menuToolsSignatures() {
 			var w = new Signatures ();
+			w.show_all ();
+		}
+
+		private void menuToolsScripting () {
+			var w = new Window (WindowType.TOPLEVEL);
+			w.resize (800, 400);
+			w.title = "ragui: grabin";
+			w.transient_for = this;
+			w.window_position = WindowPosition.CENTER;
+			var scr = new Script.Widget ();
+			w.add (scr);
 			w.show_all ();
 		}
 
