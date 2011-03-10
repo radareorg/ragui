@@ -46,10 +46,18 @@ VBox using=Gtk $Ragui.MainPanel {
 	public signal void onHelpAPI ();
 	public signal void onHelpAbout ();
 
-	// TODO: centralize all open_file () calls here
-	private void handle_open (Dialog w, FileChooser fc, bool bin) {
+	enum OpenType {
+		FILE,
+		PROGRAM,
+		PROJECT
+	}
+
+	private void handle_open (Dialog w, FileChooser fc, OpenType type) {
 		int ret = 0;
 		w.border_width = 6;
+		fc.file_activated.connect ((fc) => {
+			w.response (1);
+		});
 		do {
 			w.show_all ();
 			ret = w.run ();
@@ -58,8 +66,23 @@ VBox using=Gtk $Ragui.MainPanel {
 		w = null;
 		if (ret == 1) {
 			var filename = fc.get_filename ();
-			if (!open_file (filename, bin)) {
-				gc.show_error (@"Cannot open file $filename\n");
+			switch (type) {
+			case OpenType.FILE:
+				if (!open_file (filename, false))
+					gc.show_error (@"Cannot open file $filename\n");
+				break;
+			case OpenType.PROGRAM:
+				if (!open_file (filename, true))
+					gc.show_error (@"Cannot open file $filename\n");
+				break;
+			case OpenType.PROJECT:
+				var file = gc.core.project_info (filename);
+				if (open_file (file, false)) {
+					gc.core.bin_load (null);
+					gc.prjfile = filename;
+					gc.core.project_open (filename);
+				} else gc.show_error (@"Cannot open $file");
+				break;
 			}
 		}
 	}
@@ -73,7 +96,7 @@ VBox using=Gtk $Ragui.MainPanel {
 			);
 		var op = new OpenProgram ();
 		w.vbox.add (op);
-		handle_open (w, op.fc, true);
+		handle_open (w, op.fc, OpenType.PROGRAM);
 		op.set_config ();
 	}
 
@@ -86,7 +109,7 @@ VBox using=Gtk $Ragui.MainPanel {
 		var of = new OpenFile ();
 		w.vbox.add (of);
 		w.resize (600, 400);
-		handle_open (w, of.fc, false);
+		handle_open (w, of.fc, OpenType.FILE);
 	}
 
 	public void onOpenProject () {
@@ -99,7 +122,7 @@ VBox using=Gtk $Ragui.MainPanel {
 		var prjdir = Environment.get_home_dir () + "/.radare2/rdb";
 		var of = new OpenProject (prjdir);
 		w.vbox.add (of);
-		handle_open (w, of.fc, true);
+		handle_open (w, of.fc, OpenType.PROJECT);
 	}
 
 	public void onDebugProgram() {

@@ -16,6 +16,7 @@ VBox using=Gtk $Ragui.OpenProgram border_width=5 spacing=5 {
 	}
 	HBox {
 		VBox {
+			CheckButton !expand label="Read/Write" active;
 			CheckButton !expand label="Load headers" active;
 			CheckButton !expand label="Load sections" active;
 			CheckButton !expand label="Load symbols" active;

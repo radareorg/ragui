@@ -16,10 +16,10 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			MenuItem label="_Project" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="gtk-new" activate=OnNew;
-						ImageMenuItem stock-id="gtk-open" activate=OnOpenProject;
-						ImageMenuItem stock-id="gtk-save" activate=OnFileSave;
-						ImageMenuItem stock-id="gtk-save-as" activate=OnFileSaveAs;
+						ImageMenuItem stock-id="gtk-new" activate=on_project_new;
+						ImageMenuItem stock-id="gtk-open" activate=on_project_open;
+						ImageMenuItem stock-id="gtk-save" activate=on_project_save;
+						ImageMenuItem stock-id="gtk-save-as" activate=on_project_save_as;
 						ImageMenuItem stock-id="gtk-close" activate=OnFileClose;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-preferences" activate="OnMenuEditPreferences";
@@ -96,7 +96,6 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 					}
 				}
 			}
-
 			MenuItem label="_Help" with-mnemonic {
 				submenu {
 					Menu {
@@ -154,7 +153,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			} else print ("Unknown mode\n");
 		}
 
-		private void OnNew() {
+		private void on_project_new() {
 			Pid pid;
 			string[] runme = { gc.arg0 };
 			try {
@@ -166,12 +165,12 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			//public delegate void ChildWatchFunc (Pid pid, int status);
 		}
 
-		private void OnOpenProject() {
+		private void on_project_open() {
 			panel.onOpenProject ();
 		}
 
 		private void OnQuit() {
-			on_quit();
+			on_quit ();
 		}
 
 		private void menuProjectDiff() {
@@ -180,17 +179,20 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 				gc.system ("ragdiff2 %s %s &".printf (gc.core.file.filename, file));
 		}
 
-		private void OnFileSave() {
-			/* TODO */
+		private void on_project_save() {
 			if (is_open) {
-				//if (gc.prjfile == null)
-				//	OnFileSaveAs();
+				if (gc.prjfile != null) {
+					gc.project_save (gc.prjfile);
+				} else on_project_save_as ();
 			} else gc.show_error ("Nothing to save");
 		}
 
-		private void OnFileSaveAs() {
+		private void on_project_save_as() {
 			if (is_open) {
-				/* TODO */
+				var prj = gc.show_input ("Project name", gc.prjfile);
+				if (prj != null && prj != "") {
+					gc.project_save (prj);
+				} else gc.show_message ("Nothing done");
 			} else gc.show_error ("Nothing to save");
 		}
 
@@ -229,8 +231,6 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			w.transient_for = this;
 			w.window_position = WindowPosition.CENTER;
 			w.show_all ();
-			// TODO: open dialog with options. write analyze.gtkon
-			//gc.bgcmd ("aa");
 		}
 
 		private void menuToolsHeaders() {
@@ -285,7 +285,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		}
 
 		private bool OnWindowCloseEvent(Gdk.Event ev) {
-			OnQuit();
+			OnQuit ();
 			return true;
 		}
 
@@ -297,7 +297,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			var pw = new Ragui.PreferencesWindow ();
 			pw.window_position = WindowPosition.CENTER;
 			pw.transient_for = this;
-			pw.show_all();
+			pw.show_all ();
 		}
 
 		public void OnMenuHelpAbout () {
@@ -343,7 +343,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			body.diff.file_open.connect (() => {
 						var ret = gc.show_file_open ("Select second file");
 						if (ret != null) {
-							var core = new RCore();
+							var core = new RCore ();
 							core.file_open (ret, 0, 0);
 							if (core.file != null) {
 								core.bin_load (null);
@@ -357,6 +357,10 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			box_body.show_all ();
 			panel.hide ();
 			body.show_all ();
+/*
+	body.nb2.show_all();
+	body.nb.hide ();
+*/
 			//menu_view.sensitive = true;
 			//menu_edit.sensitive = true;
 			menu_mode.sensitive = true;

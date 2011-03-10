@@ -17,6 +17,7 @@ public class Ragui.GuiCore {
 	public GuiCoreMode type;
 	public Window window;
 	public bool debugger;
+	public string? prjfile = null;
 
 	public GuiCore (Window window, string arg0) {
 		core = new RCore ();
@@ -31,7 +32,9 @@ public class Ragui.GuiCore {
 	}
 
 	public void project_save (string? file) {
-		// open gtk dialog and so on.. 
+		prjfile = file;
+		core.project_save (gc.prjfile);
+		show_message ("Project "+gc.prjfile+" saved");
 	}
 
 	public void project_close () {
@@ -168,18 +171,22 @@ public class Ragui.GuiCore {
 		return ret;
 	}
 
-	public string? show_input (string question) {
+	public string? show_input (string question, string? txt = null) {
 		var e = new Entry ();
 		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,
 				MessageType.QUESTION, ButtonsType.YES_NO, question);
 		var foo = (VBox)md.get_content_area ();
+		if (txt != null)
+			e.text = txt;
 		foo.pack_start (e, false, false, 5);
 		md.show_all ();
 		var ret = md.run ();
+		string? text = e.text;
 		md.destroy ();
-		if (ret == 0)
+		if (ret == -9) // Why -9 means NO ? dunno .. but seems to works
 			return null;
-		return e.text;
+		print ("ret is %d\n", ret);
+		return text;
 	}
 
 	public bool show_yesno (string question) {
@@ -251,7 +258,6 @@ public class Ragui.GuiCore {
 	static void main(string[] args) {
 		Gtk.init (ref args);
 		var gc = new GuiCore (new Window (WindowType.TOPLEVEL), args[0]);
-		gc.show_input ("jiji");
 	}
 #endif
 }

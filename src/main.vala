@@ -8,10 +8,11 @@ using Gtk;
 public class Ragui.Main {
 	public static void quit_program () {
 		print ("Thanks for watching :)\n");
-		Gtk.main_quit();
+		Gtk.main_quit ();
 	}
 
 	public static string script = "";
+	public static string project = "";
 	public static bool norc = true;
 	public static bool debugger = false;
 	[CCode (array_length = false, array_null_terminated = true)]
@@ -19,6 +20,7 @@ public class Ragui.Main {
 
 	static const OptionEntry[] options = {
 		{ "debugger", 'd', 0, OptionArg.NONE, ref debugger, "Run in debugger mode", null },
+		{ "project", 'p', 0, OptionArg.FILENAME, ref project, "Open project file", null },
 		{ "norc", 'n', 0, OptionArg.NONE, ref norc, "Do not load RC file", null },
 		{ "script", 's', 0, OptionArg.FILENAME, ref script, "Run script after loading file", "FILE" },
 		{ "", 0, 0, OptionArg.FILENAME_ARRAY, ref files, null, "FILE..." },
@@ -60,6 +62,24 @@ public class Ragui.Main {
 		gc.core.config.set ("scr.color", "false");
 		gc.core.config.set ("asm.stackptr", "false");
 		gc.debugger = debugger; // set gui mode in debugger mode
+		if (project != null && project != "") {
+			var file = gc.core.project_info (project);
+			if (file != null) {
+				gc.core.file_open (file, 0, 0);
+				if (gc.core.file != null) {
+					gc.core.bin_load (null);
+					gc.project_open (project);
+					mw.view_body ();
+					mw.title = "ragui : %s".printf (file);
+				} else {
+					gc.show_error ("Cannot open file referenced by the project");
+					mw.view_panel ();
+				}
+			} else {
+				gc.show_error ("Cannot open project");
+				mw.view_panel ();
+			}
+		} else
 		if (files != null) {
 			gc.core.file_open (files[0], 0, 0);
 			if (gc.core.file != null) {

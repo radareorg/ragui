@@ -35,9 +35,15 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 						}
 					}
 				}
-
 				VBox add2 {
+/*
 					// TODO: set each tab to a var, and use it from see code/graph
+					Notebook $nb2 expand scrollable tab-vborder=1 switch-page=chtab {
+						VBox {
+							tab-label { Label label="PENIS"; }
+						}
+					}
+*/
 					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
 						VBox $.page_code {
 							tab-label { Label label="code"; }
