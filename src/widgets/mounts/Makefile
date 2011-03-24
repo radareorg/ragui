@@ -1,4 +1,4 @@
-VALAFLAGS=--pkg gtk+-2.0 --pkg r_core --vapidir=../include --Xcc=-I../include --pkg listview
+VALAFLAGS=--pkg gtk+-2.0 --pkg r_core --pkg r_fs --vapidir=../include --Xcc=-I../include --pkg listview
 CFILES=mounts.c
 OFILES=$(subst .c,.o,$(CFILES))
 

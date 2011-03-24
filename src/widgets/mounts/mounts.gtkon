@@ -5,15 +5,18 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		ComboBox !expand $fstype text;
 		Entry $mountpoint;
 		Entry $offset;
-		Button !expand label=mount;
-		Button !expand label=umount;
+		Button !expand label=mount clicked=do_mount;
+//		Button !expand label=umount clicked=do_umount;
 	}
 	VPaned position=200 {
 		Listview:Widget $listview;
 		Listview:Widget $dirs add2;
 	}
 -{
-	public Widget() {
+	RFS *fs;
+
+	public Widget(RFS *fsystem) {
+		fs = fsystem;
 		fstype.append_text ("cpio");
 		fstype.append_text ("ext2");
 		fstype.append_text ("fat");
@@ -34,6 +37,36 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		fstype.set_active (0);
 		mountpoint.text = "/";
 		offset.text = "0";
+		listview.set_actions ("Show", "Umount");
+		listview.menu_handler.connect ((action,row) => 
+				{
+					switch (action) {
+					case "Show":
+						if (fs != null) {
+							var dirs = fs->dir (row.name);
+							if ((int)dirs.length > 0) {
+								foreach (var item in dirs)
+									stdout.printf(row.name);
+							}
+						} else {
+							stdout.printf(row.name);
+						}
+						break;
+					case "Umount":
+						stdout.printf("Umount\n");
+						break;
+					}
+				});
+	}
+
+	//TODO: Dont mount twice same path
+	public void do_mount () {
+		fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse(offset.text));
+		listview.add_row (0, mountpoint.text);
+	}
+
+	public void do_umount () {
+		//TODO:
 	}
 }-
 }
