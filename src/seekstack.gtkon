@@ -1,5 +1,5 @@
 HBox using=Gtk using:Ragui=Ragui $Ragui.SeekStack {
-	Button label="&lt;" !expand clicked=undo_seek $prev;
+	Button label="<" !expand clicked=undo_seek $prev;
 	Button label=">" !expand clicked=redo_seek $next;
 	Label label=" offset: " !expand;
 	Entry text="" $entry activate=entry_activated;

@@ -15,8 +15,8 @@ VBox $Mounts.Widget using=Gtk border-width=5
 -{
 	RFS *fs;
 
-	public Widget(RFS *fsystem) {
-		fs = fsystem;
+	public Widget(RFS fsystem) {
+		this.fs = fsystem;
 		fstype.append_text ("cpio");
 		fstype.append_text ("ext2");
 		fstype.append_text ("fat");

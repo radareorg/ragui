@@ -77,7 +77,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 						}
 						VBox {
 							tab-label { Label label="files"; }
-							Mounts:Widget $mounts fsystem=gc.core.fs;
+							Mounts:Widget $mounts  fsystem='gc.core.fs';
 						}
 						VBox {
 							tab-label { Label label="bindiff"; }
