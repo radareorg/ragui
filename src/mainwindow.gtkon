@@ -7,7 +7,6 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 	using:Grasmwidget="Grasmwidget"
 	using:Codeview="Codeview"
 	using:Hexview="Hexview"
-	using:Mounts="Mounts"
 	using:Listview="Listview"
 	using:Gracalc="Gracalc"
 {

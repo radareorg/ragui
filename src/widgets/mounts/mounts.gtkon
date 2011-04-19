@@ -13,10 +13,10 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		Listview:Widget $dirs add2;
 	}
 -{
-	RFS *fs;
+	public RFS *fs = null;
 
-	public Widget(RFS fsystem) {
-		this.fs = fsystem;
+	public Widget() { //RFS fsystem) {
+print ("Setting fsystem pointer to : %p\n", fs);
 		fstype.append_text ("cpio");
 		fstype.append_text ("ext2");
 		fstype.append_text ("fat");
@@ -38,35 +38,45 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		mountpoint.text = "/";
 		offset.text = "0";
 		listview.set_actions ("Show", "Umount");
-		listview.menu_handler.connect ((action,row) => 
-				{
-					switch (action) {
-					case "Show":
-						if (fs != null) {
-							var dirs = fs->dir (row.name);
-							if ((int)dirs.length > 0) {
-								foreach (var item in dirs)
-									stdout.printf(row.name);
-							}
-						} else {
-							stdout.printf(row.name);
-						}
-						break;
-					case "Umount":
-						stdout.printf("Umount\n");
-						break;
+		listview.menu_handler.connect ((action, row) => {
+			if (fs == null) {
+				stderr.printf ("Oops: fs is null\n");
+				return;
+			}
+			switch (action) {
+			case "Show":
+				var dirs = fs->dir (row.name);
+				if (dirs.length () > 0) {
+					foreach (var file in dirs) {
+						print (@"$(file.name) ($(file.size))");
 					}
-				});
+				} else print (@"Directory $(row.name) is empty!");
+				break;
+			case "Umount":
+				print (@"Umount $(row.name)\n");
+				do_umount (row.name);
+				break;
+			}
+		});
 	}
 
 	//TODO: Dont mount twice same path
 	public void do_mount () {
-		fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse(offset.text));
-		listview.add_row (0, mountpoint.text);
+		fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse (offset.text));
+		update_list ();
 	}
 
-	public void do_umount () {
-		//TODO:
+	public void update_list () {
+		listview.clear ();
+		foreach (var root in fs->roots) {
+			print (@"MOUNT ($(root.delta)) ($(root.path))\n");
+			listview.add_row (root.delta, root.path);
+		}
+	}
+
+	public void do_umount (string path) {
+		fs->umount (path);
+		update_list ();
 	}
 }-
 }
