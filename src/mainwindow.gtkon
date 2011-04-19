@@ -9,6 +9,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 	using:Hexview="Hexview"
 	using:Listview="Listview"
 	using:Gracalc="Gracalc"
+	using:BugDialog="BugDialog"
 {
 	VBox border-width=1 {
 		MenuBar !expand {
@@ -99,6 +100,7 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 				submenu {
 					Menu {
 						ImageMenuItem stock-id="API documentation" activate="OnMenuHelpAPI";
+						ImageMenuItem stock-id="Report issue" activate="OnReportBug";
 						ImageMenuItem stock-id="gtk-help";
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="gtk-about" activate="OnMenuHelpAbout";
@@ -303,6 +305,11 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 			aboutdialog.transient_for = this;
 			aboutdialog.run ();
 			aboutdialog.hide ();
+		}
+
+		public void OnReportBug () {
+			var bd = new BugDialog.Widget ();
+			bd.show_all ();
 		}
 
 		public void OnMenuHelpAPI () {

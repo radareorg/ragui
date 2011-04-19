@@ -1,0 +1,33 @@
+Window $BugDialog.Widget using=Gtk {
+	VBox border-width=5 {
+		HBox !expand spacing=3 {
+			Label !expand label="Description";
+			Entry $desc;
+		}
+		ScrolledWindow can-focus $.scroll padding=3
+				hscrollbar-policy="{PolicyType.AUTOMATIC}"
+				vscrollbar-policy="{PolicyType.AUTOMATIC}" {
+			TextView can-focus editable $.msg;
+		}
+		HBox !expand spacing=3 {
+			ComboBox !expand $bugtype text;
+			Label label="";
+			Button !expand label=Send clicked=do_send;
+		}
+	}
+-{
+	public Widget() {
+		title = "Report issue";
+		resize (400, 300);
+		bugtype.append_text ("Bug Report");
+		bugtype.append_text ("Usability Issue");
+		bugtype.append_text ("Feature Request");
+		bugtype.append_text ("Unimplemented");
+		bugtype.set_active (0);
+	}
+
+	public void do_send () {
+		// send foo
+	}
+}-
+}

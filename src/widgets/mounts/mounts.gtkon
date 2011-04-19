@@ -51,7 +51,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 					print ("Directory list:\n");
 					dirs.clear ();
 					foreach (var file in ds) {
-						print (@" -- $(file.name) ($(file.size))\n");
+						// print (@" -- $(file.name) ($(file.size))\n");
 						dirs.add_row (file.size, file.name);
 					}
 				} else print (@"Directory $(row.name) is empty!");
@@ -76,7 +76,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 	public void update_list () {
 		listview.clear ();
 		foreach (var root in fs->roots) {
-			print (@"MOUNT ($(root.delta)) ($(root.path))\n");
+			//print (@"MOUNT ($(root.delta)) ($(root.path))\n");
 			listview.add_row (root.delta, root.path);
 		}
 	}
