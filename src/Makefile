@@ -1,7 +1,7 @@
 CC?=gcc
 BIN=ragui
 #BIN=ragui.exe
-R2DEPS=r_asm r_util r_core
+R2DEPS=r_asm r_util r_core r_socket
 VALAC?=valac
 GTKAMLC?=gtkamlc
 MD5=./chkts

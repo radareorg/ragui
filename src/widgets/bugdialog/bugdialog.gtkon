@@ -1,4 +1,4 @@
-Window $BugDialog.Widget using=Gtk {
+Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 	VBox border-width=5 {
 		HBox !expand spacing=3 {
 			Label !expand label="Description";
@@ -7,7 +7,7 @@ Window $BugDialog.Widget using=Gtk {
 		ScrolledWindow can-focus $.scroll padding=3
 				hscrollbar-policy="{PolicyType.AUTOMATIC}"
 				vscrollbar-policy="{PolicyType.AUTOMATIC}" {
-			TextView can-focus editable $.msg;
+			TextView can-focus editable $.body;
 		}
 		HBox !expand spacing=3 {
 			ComboBox !expand $bugtype text;
@@ -27,7 +27,20 @@ Window $BugDialog.Widget using=Gtk {
 	}
 
 	public void do_send () {
-		// send foo
+		int code;
+		var uri = "http://radare.org/report/mail.php";
+		var str = RSocket.http_post (uri,
+			@"title=$(desc.text)&body=$(body.buffer.text)", out code);
+		if (code == 200) {
+			print (@"Report done!\n$str\n");
+			send_ok ();
+		} else {
+			print ("Oops. problem here :(\n");
+			send_fail ();
+		}
 	}
+
+	public signal void send_ok ();
+	public signal void send_fail ();
 }-
 }
