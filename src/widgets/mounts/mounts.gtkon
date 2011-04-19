@@ -15,8 +15,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 -{
 	public RFS *fs = null;
 
-	public Widget() { //RFS fsystem) {
-print ("Setting fsystem pointer to : %p\n", fs);
+	public Widget() {
 		fstype.append_text ("cpio");
 		fstype.append_text ("ext2");
 		fstype.append_text ("fat");
@@ -39,16 +38,21 @@ print ("Setting fsystem pointer to : %p\n", fs);
 		offset.text = "0";
 		listview.set_actions ("Show", "Umount");
 		listview.menu_handler.connect ((action, row) => {
-			if (fs == null) {
+			if (fs == null || row == null) {
 				stderr.printf ("Oops: fs is null\n");
 				return;
 			}
 			switch (action) {
 			case "Show":
-				var dirs = fs->dir (row.name);
-				if (dirs.length () > 0) {
-					foreach (var file in dirs) {
-						print (@"$(file.name) ($(file.size))");
+				// TODO: show list in treeview
+				var ds = fs->dir (row.name);
+				if (ds != null)
+				if (ds.length () > 0) {
+					print ("Directory list:\n");
+					dirs.clear ();
+					foreach (var file in ds) {
+						print (@" -- $(file.name) ($(file.size))\n");
+						dirs.add_row (file.size, file.name);
 					}
 				} else print (@"Directory $(row.name) is empty!");
 				break;
@@ -62,8 +66,11 @@ print ("Setting fsystem pointer to : %p\n", fs);
 
 	//TODO: Dont mount twice same path
 	public void do_mount () {
-		fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse (offset.text));
-		update_list ();
+		void *p = fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse (offset.text));
+		if (p == null) {
+			// TODO: how to call gc.show_error() ?
+			stderr.printf ("Cannot mount\n");
+		} else update_list ();
 	}
 
 	public void update_list () {

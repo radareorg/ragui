@@ -11,7 +11,7 @@ clean:
 
 mrproper: clean
 	cd src/widgets && ${MAKE} clean
-	rm src/widgets.done
+	rm -f src/widgets.done
 	rm -rf ragui-*
 
 bindist:
