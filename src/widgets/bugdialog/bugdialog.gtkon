@@ -4,15 +4,16 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 			Label !expand label="Description";
 			Entry $desc;
 		}
+		Label $foo label='' !expand;
 		ScrolledWindow can-focus $.scroll padding=3
 				hscrollbar-policy="{PolicyType.AUTOMATIC}"
 				vscrollbar-policy="{PolicyType.AUTOMATIC}" {
-			TextView can-focus editable $.body;
+			TextView can-focus editable $.body wrap-mode=WrapMode.WORD;
 		}
 		HBox !expand spacing=3 {
 			ComboBox !expand $bugtype text;
 			Label label="";
-			Button !expand label=Send clicked=do_send;
+			Button !expand label=Send clicked=do_send_thread;
 		}
 	}
 -{
@@ -26,18 +27,62 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 		bugtype.set_active (0);
 	}
 
-	public void do_send () {
-		int code;
-		var uri = "http://radare.org/report/mail.php";
-		var str = RSocket.http_post (uri,
-			@"title=$(desc.text)&body=$(body.buffer.text)", out code);
-		if (code == 200) {
-			print (@"Report done!\n$str\n");
-			send_ok ();
-		} else {
-			print ("Oops. problem here :(\n");
+	int code;
+        private unowned Thread<void*> th;
+
+	public void ui_lock() {
+		//bugtype.focus_on_click = false;
+		body.editable = false;
+		desc.editable = false;
+		foo.label = "Sending message...";
+	}
+
+	public void ui_unlock() {
+		//bugtype.focus_on_click = true;
+		foo.label = "";
+		body.editable = true;
+		desc.editable = true;
+	}
+
+	public void do_send_thread() {
+		if (desc.text == "" || body.buffer.text == "") {
 			send_fail ();
+			return;
 		}
+		ui_lock ();
+                try {
+                        th = Thread.create <void*>( () => {
+				do_send ();
+                                return null;
+                        }, true);
+                        Thread.create <void*> ( () => {
+                                th.join ();
+                                Idle.add (() => {
+					if (code == 200) {
+						print ("Thanks!\n\n");
+						send_ok ();
+					} else {
+						print ("Oops. problem here :(\n");
+						send_fail ();
+					}
+					ui_unlock ();
+                                        return false;
+                                });
+                                return null;
+                        }, true);
+                } catch (ThreadError e) {
+			print ("The impossible happened!\n");
+                        //send_fail ();
+                }
+	}
+
+	public void do_send () {
+		var uri = "http://radare.org/report/mail.php";
+		var from = Environment.get_user_name ();
+		var kind = bugtype.get_active_text ();
+		var subject = desc.text;
+		var message = "Type: "+kind+"\n\n"+body.buffer.text;
+		RSocket.http_post (uri, @"from=$from&title=$subject&body=$message", out code);
 	}
 
 	public signal void send_ok ();
