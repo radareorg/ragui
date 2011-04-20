@@ -1,4 +1,5 @@
 Window $BugDialog.Widget using=Gtk using:Radare=Radare {
+// TODO: implement delete-event=on_delete {
 	VBox border-width=5 {
 		HBox !expand spacing=3 {
 			Label !expand label="Description";
@@ -13,13 +14,14 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 		HBox !expand spacing=3 {
 			ComboBox !expand $bugtype text;
 			Label label="";
-			Button !expand label=Send clicked=do_send_thread;
+			Button $butt !expand label=Send clicked=do_send_thread;
 		}
 	}
 -{
 	public Widget() {
 		title = "Report issue";
 		resize (400, 300);
+		position = WindowPosition.CENTER;
 		bugtype.append_text ("Bug Report");
 		bugtype.append_text ("Usability Issue");
 		bugtype.append_text ("Feature Request");
@@ -27,26 +29,47 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 		bugtype.set_active (0);
 	}
 
-	int code;
+	public int code;
         private unowned Thread<void*> th;
 
+	public bool on_delete () {
+		// cannot kill a thread.. just let it go //
+		if (th != null || ui_is_locked) {
+			//th.exit (null);
+			//message ("Operatation cancelled");
+			return false;
+		}
+		return true;
+	}
+
+	public void close () {
+		this.hide ();
+		this.destroy ();
+	}
+
+	public bool ui_is_locked = false;
+
 	public void ui_lock() {
-		//bugtype.focus_on_click = false;
-		body.editable = false;
-		desc.editable = false;
+		ui_is_locked = true;
+		body.editable =
+		desc.editable =
+		butt.sensitive =
+		bugtype.sensitive = false;
 		foo.label = "Sending message...";
 	}
 
 	public void ui_unlock() {
-		//bugtype.focus_on_click = true;
+		ui_is_locked = false;
 		foo.label = "";
-		body.editable = true;
-		desc.editable = true;
+		body.editable =
+		desc.editable =
+		butt.sensitive =
+		bugtype.sensitive = true;
 	}
 
 	public void do_send_thread() {
 		if (desc.text == "" || body.buffer.text == "") {
-			send_fail ();
+			message ("Empty fields?", false);
 			return;
 		}
 		ui_lock ();
@@ -58,12 +81,13 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
                         Thread.create <void*> ( () => {
                                 th.join ();
                                 Idle.add (() => {
+					/* fix segfault if operation was cancelled */
+					if (this == null)
+						return false;
 					if (code == 200) {
-						print ("Thanks!\n\n");
-						send_ok ();
+						message ("Thanks! Your bug report has been sent!", true);
 					} else {
-						print ("Oops. problem here :(\n");
-						send_fail ();
+						message ("Uhmf.. there was a problem sending your report :(\n", false);
 					}
 					ui_unlock ();
                                         return false;
@@ -71,8 +95,7 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
                                 return null;
                         }, true);
                 } catch (ThreadError e) {
-			print ("The impossible happened!\n");
-                        //send_fail ();
+			message ("The impossible happened!\n", false);
                 }
 	}
 
@@ -82,10 +105,14 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 		var kind = bugtype.get_active_text ();
 		var subject = desc.text;
 		var message = "Type: "+kind+"\n\n"+body.buffer.text;
+		// base64 encoding //
+		from = Base64.encode (from.data);
+		subject = Base64.encode (subject.data);
+		message = Base64.encode (message.data);
+		// send //
 		RSocket.http_post (uri, @"from=$from&title=$subject&body=$message", out code);
 	}
 
-	public signal void send_ok ();
-	public signal void send_fail ();
+	public signal void message (string msg, bool pini);
 }-
 }

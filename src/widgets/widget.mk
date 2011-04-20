@@ -2,6 +2,7 @@ CFILES=$(subst .gtkon,.c,$(GTKONFILES))
 VALAFLAGS= --vapidir=../include --Xcc=-I../include 
 VALAFLAGS+=$(addprefix --pkg ,$(PACKAGES))
 OFILES=$(subst .c,.o,$(CFILES))
+CFLAGS+=-g -O0
 
 all: main
 
