@@ -92,7 +92,7 @@ guicore:
 	valac --define=TEST guicore.vala --pkg r_core --pkg gtk+-2.0
 
 vapi:
-	valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
+	@valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
 
 tstamp_begin:
 	@${MD5} *.gtkon ${OVALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp 2>/dev/null

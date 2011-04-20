@@ -310,9 +310,9 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 		public void OnReportBug () {
 			var bd = new BugDialog.Widget ();
 			bd.send_ok.connect (()=> {
-				gc.show_message ("Bug report sent successfully");
-				bd.hide ();
-				bd = null;
+				gc.show_message ("Thanks! Bug report sent successfully");
+			//	bd.hide ();
+			//	bd = null;
 			});
 			bd.send_fail.connect (()=> {
 				gc.show_error ("There was an error sending the report :(");
