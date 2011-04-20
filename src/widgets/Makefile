@@ -2,6 +2,7 @@ RANLIB?=ranlib
 
 all:
 	mkdir -p include
+	cd bugdialog && ${MAKE} lib
 	cd segmentbar && ${MAKE} lib
 	cd gracalc && ${MAKE} lib
 	cd grava && ${MAKE} lib
