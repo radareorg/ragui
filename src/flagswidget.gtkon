@@ -21,7 +21,7 @@ VBox using=Gtk $Flags.Widget using:posix=Posix {
 		int space = gc.core.flags.space_idx;
 //Posix.exit (0);
 		// TODO: fill treeview with flags.. needs RFlags work
-		string nam = cb.get_active_text ();
+		//string nam = cb.get_active_text ();
 		foreach (var f in gc.core.flags.flags) {
 			if (space == f.space) {
 				print ("GO FLAG YOURSELF "+f.name+"\n");

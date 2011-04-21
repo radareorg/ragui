@@ -267,7 +267,7 @@ print (@"Go disasm $offset\n");
 					break;
 				case "rename":
 					// TODO: rename what? function? symbol? flag?
-					var nam = show_input ("New name for function "+d.name, d.name);
+					var nam = gc.show_input ("New name for function "+d.name, d.name);
 					foreach (var fun in gc.core.anal.get_fcns ()) {
 						if (d.name == fun.name) {
 							fun.name = nam;

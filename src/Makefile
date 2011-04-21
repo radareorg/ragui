@@ -7,8 +7,6 @@ GTKAMLC?=gtkamlc
 MD5=./chkts
 #MD5=md5sum
 
-PACKAGES=bugdialog
-
 PKG=--pkg gtk+-2.0 --pkg codeview --pkg hexview --pkg listview
 PKG+=--pkg grasmwidget --pkg r_util --pkg r_asm --pkg grava --pkg bugdialog
 PKG+=--pkg posix
@@ -22,6 +20,7 @@ PKG+=--Xcc=-Iwidgets/include
 PKG+=--pkg r_core
 VALAFLAGS=${PKG} --thread
 
+#PACKAGES=bugdialog
 #PKGMKS=$(addprefix --pkg ,${PACKAGES})
 #WIDGETS+=...
 
@@ -29,11 +28,11 @@ WIDGETS+=widgets/bugdialog/libbugdialog.a
 WIDGETS+=widgets/gradiff/libgradiff.a
 WIDGETS+=widgets/grava/libgrava.a
 WIDGETS+=widgets/gracalc/libgracalc.a
-WIDGETS+=widgets/codew/libcodew.a
+WIDGETS+=widgets/codeview/libcodeview.a
 WIDGETS+=widgets/hexview/libhexview.a
 WIDGETS+=widgets/grabin/libgrabin.a
 WIDGETS+=widgets/listview/liblistview.a
-WIDGETS+=widgets/segmentbar/libsegbar.a
+WIDGETS+=widgets/segmentbar/libsegmentbar.a
 WIDGETS+=widgets/texttagview/libtexttagview.a
 WIDGETS+=widgets/grasm/libgrasm.a
 WIDGETS+=widgets/mounts/libmounts.a

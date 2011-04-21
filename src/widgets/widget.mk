@@ -14,9 +14,9 @@ VALALIBFLAGS=--library ${LIBNAME} --vapi=../include/${LIBNAME}.vapi -H ../includ
 OFILES=$(subst .c,.o,$(CFILES))
 CFLAGS+=-g -O0
 
-all: main
+all: lib
 
-main: ${LIBFILE}
+lib: ${LIBFILE}
 
 ${LIBFILE}: ${OFILES}
 	rm -f ${LIBFILE}

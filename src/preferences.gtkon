@@ -137,9 +137,9 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 
 	private void OnButtonCloseClicked() {
 		/* save remaining changes */
-		var lw = lineswidth.text.to_int ();
+		int lw = int.parse (lineswidth.text);
 		if (lw>0) gc.core.config.set_i ("asm.lineswidth", lw);
-		var ob = opcodebytes.text.to_int ();
+		int ob = int.parse (opcodebytes.text);
 		if (ob>0) gc.core.config.set_i ("asm.nbytes", ob);
 
 		this.hide ();

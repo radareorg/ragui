@@ -16,7 +16,7 @@ VBox using=Gtk $Ragui.OpenProcess border_width=5 spacing=5 {
 
 		public int get_pid () {
 			string pidstr = pids.get_active_text ();
-			return pidstr.to_int ();
+			return int.parse (pidstr);
 		}
 
 		public OpenProcess () {
