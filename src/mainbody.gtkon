@@ -124,7 +124,7 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				now = "disasm";
 			} else
 			if ((void *)page == (void *)page_data) {
-				now = "see data";
+				now = "hexdump";
 			} else
 			if ((void *)page == (void *)page_graph) {
 				now = "graph";
@@ -207,22 +207,24 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 					listview.set_actions ("copy");
 					break;
 				case "Relocations":
-					listview.set_actions ("see code", "see data");
+					listview.set_actions ("see code", "hexdump");
 					break;
 				case "Breakpoints":
 					listview.set_actions ("add", "remove", "enable", "disable");
 					break;
 				case "Sections":
-					listview.set_actions ("see code", "see data", "resize", "delete", "dump", "restore", "change perms");
+					listview.set_actions ("see code", "hexdump", "resize", "delete", "dump", "restore", "change perms");
 					break;
 				case "Functions":
+					listview.set_actions ("rename", "disasm", "graph", "analyze", "set breakpoint");
+					break;
 				case "Files":
 				case "Libraries":
 				case "Entry Points":
 				case "Strings":
 				case "Imports":
 				case "Symbols":
-					listview.set_actions ("disasm", "see data", "graph", "analyze", "set breakpoint");
+					listview.set_actions ("disasm", "hexdump", "graph", "analyze", "set breakpoint");
 					break;
 				case "Processes":
 					listview.set_actions ("attach", "stop", "continue", "kill");
@@ -263,7 +265,18 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 print (@"Go disasm $offset\n");
 					disasm.goto (offset);
 					break;
-				case "see data":
+				case "rename":
+					// TODO: rename what? function? symbol? flag?
+					var nam = show_input ("New name for function "+d.name, d.name);
+					foreach (var fun in gc.core.anal.get_fcns ()) {
+						if (d.name == fun.name) {
+							fun.name = nam;
+							// TODO: update row
+							break;
+						}
+					}
+					break;
+				case "hexdump":
 					ss_data.goto (offset);
 				//	hexview.seek (offset);
 					break;

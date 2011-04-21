@@ -52,7 +52,7 @@ public class Listview.Widget : ScrolledWindow {
 			GLib.List<unowned Gtk.TreePath> list = sel.get_selected_rows (out m);
 			foreach (var row in list) {
 				var nth = row.to_string ();
-				data = rows.nth_data (nth.to_int ());
+				data = rows.nth_data (int.parse (nth));
 				break;
 			}
 		}
