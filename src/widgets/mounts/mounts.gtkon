@@ -1,5 +1,6 @@
 VBox $Mounts.Widget using=Gtk border-width=5
 		using:Radare="Radare" 
+		using:Gdk="Gdk" 
 		using:Listview="Listview" {
 	HBox !expand spacing=3 {
 		ComboBox !expand $fstype text;
@@ -10,10 +11,12 @@ VBox $Mounts.Widget using=Gtk border-width=5
 	}
 	VPaned position=200 {
 		Listview:Widget $listview;
-		Listview:Widget $dirs add2;
+		IconView $dirs add2 button_release_event=rclick button_press_event=dclick;
 	}
 -{
 	public RFS *fs = null;
+	public ListStore model;
+	public StringBuilder path;
 
 	public Widget() {
 		fstype.append_text ("cpio");
@@ -44,17 +47,8 @@ VBox $Mounts.Widget using=Gtk border-width=5
 			}
 			switch (action) {
 			case "Show":
-				// TODO: show list in treeview
-				var ds = fs->dir (row.name);
-				if (ds != null)
-				if (ds.length () > 0) {
-					print ("Directory list:\n");
-					dirs.clear ();
-					foreach (var file in ds) {
-						// print (@" -- $(file.name) ($(file.size))\n");
-						dirs.add_row (file.size, file.name);
-					}
-				} else print (@"Directory $(row.name) is empty!");
+				path = new StringBuilder (row.name);
+				update_icons ();
 				break;
 			case "Umount":
 				print (@"Umount $(row.name)\n");
@@ -62,6 +56,13 @@ VBox $Mounts.Widget using=Gtk border-width=5
 				break;
 			}
 		});
+		model = new ListStore (3, typeof (string), typeof (Gdk.Pixbuf), typeof (RFSFile));
+		dirs.model = (model);
+		dirs.set_item_width (100);
+		dirs.set_columns (0);
+		dirs.set_orientation (Orientation.VERTICAL);
+		dirs.set_text_column (0);
+		dirs.set_pixbuf_column (1);
 	}
 
 	//TODO: Dont mount twice same path
@@ -70,7 +71,9 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		if (p == null) {
 			// TODO: how to call gc.show_error() ?
 			stderr.printf ("Cannot mount\n");
-		} else update_list ();
+		} else {
+			update_list ();
+		}
 	}
 
 	public void update_list () {
@@ -81,9 +84,80 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		}
 	}
 
-	public void do_umount (string path) {
-		fs->umount (path);
+	public void do_umount (string str) {
+		fs->umount (str);
 		update_list ();
+	}
+
+	public void update_icons () {
+		TreeIter iter;
+
+//TODO: Chop_path
+		var ds = fs->dir (path.str);
+		if (ds != null) {
+			if (ds.length () > 0) {
+				model.clear ();
+				foreach (var file in ds) {
+					var pbuf = dirs.render_icon (
+							(file.type == 'd')?Stock.OPEN:Stock.FILE,
+							IconSize.LARGE_TOOLBAR, null);
+					model.append (out iter);
+					model.set (iter, 0, file.name, 1, pbuf, 2, file);
+				}
+			} else print (@"Directory $(path.str) is empty!\n");
+		}
+	}
+
+	private bool rclick (Gtk.Widget _w, Gdk.EventButton eb) {
+		if (eb.button != 3)
+			return false;
+		var menu = new Menu();
+
+		var imi = new ImageMenuItem.with_label ("Back");
+		imi.activate.connect ((x)=> {
+				path.append("/..");
+				update_icons ();
+				});
+		menu.append (imi);
+		imi = new ImageMenuItem.with_label ("Dump to file");
+		imi.activate.connect ((x)=> { print ("TODO\n"); });
+		menu.append (imi);
+		imi = new ImageMenuItem.with_label ("Properties");
+		imi.activate.connect ((x)=> {
+				var item = get_item ();
+				stdout.printf ("Name: %s\nType: %c\n", item.name, item.type);
+				});
+		menu.append (imi);
+
+		menu.show_all ();
+		menu.popup (null, null, null, 0, 0);
+		return false;
+	}
+
+	public bool dclick (Gtk.Widget _w , Gdk.EventButton eb) {
+		switch (eb.type) {
+			case EventType.@2BUTTON_PRESS:
+				var item = get_item ();
+				if (item == null || item.type != 'd')
+					return false;
+				path.append (@"/$(item.name)");
+				update_icons ();
+				return true; // does not pass the event to the rest of widgets
+		}
+		return false;
+	}
+
+	public RFSFile get_item () {
+		TreeIter iter;
+		RFSFile file = null;
+		GLib.List<unowned Gtk.TreePath> list = dirs.get_selected_items (); 
+
+		if (list == null || list.length () == 0)
+			return file;
+		var model = dirs.get_model (); 
+		if (model.get_iter (out iter, (TreePath)list.data))
+			model.get (iter, 2, out file);
+		return file;
 	}
 }-
 }
