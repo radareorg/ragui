@@ -1,6 +1,6 @@
 VBox $Mounts.Widget using=Gtk border-width=5
-		using:Radare="Radare" 
-		using:Gdk="Gdk" 
+		using:Radare="Radare"
+		using:Gdk="Gdk"
 		using:Listview="Listview" {
 	HBox !expand spacing=3 {
 		ComboBox !expand $fstype text;
@@ -11,12 +11,14 @@ VBox $Mounts.Widget using=Gtk border-width=5
 	}
 	VPaned position=200 {
 		Listview:Widget $listview;
-		IconView $dirs add2 button_release_event=rclick button_press_event=dclick;
+		ScrolledWindow $scroll add2 {
+			IconView $dirs button_release_event=rclick button_press_event=dclick;
+		}
 	}
 -{
 	public RFS *fs = null;
 	public ListStore model;
-	public StringBuilder path;
+	private string path;
 
 	public Widget() {
 		fstype.append_text ("cpio");
@@ -47,7 +49,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 			}
 			switch (action) {
 			case "Show":
-				path = new StringBuilder (row.name);
+				path = row.name;
 				update_icons ();
 				break;
 			case "Umount":
@@ -65,7 +67,6 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		dirs.set_pixbuf_column (1);
 	}
 
-	//TODO: Dont mount twice same path
 	public void do_mount () {
 		void *p = fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse (offset.text));
 		if (p == null) {
@@ -91,9 +92,10 @@ VBox $Mounts.Widget using=Gtk border-width=5
 
 	public void update_icons () {
 		TreeIter iter;
+		RList<RFSFile> ds;
 
-//TODO: Chop_path
-		var ds = fs->dir (path.str);
+		chop_path ();
+		ds = fs->dir (path);
 		if (ds != null) {
 			if (ds.length () > 0) {
 				model.clear ();
@@ -104,30 +106,43 @@ VBox $Mounts.Widget using=Gtk border-width=5
 					model.append (out iter);
 					model.set (iter, 0, file.name, 1, pbuf, 2, file);
 				}
-			} else print (@"Directory $(path.str) is empty!\n");
+			} else print (@"Directory $(path) is empty!\n");
 		}
 	}
 
 	private bool rclick (Gtk.Widget _w, Gdk.EventButton eb) {
+		RFSFile *item = get_item ();
 		if (eb.button != 3)
 			return false;
 		var menu = new Menu();
 
 		var imi = new ImageMenuItem.with_label ("Back");
 		imi.activate.connect ((x)=> {
-				path.append("/..");
+				path += "/..";
 				update_icons ();
 				});
 		menu.append (imi);
-		imi = new ImageMenuItem.with_label ("Dump to file");
-		imi.activate.connect ((x)=> { print ("TODO\n"); });
-		menu.append (imi);
-		imi = new ImageMenuItem.with_label ("Properties");
-		imi.activate.connect ((x)=> {
-				var item = get_item ();
-				stdout.printf ("Name: %s\nType: %c\n", item.name, item.type);
-				});
-		menu.append (imi);
+
+		if (item != null) {
+			if (item->type == 'd') {
+				imi = new ImageMenuItem.with_label ("Open");
+				imi.activate.connect ((x)=> {
+						if (item == null || item->type != 'd')
+							return;
+						path += "/"+item->name;
+						update_icons ();
+						});
+				menu.append (imi);
+			} else {
+				imi = new ImageMenuItem.with_label ("Dump to file");
+				imi.activate.connect ((x)=> { dump_file (item->name); });
+				menu.append (imi);
+
+			}
+			imi = new ImageMenuItem.with_label ("Properties");
+			imi.activate.connect ((x)=> { properties_menu (item); });
+			menu.append (imi);
+		}
 
 		menu.show_all ();
 		menu.popup (null, null, null, 0, 0);
@@ -137,27 +152,96 @@ VBox $Mounts.Widget using=Gtk border-width=5
 	public bool dclick (Gtk.Widget _w , Gdk.EventButton eb) {
 		switch (eb.type) {
 			case EventType.@2BUTTON_PRESS:
-				var item = get_item ();
-				if (item == null || item.type != 'd')
+				RFSFile *item = get_item ();
+				if (item == null || item->type != 'd')
 					return false;
-				path.append (@"/$(item.name)");
+				path += "/"+item->name;
 				update_icons ();
 				return true; // does not pass the event to the rest of widgets
 		}
 		return false;
 	}
 
-	public RFSFile get_item () {
+	public RFSFile *get_item () {
 		TreeIter iter;
-		RFSFile file = null;
-		GLib.List<unowned Gtk.TreePath> list = dirs.get_selected_items (); 
+		RFSFile *file = null;
+		GLib.List<unowned Gtk.TreePath> list = dirs.get_selected_items ();
 
 		if (list == null || list.length () == 0)
 			return file;
-		var model = dirs.get_model (); 
+		var model = dirs.get_model ();
 		if (model.get_iter (out iter, (TreePath)list.data))
 			model.get (iter, 2, out file);
 		return file;
 	}
+
+	public void chop_path () {
+		try {
+			path += "/";
+			Regex reg1 = new Regex ("/[^/]*/\\.\\./");
+			path = reg1.replace (path, path.length, 0, "/");
+			Regex reg2 = new Regex ("/./");
+			path = reg2.replace (path, path.length, 0, "/");
+			Regex reg3 = new Regex ("//");
+			path = reg3 .replace (path, path.length, 0, "/");
+			Regex reg4 = new Regex ("/$");
+			path = reg4.replace (path, path.length, 0, "");
+			if (path == "") {
+				path = "/";
+			}
+		} catch (RegexError e) {
+			stderr.printf ("Error at chop_path\n");
+		}
+	}
+
+	public void dump_file (string name) {
+		RFSFile file = fs->open (path+"/"+name);
+		fs->read (file, 0, (int) file.size);
+		try {
+			// null parent ??
+			var fcd = new FileChooserDialog ("Dump File", null, FileChooserAction.SAVE,
+					"gtk-cancel", 0, "gtk-ok", 1);
+			string? ret = null;
+			if (fcd.run () == 1) {
+				ret = fcd.get_filename ();
+				FileUtils.set_contents (ret, (string) file.data, file.size);
+			}
+			fcd.hide ();
+			fcd.destroy ();
+			fcd = null;
+		} catch (FileError e) {
+			stderr.printf ("Error at dump_file: %s\n", e.message);
+		}
+		fs->close (file);
+	}
+
+	// Move out into a separate widget??
+	// FIXME: Why item doesnt fill all gaps ??
+	public void properties_menu (RFSFile* item) {
+		if (item != null) {
+			stdout.printf ("Name: %s\nType: %c\n",
+					item->name, item->type);
+			var wi = new Gtk.Window ();
+			wi.title = @"$(item->name) properties";
+			wi.set_default_size (400, 400);
+
+			var hbox = new HBox (false, 0);
+			var vbox = new VBox (false, 0);
+			var pbuf = this.render_icon (
+					(item->type == 'd')?Stock.OPEN:Stock.FILE,
+					IconSize.LARGE_TOOLBAR, null);
+			hbox.pack_start (new Gtk.Image.from_pixbuf (pbuf), true, true, 0);
+			vbox.pack_start (new Label (@"Name: $(item->name)"), true, true, 0);
+			vbox.pack_start (new Label (@"Path: $(item->path)"), true, true, 0);
+			vbox.pack_start (new Label (@"Size: $(item->size)"), true, true, 0);
+			vbox.pack_start (new Label (@"Time: $(item->time)"), true, true, 0);
+			vbox.pack_start (new Label (@"Offset: $(item->off)"), true, true, 0);
+			hbox.pack_start (vbox, true, true, 0);
+
+			wi.add (hbox);
+			wi.show_all ();
+		}
+	}
+
 }-
 }
