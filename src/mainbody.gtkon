@@ -110,10 +110,10 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		border-width=5 title="About ragui" !resizable modal !has-separator
 		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name="ragui" version="0.1"
-		copyright="Copyright (c) 2009-2010 pancake/nibble"
+		copyright="Copyright (c) 2009-2011 pancake/nibble/earada"
 		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
-		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble@develsec.org)", null}}';
+		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble@develsec.org)", "earada (edu@hardcoders.org)", null}}';
 
 	-{
 		private string now = "disasm"; // selected tab // TODO: rename
@@ -235,6 +235,12 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				}
 				//listview.set_actions ("seek", "breakpoint", "continue until", "inspect");
 			});
+
+			lv.row_activated.connect ((row) => {
+				lv.menu_handler (now, row);
+				return true;
+			});
+
 			lv.menu_handler.connect ((m, d) => {
 				uint64 offset = (d!=null)?d.offset:0;
 				string action;
@@ -262,7 +268,6 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 				case "backup":
 					break;
 				case "disasm":
-print (@"Go disasm $offset\n");
 					disasm.goto (offset);
 					break;
 				case "rename":
@@ -306,6 +311,10 @@ print (@"Go disasm $offset\n");
 			return (str==null)?"":str;
 		}
 
+		private inline string N(uint64 num) {
+			return num.to_string ("0x%"+uint64.FORMAT_MODIFIER+"x");
+		}
+
 		public void grava_seek (uint64 offset) {
 			gc.cmd (@"s $offset");
 			gc.cmd ("pd 20");
@@ -328,12 +337,13 @@ print (@"Go disasm $offset\n");
 			lv.clear ();
 			lv.show ();
 			var info = gc.core.bin.get_info ();
-			if (info == null)
-				return;
+		//	if (info == null)
+		//		return;
 			switch (type) {
 			case "Information":
 				if (info != null) {
 					lv.add_row_s ("file", S(info.file));
+					lv.add_row_s ("type", "binary");
 					lv.add_row_s ("size", gc.core.bin.curarch.size.to_string ());
 					lv.add_row_s ("class", S(info.rclass));
 					lv.add_row_s ("type", S(info.type));
@@ -344,6 +354,13 @@ print (@"Go disasm $offset\n");
 					lv.add_row_s ("endian", info.big_endian?"big":"little");
 				} else {
 					// TODO put file name and size!!
+					lv.add_row_s ("file", gc.core.file.filename);
+					lv.add_row_s ("type", "unknown");
+					lv.add_row_s ("uri", gc.core.file.uri);
+					//lv.add_row_s ("offset", N(gc.core.file.offset));
+					lv.add_row_s ("size", N(gc.core.file.size));
+					lv.add_row_s ("rwx", N(gc.core.file.rwx));
+					lv.add_row_s ("fd", N(gc.core.file.fd.fd));
 				}
 				// TODO lv.add_row_s ("relocs", info.dbg_info.is_stripped ()?"true":"false");
 				break;
@@ -377,6 +394,10 @@ print (@"Go disasm $offset\n");
 					lv.add_row (baddr+entry.rva, "entry%i".printf (i++));
 				break;
 			case "Libraries":
+				int i = 0;
+				foreach (var lib in gc.core.bin.get_libs())
+					lv.add_row (i++, lib);
+				break;
 			case "Registers":
 				// TODO
 				break;

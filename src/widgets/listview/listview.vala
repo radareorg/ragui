@@ -19,6 +19,7 @@ public class Listview.Widget : ScrolledWindow {
 	public SList<string> actions;
 
 	// if action is null then we are doing double click, so default action is performed
+	public signal bool row_activated(ListviewData? row);
 	public signal void menu_handler(string? action, ListviewData? row);
 	public signal void menu_construct();
 
@@ -125,8 +126,12 @@ public class Listview.Widget : ScrolledWindow {
 			if (e.type == EventType.2BUTTON_PRESS) {
 				//print (@"DOUBLE LICK! $action\n");
 				var data = get_listviewdata ();
+				if (row_activated (data))
+					return true;
 			//	menu_construct ();
 			//	var action = actions.nth_data (0);
+
+				// TODO: deprecate OLD METHOD just must be deprecated
 				menu_handler (null, data); //action, data);
 				return true;
 			}
