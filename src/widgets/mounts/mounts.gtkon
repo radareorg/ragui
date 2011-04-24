@@ -13,7 +13,12 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		Listview:Widget $listview;
 		VBox add2 {
 			HBox !expand {
-				Entry $url;
+				Entry $url activate={
+					var tmp=path;
+					path=url.text;
+					if (!update_icons())
+						path = tmp;
+				} ;
 				Button label=GO clicked={
 					var tmp=path;
 					path=url.text;
@@ -54,6 +59,10 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		mountpoint.text = "/";
 		offset.text = "0";
 		listview.set_actions ("Show", "Umount");
+		listview.row_activated.connect ((row) => {
+				listview.menu_handler ("Show", row);
+				return true;
+				});
 		listview.menu_handler.connect ((action, row) => {
 				if (fs == null || row == null) {
 					stderr.printf ("Oops: fs is null\n");
@@ -267,7 +276,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		if (ls != null) {
 			if (ls.length () > 0) {
 				foreach (var part in ls) {
-					print ("uno\n");
+					stdout.printf ("Type: %i\nOffset: %llx\n", part.number, part.start);
 				}
 			} else print (@"No partitions found!\n");
 		}
