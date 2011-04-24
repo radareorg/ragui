@@ -7,12 +7,24 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		Entry $mountpoint;
 		Entry $offset;
 		Button !expand label=mount clicked=do_mount;
-//		Button !expand label=umount clicked=do_umount;
+		Button !expand label=partitions clicked=show_partitions; //FIXME: partitions method
 	}
 	VPaned position=200 {
 		Listview:Widget $listview;
-		ScrolledWindow $scroll add2 {
-			IconView $dirs button_release_event=rclick button_press_event=dclick;
+		VBox add2 {
+			HBox !expand {
+				Entry $url;
+				Button label=GO clicked={
+					var tmp=path;
+					path=url.text;
+					if (!update_icons())
+						path = tmp;
+				} !expand;
+			}
+			ScrolledWindow $scroll vscrollbar-policy="{PolicyType.AUTOMATIC}"
+				hscrollbar-policy="{PolicyType.AUTOMATIC}" {
+					IconView $dirs button_release_event=rclick button_press_event=dclick;
+				}
 		}
 	}
 -{
@@ -43,21 +55,22 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		offset.text = "0";
 		listview.set_actions ("Show", "Umount");
 		listview.menu_handler.connect ((action, row) => {
-			if (fs == null || row == null) {
-				stderr.printf ("Oops: fs is null\n");
-				return;
-			}
-			switch (action) {
-			case "Show":
-				path = row.name;
-				update_icons ();
-				break;
-			case "Umount":
-				print (@"Umount $(row.name)\n");
-				do_umount (row.name);
-				break;
-			}
-		});
+				if (fs == null || row == null) {
+					stderr.printf ("Oops: fs is null\n");
+					return;
+				}
+				switch (action) {
+					case "Show":
+						print ("Estoy en show\n");
+						path = row.name;
+						update_icons ();
+						break;
+					case "Umount":
+						print (@"Umount $(row.name)\n");
+						do_umount (row.name);
+						break;
+				}
+				});
 		model = new ListStore (3, typeof (string), typeof (Gdk.Pixbuf), typeof (RFSFile));
 		dirs.model = (model);
 		dirs.set_item_width (100);
@@ -74,6 +87,8 @@ VBox $Mounts.Widget using=Gtk border-width=5
 			stderr.printf ("Cannot mount\n");
 		} else {
 			update_list ();
+			path = mountpoint.text;
+			update_icons ();
 		}
 	}
 
@@ -85,12 +100,14 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		}
 	}
 
+	//TODO: Don't clear model if partition umounted its different
 	public void do_umount (string str) {
+		model.clear ();
 		fs->umount (str);
 		update_list ();
 	}
 
-	public void update_icons () {
+	public bool update_icons () {
 		TreeIter iter;
 		RList<RFSFile> ds;
 
@@ -102,12 +119,15 @@ VBox $Mounts.Widget using=Gtk border-width=5
 				foreach (var file in ds) {
 					var pbuf = dirs.render_icon (
 							(file.type == 'd')?Stock.OPEN:Stock.FILE,
-							IconSize.LARGE_TOOLBAR, null);
+							IconSize.DIALOG, null);
 					model.append (out iter);
 					model.set (iter, 0, file.name, 1, pbuf, 2, file);
 				}
+				url.text = path;
+				return true;
 			} else print (@"Directory $(path) is empty!\n");
 		}
+		return false;
 	}
 
 	private bool rclick (Gtk.Widget _w, Gdk.EventButton eb) {
@@ -215,8 +235,6 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		fs->close (file);
 	}
 
-	// Move out into a separate widget??
-	// FIXME: Why item doesnt fill all gaps ??
 	public void properties_menu (RFSFile* item) {
 		if (item != null) {
 			stdout.printf ("Name: %s\nType: %c\n",
@@ -225,23 +243,34 @@ VBox $Mounts.Widget using=Gtk border-width=5
 			wi.title = @"$(item->name) properties";
 			wi.set_default_size (400, 400);
 
-			var hbox = new HBox (false, 0);
 			var vbox = new VBox (false, 0);
 			var pbuf = this.render_icon (
 					(item->type == 'd')?Stock.OPEN:Stock.FILE,
-					IconSize.LARGE_TOOLBAR, null);
-			hbox.pack_start (new Gtk.Image.from_pixbuf (pbuf), true, true, 0);
+					IconSize.DIALOG, null);
+			vbox.pack_start (new Gtk.Image.from_pixbuf (pbuf), true, true, 0);
 			vbox.pack_start (new Label (@"Name: $(item->name)"), true, true, 0);
 			vbox.pack_start (new Label (@"Path: $(item->path)"), true, true, 0);
 			vbox.pack_start (new Label (@"Size: $(item->size)"), true, true, 0);
 			vbox.pack_start (new Label (@"Time: $(item->time)"), true, true, 0);
 			vbox.pack_start (new Label (@"Offset: $(item->off)"), true, true, 0);
-			hbox.pack_start (vbox, true, true, 0);
 
-			wi.add (hbox);
+			wi.add (vbox);
 			wi.show_all ();
 		}
 	}
 
+	public void show_partitions () {
+		print ("Partitions\n");
+		RList<RFSPartition> ls;
+
+		ls = fs->partitions ("msdos", 0);
+		if (ls != null) {
+			if (ls.length () > 0) {
+				foreach (var part in ls) {
+					print ("uno\n");
+				}
+			} else print (@"No partitions found!\n");
+		}
+	}
 }-
 }
