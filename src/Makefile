@@ -134,6 +134,7 @@ gtkon:
 
 # hacky..conflicts with widgets:
 widgets.done:
+	${MAKE} vapi
 	cd widgets && ${MAKE}
 	:> widgets.done
 
