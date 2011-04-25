@@ -87,11 +87,15 @@ link: ${OFILES}
 		fi ; \
 	done
 
-guicore:
-	valac --define=TEST guicore.vala --pkg r_core --pkg gtk+-2.0
+#guicore:
+#	valac --define=TEST guicore.vala --pkg r_core --pkg gtk+-2.0
 
 vapi:
-	@valac --fast-vapi guicore.vapi guicore.vala --pkg r_core -C
+	@if [ guicore.vala -nt widgets/include/guicore.vapi ]; then \
+	echo "  CC guicore.vapi" ; \
+	valac --library guicore \
+		--vapi widgets/include/guicore.vapi -H widgets/include/guicore.h \
+		guicore.vala --pkg r_core --pkg gtk+-2.0 -C ; fi
 
 tstamp_begin:
 	@${MD5} *.gtkon ${OVALAFILES} | sed -e s,gtkon,c,g -e s,vala,c,g | tr '()' '  ' | awk '{print " "$$4" "$$2}' > .tstamp 2>/dev/null

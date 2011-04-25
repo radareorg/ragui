@@ -23,6 +23,17 @@ public class Listview.Widget : ScrolledWindow {
 	public signal void menu_handler(string? action, ListviewData? row);
 	public signal void menu_construct();
 
+	private bool _show_headers;
+	public bool show_headers {
+		set {
+			_show_headers = value;
+			view.headers_visible = _show_headers;
+			view.reorderable = !_show_headers;
+			view.rules_hint = !_show_headers;
+		}
+		get { return _show_headers; }
+	}
+
 	private ListviewData? get_listviewdata () {
 		ListviewData? data = null;
 		var sel = view.get_selection ();

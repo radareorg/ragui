@@ -26,5 +26,5 @@ public class Hexview.Buffer {
 		return ptr + y*16+x;
 	}
 
-	public signal void update(uint64 addr, int sz);
+	public signal bool update(uint64 addr, int sz);
 }

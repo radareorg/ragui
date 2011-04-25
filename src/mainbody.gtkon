@@ -1,19 +1,8 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org>, nibble<develsec.org> */
 
-VBox using=Gtk $Ragui.MainBody border-width=1
-	using:Radare="Radare"
-	using:Ragui="Ragui"
-	using:Script="Script"
-	using:Search="Search"
-	using:Gradiff="Gradiff"
-	using:Debug="Debug"
-	using:Flags="Flags"
-	using:Grava="Grava"
-	using:Mounts="Mounts"
-	using:Grasmwidget="Grasmwidget"
-	using:Codeview="Codeview"
-	using:Hexview="Hexview"
-	using:Listview="Listview"
+VBox $Ragui.MainBody border-width=1
+	using=Gtk:Radare:Ragui
+	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview
 {
 /*
 		Toolbar !expand {
@@ -397,13 +386,14 @@ VBox using=Gtk $Ragui.MainBody border-width=1
 		private void setup_io () {
 			ss_data.goto (0); //hexview.seek (0);
 			hexview.buffer.update.connect ((x, y)=> {
-				print ("READING FROM 0x%08llx\n", x);
 				hexview.buffer.start = x;
 				hexview.buffer.end = x+y;
 				hexview.buffer.size = y;
 				hexview.buffer.bytes = new uint8[y];
-				uint8 *ptr = hexview.buffer.bytes;
-				gc.core.read_at (x, ptr, y);
+				uint8* ptr = hexview.buffer.bytes;
+				var ret = gc.core.read_at (x, ptr, y);
+				gc.log_file (@"READING FROM 0x%08llx ++ $(ret)".printf (x));
+				return ret;
 			});
 		}
 
