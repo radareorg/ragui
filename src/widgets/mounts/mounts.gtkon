@@ -256,12 +256,17 @@ VBox $Mounts.Widget using=Gtk border-width=5
 			var pbuf = this.render_icon (
 					(item->type == 'd')?Stock.OPEN:Stock.FILE,
 					IconSize.DIALOG, null);
-			vbox.pack_start (new Gtk.Image.from_pixbuf (pbuf), true, true, 0);
-			vbox.pack_start (new Label (@"Name: $(item->name)"), true, true, 0);
-			vbox.pack_start (new Label (@"Path: $(item->path)"), true, true, 0);
-			vbox.pack_start (new Label (@"Size: $(item->size)"), true, true, 0);
-			vbox.pack_start (new Label (@"Time: $(item->time)"), true, true, 0);
-			vbox.pack_start (new Label (@"Offset: $(item->off)"), true, true, 0);
+			vbox.add (new Gtk.Image.from_pixbuf (pbuf));
+			var label = new Label (@"Name: $(item->name)");
+			vbox.pack_start (label, true, true, 0);
+			label = new Label (@"Path: $(item->path)");
+			vbox.pack_start (label, true, true, 0);
+			label = new Label (@"Size: $(item->size)");
+			vbox.pack_start (label, true, true, 0);
+			label = new Label (@"Time: $(item->time)");
+			vbox.pack_start (label, true, true, 0);
+			label = new Label (@"Offset: $(item->off)");
+			vbox.pack_start (label, true, true, 0);
 
 			wi.add (vbox);
 			wi.show_all ();
