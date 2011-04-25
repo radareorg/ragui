@@ -1,7 +1,4 @@
-VBox $Mounts.Widget using=Gtk border-width=5
-		using:Radare="Radare"
-		using:Gdk="Gdk"
-		using:Listview="Listview" {
+VBox $Mounts.Widget border-width=5 using=Gtk:Radare:Gdk:Listview {
 	HBox !expand spacing=3 {
 		ComboBox !expand $fstype text;
 		Entry $mountpoint;
