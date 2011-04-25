@@ -1,15 +1,7 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 
-Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
-	using:Radare="Radare"
-	using:Ragui="Ragui"
-	using:Grava="Grava"
-	using:Grasmwidget="Grasmwidget"
-	using:Codeview="Codeview"
-	using:Hexview="Hexview"
-	using:Listview="Listview"
-	using:Gracalc="Gracalc"
-	using:BugDialog="BugDialog"
+Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
+	using=Gtk:Radare:Ragui:Grava:Grasmwidget:Codeview:Hexview:Listview:Gracalc:BugDialog
 {
 	VBox border-width=1 {
 		MenuBar !expand {
@@ -126,14 +118,15 @@ Window using=Gtk $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEven
 */
 	}
 
+//XXX dupped in mainbody or wtf?
 	AboutDialog gtkaml:standalone $.aboutdialog delete-event="aboutdialog.hide_on_delete"
 		border-width=5 title="About ragui" !resizable modal !has-separator
 		window-position=WindowPosition.CENTER_ON_PARENT
 		program-name=ragui version=0.1
-		copyright="Copyright (c) 2009-2011 pancake/nibble"
+		copyright="Copyright (c) 2009-2011 pancake/nibble/earada"
 		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
-		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble.ds@gmail.com)", null}}';
+		authors='{new string[] {"pancake (pancake@nopcode.org)", "nibble (nibble@develsec.org)", "earada (edu@hardcoders.org)", null}}';
 
 	-{
 		SList <RadioMenuItem> mode_group;

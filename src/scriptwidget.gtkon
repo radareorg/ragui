@@ -75,8 +75,12 @@ VBox using=Gtk $Script.Widget construct=init() {
 
 		switch (lang) {
 		case "radare":
+			//foreach (var line in text.split ("\n"))
+			//	gc.cmd (line);
+			var s = "";
 			foreach (var line in text.split ("\n"))
-				gc.cmd (line);
+				s += "\n> "+line+"\n" + gc.cmdstr (line);
+			gc.show_text ("output", s);
 			break;
 		default:
 			gc.cmd (@"#!$lang $file");

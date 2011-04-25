@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2010-2011 - pancake<nopcode.org> */
 
-VBox using=Gtk $Flags.Widget using:posix=Posix {
+VBox using=Gtk $Flags.Widget using:posix=Posix using:Ragui=Ragui {
 	HBox !expand {
 		Label label=" Space " !expand;
 		ComboBox text $cb !expand changed=cb_changed;
@@ -12,25 +12,30 @@ VBox using=Gtk $Flags.Widget using:posix=Posix {
 		Label label="";
 		Button !expand label="new flag" activate=fs_add released=fs_add;
 	}
-
-	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
-		TextView $tv;
-	}
+	Ragui.TextTagView $tv;
 -{
 	public void cb_view () {
 		int space = gc.core.flags.space_idx;
 //Posix.exit (0);
 		// TODO: fill treeview with flags.. needs RFlags work
 		//string nam = cb.get_active_text ();
+		var s = "";
 		foreach (var f in gc.core.flags.flags) {
 			if (space == f.space) {
-				print ("GO FLAG YOURSELF "+f.name+"\n");
+		//		print ("GO FLAG YOURSELF "+f.name+"\n");
+				s += f.offset.to_string ("0x%08llx");
+				s += "   "+ f.size.to_string ("0x%08llx");
+				s += "   <a "+f.name+">"+f.name+"</>\n";
 			}
 		}
+		tv.clear ();
+		tv.set_markup (s, false);
 	}
 
 	public void cb_changed () {
-		//cb_view ();
+		string nam = cb.get_active_text ();
+		gc.cmd ("fs "+nam);
+		cb_view ();
 	}
 
 	public void fs_add () {
@@ -47,7 +52,7 @@ VBox using=Gtk $Flags.Widget using:posix=Posix {
 
 	public void fs_refresh () {
 		string old = cb.get_active_text ();
-		/* HACK */ for(int i=0;i<30;i++) cb.remove_text (0);
+		/* HACK */ for (int i=0;i<30;i++) cb.remove_text (0);
 		cb.append_text ("*");
 		cb.set_active (0);
 		for (int n=0; ; n++) {

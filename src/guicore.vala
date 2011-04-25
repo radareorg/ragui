@@ -189,6 +189,28 @@ public class Ragui.GuiCore {
 		return text;
 	}
 
+	public void show_text (string title, string txt) {
+		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,
+				MessageType.INFO, ButtonsType.CLOSE, title);
+		md.resizable = true;
+		md.resize (600, 500);
+		var foo = (VBox)md.get_content_area ();
+		var sw = new ScrolledWindow (null, null);
+                sw.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		var tv = new TextView ();
+                var couriertag = tv.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
+		tv.editable = false;
+		sw.add (tv);
+		//tv.buffer.text = txt;
+		TextIter ei;
+                tv.buffer.get_start_iter (out ei);
+		tv.buffer.insert_with_tags (ei, txt, -1, couriertag);
+		foo.add (sw); //pack_start (sw, false, false, 5);
+		md.show_all ();
+		md.run ();
+		md.destroy ();
+	}
+
 	public bool show_yesno (string question) {
 		MessageDialog md = new MessageDialog (window,
 				DialogFlags.DESTROY_WITH_PARENT,

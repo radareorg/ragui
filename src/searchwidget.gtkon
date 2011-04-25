@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2010 - pancake<nopcode.org> */
+/* ragui - copyright(C) 2010-2011 - pancake<nopcode.org> */
 VBox using=Gtk using:r=Radare $Search.Widget {
 	HBox !expand {
 		ComboBox text !expand $st;
