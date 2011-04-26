@@ -132,19 +132,34 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		SList <RadioMenuItem> mode_group;
 		public signal void on_quit();
 
+		private string _ui_mode = "editor";
+
 		public void mode_changed () {
-			if (mode_e.active) {
-				print ("Editor mode\n");
-			} else
-			if (mode_d.active) {
-				print ("Debugger mode\n");
-			} else
-			if (mode_f.active) {
-				print ("Forensics mode\n");
-			} else
-			if (mode_b.active) {
-				print ("Bindiff mode\n");
-			} else print ("Unknown mode\n");
+			string new_mode = "unknown";
+			if (mode_e.active) new_mode = "editor";
+			else if (mode_d.active) new_mode = "debugger";
+			else if (mode_f.active) new_mode = "forensics";
+			else if (mode_b.active) new_mode = "bindiff";
+			if (new_mode != _ui_mode)
+				ui_mode (new_mode);
+			_ui_mode = new_mode;
+		}
+
+		public void ui_mode(string mode) {
+			print ("MODE IS NOW "+mode+"\n");
+			switch (mode) {
+			case "editor":
+				view_body_editor ();
+				break;
+			case "forensics":
+				break;
+			case "bindiff":
+				view_body_bindiff ();
+				break;
+			default:
+				view_panel ();
+				break;
+			}
 		}
 
 		private void on_project_new() {
@@ -290,7 +305,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		private void OnMenuEditPreferences () {
 			var pw = new Ragui.PreferencesWindow ();
 			pw.window_position = WindowPosition.CENTER;
-			pw.transient_for = this;
+			pw.transient_for = gc.window;//this;
 			pw.show_all ();
 		}
 
@@ -338,31 +353,48 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 
 		public void view_body () {
 			/* default view */
+			// XXX: deprecated with ui_mode (mode) ???
 			view_body_editor ();
 		}
 
-		public void view_body_editor () {
-			if (body == null)
-				body = new MainBody ();
-			is_open = true;
-			body.goto (gc.core.offset);
-			body.diff.set_core (gc.core);
-			body.diff.file_open.connect (() => {
-						var ret = gc.show_file_open ("Select second file");
-						if (ret != null) {
-							var core = new RCore ();
-							core.file_open (ret, 0, 0);
-							if (core.file != null) {
-								core.bin_load (null);
-								body.diff.set_core_two (core);
-								body.diff.diff_bins ();
-							}
-						}
-					});
-			//box_body.children = null;
-			box_body.add (body);
+		public VBox body_bindiff = null;
+		public void view_body_bindiff () {
+			if (body_bindiff == null) {
+				body_bindiff = new VBox (false, 4);
+				body_bindiff.add (new Label ("bindiff mode"));
+				box_body.add (body_bindiff);
+				//box_body.show_all ();
+			}
 			box_body.show_all ();
 			panel.hide ();
+			body.hide ();
+			menu_mode.sensitive = true;
+		}
+
+		public void view_body_editor () {
+			is_open = true;
+			if (body == null) {
+				body = new MainBody ();
+				body.goto (gc.core.offset);
+				body.diff.set_core (gc.core);
+				body.diff.file_open.connect (() => {
+							var ret = gc.show_file_open ("Select second file");
+							if (ret != null) {
+								var core = new RCore ();
+								core.file_open (ret, 0, 0);
+								if (core.file != null) {
+									core.bin_load (null);
+									body.diff.set_core_two (core);
+									body.diff.diff_bins ();
+								}
+							}
+						});
+				//box_body.children = null;
+				box_body.add (body);
+			}
+			box_body.show_all ();
+			panel.hide ();
+			body_bindiff.hide ();
 			body.show_all ();
 /*
 	body.nb2.show_all();
