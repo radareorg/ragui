@@ -169,7 +169,7 @@ public class Hexview.Widget : ScrolledWindow {
 		//DrawingArea da = (DrawingArea)w;
 		this.grab_focus();
 
-		//print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
+		print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 		switch (ek.keyval) {
 		case 'i': // inverse colors
 			inverse = !inverse;
@@ -200,6 +200,7 @@ public class Hexview.Widget : ScrolledWindow {
 		case 'k':
 			cursor--;
 			break;
+		case 65363:
 		case 'l':
 			xcursor++;
 			if (xcursor>15) {
@@ -207,6 +208,7 @@ public class Hexview.Widget : ScrolledWindow {
 				cursor++;
 			}
 			break;
+		case 65361:
 		case 'h':
 			xcursor--;
 			if (xcursor<0) {
@@ -338,7 +340,7 @@ public class Hexview.Widget : ScrolledWindow {
 
 	private void sync () {
 		const int K = 16;
-
+		bool ret = false;
 		//print ("PANY IS %d\n", (int)pany);
 		/* TODO: handle multipliers here!! */
 		int foo = K*((int)((pany/zoom)/K));
@@ -346,24 +348,25 @@ public class Hexview.Widget : ScrolledWindow {
 		if (pany>K) {
 
 			if (foo>0 && foo>address) {
-				address=0;
+				address = 0;
 			} else {
-				address-=(int)foo;
-				//			address -= (int)foo;
-				buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
+				address -= (int)foo;
+				//	address -= (int)foo;
+				ret = buffer.update (address, 16*80); /// XXX: fix read buffer depending on screen size
 				cursor += pwn;
 			}
 			pany = 0;
 		} else if (-pany>K) {
 			address-=(int)foo;
-			buffer.update (address, 16*80);
+			ret = buffer.update (address, 16*80);
 			pany = 0;
 			cursor += pwn; // TODO move mult
 		}
 		int py = 0; //foo/2; //(-pany/zoom)/10;
 		offset = (uint64)(address + py);
 		offset_click = offset + xcursor; // TODO: add Y
-		print ("click : %llx\n", offset_click);
+		print ("BUFFER "+ret.to_string ()+"\n");
+		print ("click : %llx --\n", offset_click);
 	}
 
 	public void draw() {
@@ -380,7 +383,7 @@ public class Hexview.Widget : ScrolledWindow {
 		//ctx.save();
 		ctx.save ();
 		// Sans Serif
-		ctx.select_font_face (FONTNAME, FontSlant.NORMAL, FontWeight.BOLD);
+		ctx.select_font_face (FONTNAME, FontSlant.NORMAL, FontWeight.NORMAL);
 		ctx.set_font_size (10);
 		ctx.translate (0, pany);
 		ctx.scale (zoom, zoom);

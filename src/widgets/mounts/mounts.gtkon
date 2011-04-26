@@ -1,7 +1,4 @@
-VBox $Mounts.Widget using=Gtk border-width=5
-		using:Radare="Radare"
-		using:Gdk="Gdk"
-		using:Listview="Listview" {
+VBox $Mounts.Widget border-width=5 using=Gtk:Radare:Ragui:Gdk:Listview {
 	HBox !expand spacing=3 {
 		ComboBox !expand $fstype text;
 		Entry $mountpoint;
@@ -19,7 +16,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 					if (!update_icons())
 						path = tmp;
 				} ;
-				Button label=GO clicked={
+				Button label=go clicked={
 					var tmp=path;
 					path=url.text;
 					if (!update_icons())
@@ -35,7 +32,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 -{
 	public RFS *fs = null;
 	public ListStore model;
-	private string path;
+	private new string path;
 
 	public Widget() {
 		fstype.append_text ("cpio");
@@ -62,24 +59,24 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		listview.row_activated.connect ((row) => {
 				listview.menu_handler ("Show", row);
 				return true;
-				});
+			});
 		listview.menu_handler.connect ((action, row) => {
 				if (fs == null || row == null) {
 					stderr.printf ("Oops: fs is null\n");
 					return;
 				}
 				switch (action) {
-					case "Show":
-						print ("Estoy en show\n");
-						path = row.name;
-						update_icons ();
-						break;
-					case "Umount":
-						print (@"Umount $(row.name)\n");
-						do_umount (row.name);
-						break;
+				case "Show":
+					print ("Estoy en show\n");
+					path = row.name;
+					update_icons ();
+					break;
+				case "Umount":
+					print (@"Umount $(row.name)\n");
+					do_umount (row.name);
+					break;
 				}
-				});
+			});
 		model = new ListStore (3, typeof (string), typeof (Gdk.Pixbuf), typeof (RFSFile));
 		dirs.model = (model);
 		dirs.set_item_width (100);
@@ -93,7 +90,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		void *p = fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse (offset.text));
 		if (p == null) {
 			// TODO: how to call gc.show_error() ?
-			stderr.printf ("Cannot mount\n");
+			gc.show_error ("Cannot mount filesystem");
 		} else {
 			update_list ();
 			path = mountpoint.text;
@@ -149,7 +146,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 		imi.activate.connect ((x)=> {
 				path += "/..";
 				update_icons ();
-				});
+			});
 		menu.append (imi);
 
 		if (item != null) {
@@ -180,13 +177,20 @@ VBox $Mounts.Widget using=Gtk border-width=5
 
 	public bool dclick (Gtk.Widget _w , Gdk.EventButton eb) {
 		switch (eb.type) {
-			case EventType.@2BUTTON_PRESS:
-				RFSFile *item = get_item ();
-				if (item == null || item->type != 'd')
-					return false;
+		case EventType.@2BUTTON_PRESS:
+			RFSFile *item = get_item ();
+			if (item == null)
+				return false;
+			switch (item->type) {
+			case 'f':
+				properties_menu (item);
+				break;
+			case 'd':
 				path += "/"+item->name;
 				update_icons ();
-				return true; // does not pass the event to the rest of widgets
+				break;
+			}
+			return true; // does not pass the event to the rest of widgets
 		}
 		return false;
 	}
@@ -219,27 +223,20 @@ VBox $Mounts.Widget using=Gtk border-width=5
 				path = "/";
 			}
 		} catch (RegexError e) {
-			stderr.printf ("Error at chop_path\n");
+			gc.show_error ("Error at chop_path");
 		}
 	}
 
 	public void dump_file (string name) {
 		RFSFile file = fs->open (path+"/"+name);
 		fs->read (file, 0, (int) file.size);
-		try {
-			// null parent ??
-			var fcd = new FileChooserDialog ("Dump File", null, FileChooserAction.SAVE,
-					"gtk-cancel", 0, "gtk-ok", 1);
-			string? ret = null;
-			if (fcd.run () == 1) {
-				ret = fcd.get_filename ();
-				FileUtils.set_contents (ret, (string) file.data, file.size);
+		var ofile = gc.show_file_save ("Dump File", null);
+		if (ofile != null) {
+			try {
+				FileUtils.set_contents (ofile, (string) file.data, file.size);
+			} catch (FileError e) {
+				gc.show_error ("Dump error: "+e.message);
 			}
-			fcd.hide ();
-			fcd.destroy ();
-			fcd = null;
-		} catch (FileError e) {
-			stderr.printf ("Error at dump_file: %s\n", e.message);
 		}
 		fs->close (file);
 	}
@@ -249,25 +246,24 @@ VBox $Mounts.Widget using=Gtk border-width=5
 			stdout.printf ("Name: %s\nType: %c\n",
 					item->name, item->type);
 			var wi = new Gtk.Window ();
+			wi.modal = false; // not modal.. main ragui window can still be usable
+			wi.transient_for = gc.window;
 			wi.title = @"$(item->name) properties";
-			wi.set_default_size (400, 400);
+			wi.set_default_size (200, 300);
 
 			var vbox = new VBox (false, 0);
 			var pbuf = this.render_icon (
 					(item->type == 'd')?Stock.OPEN:Stock.FILE,
 					IconSize.DIALOG, null);
-			vbox.add (new Gtk.Image.from_pixbuf (pbuf));
-			var label = new Label (@"Name: $(item->name)");
-			vbox.pack_start (label, true, true, 0);
-			label = new Label (@"Path: $(item->path)");
-			vbox.pack_start (label, true, true, 0);
-			label = new Label (@"Size: $(item->size)");
-			vbox.pack_start (label, true, true, 0);
-			label = new Label (@"Time: $(item->time)");
-			vbox.pack_start (label, true, true, 0);
-			label = new Label (@"Offset: $(item->off)");
-			vbox.pack_start (label, true, true, 0);
-
+			var lv = new Listview.Widget ();
+			lv.show_headers = false;
+			vbox.pack_start (new Gtk.Image.from_pixbuf (pbuf), false, false, 10);
+			lv.add_row_s ("name", item->name);
+			lv.add_row_s ("path", item->path);
+			lv.add_row_s ("size", item->size.to_string ());
+			lv.add_row_s ("time", item->time.to_string ());
+			lv.add_row_s ("offset", item->off.to_string ("0x%08"+uint64.FORMAT_MODIFIER+"x"));
+			vbox.add (lv);
 			wi.add (vbox);
 			wi.show_all ();
 		}
@@ -283,7 +279,7 @@ VBox $Mounts.Widget using=Gtk border-width=5
 				foreach (var part in ls) {
 					stdout.printf ("Type: %i\nOffset: %llx\n", part.number, part.start);
 				}
-			} else print (@"No partitions found!\n");
+			} else gc.show_error ("No partitions found!\n");
 		}
 	}
 }-

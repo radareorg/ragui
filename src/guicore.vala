@@ -3,6 +3,7 @@ using Radare;
 
 public static Ragui.GuiCore gc;
 public static const string U64FMT = uint64.FORMAT_MODIFIER;
+public static const string LOGFILE = "/tmp/r2log";
 
 public enum Ragui.GuiCoreMode {
 	EDIT,
@@ -189,6 +190,28 @@ public class Ragui.GuiCore {
 		return text;
 	}
 
+	public void show_text (string title, string txt) {
+		var md = new MessageDialog (window, DialogFlags.DESTROY_WITH_PARENT,
+				MessageType.INFO, ButtonsType.CLOSE, title);
+		md.resizable = true;
+		md.resize (600, 500);
+		var foo = (VBox)md.get_content_area ();
+		var sw = new ScrolledWindow (null, null);
+                sw.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		var tv = new TextView ();
+                var couriertag = tv.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
+		tv.editable = false;
+		sw.add (tv);
+		//tv.buffer.text = txt;
+		TextIter ei;
+                tv.buffer.get_start_iter (out ei);
+		tv.buffer.insert_with_tags (ei, txt, -1, couriertag);
+		foo.add (sw); //pack_start (sw, false, false, 5);
+		md.show_all ();
+		md.run ();
+		md.destroy ();
+	}
+
 	public bool show_yesno (string question) {
 		MessageDialog md = new MessageDialog (window,
 				DialogFlags.DESTROY_WITH_PARENT,
@@ -198,7 +221,7 @@ public class Ragui.GuiCore {
 		return ret==ResponseType.YES;
 	}
 
-	public void show_message (string msg, MessageType mt = MessageType.INFO) {
+	public void show_message (string msg, MessageType mt = Gtk.MessageType.INFO) {
 		MessageDialog md = new MessageDialog (window,
 				DialogFlags.DESTROY_WITH_PARENT,
 				mt, ButtonsType.CLOSE, msg);
@@ -250,6 +273,17 @@ public class Ragui.GuiCore {
 
 	public int system (string str) {
 		return RSystem.cmd (str);
+	}
+
+	private int logcount = 0;
+	public void log_file (string msg) {
+		if (logcount++==0)
+			FileUtils.unlink (LOGFILE);
+		var fs = FileStream.open (LOGFILE, "a+");
+		if (fs != null) {
+			fs.puts (msg+"\n");
+			fs = null;
+		}
 	}
 
 	public static const string VERSION = "0.1";
