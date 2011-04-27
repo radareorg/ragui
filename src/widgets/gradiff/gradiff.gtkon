@@ -13,26 +13,28 @@ VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" using:Radare="
 				Grava.Widget $g_two;
 			}
 		}
-		TreeView $view add2 can-focus {
-			TreeViewColumn title="Address1" clickable clicked="{sort_column (view, 0)}" {
-				CellRendererText $.column0 expand;
-				CellRendererText &column0 attribute="text" column=0;
-			}
-			TreeViewColumn title="Name 1" clickable clicked="{sort_column (view, 1)}" {
-				CellRendererText $.column1 expand;
-				CellRendererText &column1 attribute="text" column=1;
-			}
-			TreeViewColumn title="Address2" clickable clicked="{sort_column (view, 2)}" {
-				CellRendererText $.column2 expand;
-				CellRendererText &column2 attribute="text" column=2;
-			}
-			TreeViewColumn title="Name 2" clickable clicked="{sort_column (view, 3)}" {
-				CellRendererText $.column3 expand;
-				CellRendererText &column3 attribute="text" column=3;
-			}
-			TreeViewColumn title="Diff" clickable clicked="{sort_column (view, 4)}" {
-				CellRendererText $.column4 expand;
-				CellRendererText &column4 attribute="text" column=4;
+		ScrolledWindow add2 hscrollbar-policy="{PolicyType.AUTOMATIC}" {
+			TreeView $view can-focus {
+				TreeViewColumn title="Address1" clickable clicked="{sort_column (view, 0)}" {
+					CellRendererText $.column0 expand;
+					CellRendererText &column0 attribute="text" column=0;
+				}
+				TreeViewColumn title="Name 1" clickable clicked="{sort_column (view, 1)}" {
+					CellRendererText $.column1 expand;
+					CellRendererText &column1 attribute="text" column=1;
+				}
+				TreeViewColumn title="Address2" clickable clicked="{sort_column (view, 2)}" {
+					CellRendererText $.column2 expand;
+					CellRendererText &column2 attribute="text" column=2;
+				}
+				TreeViewColumn title="Name 2" clickable clicked="{sort_column (view, 3)}" {
+					CellRendererText $.column3 expand;
+					CellRendererText &column3 attribute="text" column=3;
+				}
+				TreeViewColumn title="Diff" clickable clicked="{sort_column (view, 4)}" {
+					CellRendererText $.column4 expand;
+					CellRendererText &column4 attribute="text" column=4;
+				}
 			}
 		}
 	}

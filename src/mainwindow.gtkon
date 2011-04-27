@@ -66,13 +66,14 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			MenuItem label="_Tools" with-mnemonic {
 				submenu {
 					Menu {
-						ImageMenuItem stock-id="Calculator" activate=menuToolsCalculator;
-						ImageMenuItem stock-id="Assembler" activate=menuToolsAssembler;
-						ImageMenuItem stock-id="Headers" activate=menuToolsHeaders;
 						ImageMenuItem stock-id="Analyze .." activate=menuToolsAnalyze;
-						ImageMenuItem stock-id="Signatures .." activate=menuToolsSignatures;
-						ImageMenuItem stock-id="Scripting" activate=menuToolsScripting;
+						ImageMenuItem stock-id="Assembler" activate=menuToolsAssembler;
 						ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
+						ImageMenuItem stock-id="Calculator" activate=menuToolsCalculator;
+						ImageMenuItem stock-id="Console" activate=menuToolsConsole;
+						ImageMenuItem stock-id="Headers" activate=menuToolsHeaders;
+						ImageMenuItem stock-id="Scripting" activate=menuToolsScripting;
+						ImageMenuItem stock-id="Signatures .." activate=menuToolsSignatures;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
 					}
@@ -110,12 +111,11 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		}
 */
 		VBox $box_body;
-/*
+
 		HBox !expand {
 			ProgressBar !expand;
 			Statusbar expand;
 		}
-*/
 	}
 
 //XXX dupped in mainbody or wtf?
@@ -218,7 +218,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		}
 
 		public MainWindow () {
-			panel = new MainPanel ();
+			//panel = new MainPanel ();
 			window_position = WindowPosition.CENTER;
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 		}
@@ -227,6 +227,21 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			var w = new Signatures ();
 			w.show_all ();
 		}
+
+		private void menuToolsConsole() {
+			var w = new Window (WindowType.TOPLEVEL);
+			w.resize (800, 400);
+			w.title = "ragui: console";
+			var cons = new Ragui.Console ();
+			cons.cmd_handler.connect ((x) => {
+				var prompt = ("[0x%08"+uint64.FORMAT_MODIFIER+"x] ").printf (gc.core.offset);
+				var cmd = gc.core.cmd_str (x);
+				cons.set_text (prompt+x+"\n"+cmd);
+			});
+			w.add (cons);
+			w.show_all ();
+		}
+
 
 		private void menuToolsScripting () {
 			var w = new Window (WindowType.TOPLEVEL);
@@ -341,13 +356,15 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 
 
 		public void view_panel () {
-			if (panel == null)
-				panel = new MainPanel ();
 			is_open = false;
+			if (panel == null) {
+				panel = new MainPanel ();
 			//box_body.children = null;
-			box_body.add (panel);
+				box_body.add (panel);
+			}
 			box_body.show_all ();
-			body_editor.hide ();
+			view_body_hide_all ();
+			panel.show_all ();
 			menu_mode.sensitive = false;
 			//menu_view.sensitive = false;
 			//menu_edit.sensitive = false;
@@ -360,11 +377,12 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		}
 
 		public MainPanel panel;
-		public MainBody body_editor = null;
+		public BodyEditor body_editor = null;
 		public VBox body_bindiff = null;
 		public VBox body_forensics = null;
-		public VBox body_debugger = null;
+		public BodyDebugger body_debugger = null;
 
+// TODO: rename panel to body_panel
 		public void view_body_hide_all () {
 			box_body.show_all ();
 			panel.hide ();
@@ -391,22 +409,21 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		public void view_body_editor () {
 			is_open = true;
 			if (body_editor == null) {
-				body_editor = new MainBody ();
+				body_editor = new BodyEditor ();
 				body_editor.goto (gc.core.offset);
 				body_editor.diff.set_core (gc.core);
 				body_editor.diff.file_open.connect (() => {
-							var ret = gc.show_file_open ("Select second file");
-							if (ret != null) {
-								var core = new RCore ();
-								core.file_open (ret, 0, 0);
-								if (core.file != null) {
-									core.bin_load (null);
-									body_editor.diff.set_core_two (core);
-									body_editor.diff.diff_bins ();
-								}
+						var ret = gc.show_file_open ("Select second file");
+						if (ret != null) {
+							var core = new RCore ();
+							core.file_open (ret, 0, 0);
+							if (core.file != null) {
+								core.bin_load (null);
+								body_editor.diff.set_core_two (core);
+								body_editor.diff.diff_bins ();
 							}
-						});
-				//box_body.children = null;
+						}
+					});
 				box_body.add (body_editor);
 			}
 			//menu_view.sensitive = true;
@@ -419,10 +436,8 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 
 		public void view_body_debugger () {
 			if (body_debugger == null) {
-				body_debugger = new VBox (false, 4);
-				body_debugger.add (new Label ("debugger mode"));
+				body_debugger = new BodyDebugger ();
 				box_body.add (body_debugger);
-				//box_body.show_all ();
 			}
 			menu_mode.sensitive = true;
 			box_body.show_all ();
@@ -435,7 +450,6 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 				body_forensics = new VBox (false, 4);
 				body_forensics.add (new Label ("forensics mode"));
 				box_body.add (body_forensics);
-				//box_body.show_all ();
 			}
 			box_body.show_all ();
 			view_body_hide_all ();

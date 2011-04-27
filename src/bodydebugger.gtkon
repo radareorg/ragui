@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org>, nibble<develsec.org> */
 
-VBox $Ragui.MainBody border-width=1
+VBox $Ragui.BodyDebugger border-width=1
 	using=Gtk:Radare:Ragui
 	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview
 {
@@ -22,27 +22,26 @@ VBox $Ragui.MainBody border-width=1
 								vscrollbar-policy=PolicyType.AUTOMATIC {
 							Listview:Widget $listview;
 						}
+						ComboBox text !expand $leftbox2;
+						ScrolledWindow can-focus expand
+								hscrollbar-policy=PolicyType.AUTOMATIC
+								vscrollbar-policy=PolicyType.AUTOMATIC {
+							Listview:Widget $listview2;
+						}
 					}
 				}
 				VBox add2 {
-/*
-					// TODO: set each tab to a var, and use it from see code/graph
-					Notebook $nb2 expand scrollable tab-vborder=1 switch-page=chtab {
-						VBox {
-							tab-label { Label label="PENIS"; }
-						}
-					}
-*/
 					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
 						VBox $.page_code {
 							tab-label { Label label="code"; }
 							/* Codeview:Widget $codeview; */
-							Ragui.Disasm $disasm;
-						}
-						VBox $.page_data {
-							tab-label { Label label="data"; }
-							Ragui.SeekStack !expand $ss_data;
-							Hexview.Widget $hexview;
+							VPaned $vpaned position=300 {
+								Ragui.Disasm $disasm;
+								VBox add2 {
+									Ragui.SeekStack !expand $ss_data;
+									Hexview.Widget $hexview;
+								}
+							}
 						}
 						VBox $.page_graph {
 							tab-label { Label label="graph"; }
@@ -57,34 +56,9 @@ VBox $Ragui.MainBody border-width=1
 							tab-label { Label label="script"; }
 							Script:Widget $script;
 						}
-						VBox {
-							tab-label { Label label="search"; }
-							Search:Widget $search;
-						}
 						VBox $vbheaders {
 							tab-label { Label label="headers"; }
 						}
-						VBox {
-							tab-label { Label label="files"; }
-							Mounts:Widget $mounts; // fsystem='gc.core.fs';
-						}
-						VBox {
-							tab-label { Label label="bindiff"; }
-							Gradiff.Widget $diff;
-						}
-						VBox {
-							tab-label { Label label="debug"; }
-							Debug:Widget $debug;
-						}
-						VBox {
-							tab-label { Label label="console"; }
-							Ragui:Console $console;
-						}
-						/*Label label="hash-foo" {
-						  tab-label {
-						  Label label="data analysis";
-						  }
-						  }*/
 					}
 				}
 			}
@@ -102,9 +76,6 @@ VBox $Ragui.MainBody border-width=1
 			if ((void *)page == (void *)page_code) {
 				now = "disasm";
 			} else
-			if ((void *)page == (void *)page_data) {
-				now = "hexdump";
-			} else
 			if ((void *)page == (void *)page_graph) {
 				now = "graph";
 			}
@@ -112,15 +83,13 @@ VBox $Ragui.MainBody border-width=1
 	//	print ("===  > %p %p %p\n", page_code, page_data, page_graph);
 		}
 
-		public MainBody () {
+		public BodyDebugger () {
 			// TODO: remove because unnecesary {{{
 #if 0
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 			grava.graph.update ();
 #endif
 			// }}}
-			mounts.fs = gc.core.fs;
-			setup_console ();
 			setup_leftbox ();
 			setup_leftlist ();
 			setup_io ();
@@ -154,16 +123,25 @@ VBox $Ragui.MainBody border-width=1
 			leftbox.append_text ("Relocations");
 			leftbox.append_text ("Entry Points");
 			leftbox.append_text ("Strings");
-			leftbox.append_text ("Registers");
-			leftbox.append_text ("Breakpoints");
-			leftbox.append_text ("Processes");
 			leftbox.append_text ("Comments");
-			leftbox.append_text ("Threads");
 			leftbox.set_active (0);
+			leftbox2.append_text ("Backtrace");
+			leftbox2.append_text ("Filedescriptors");
+			leftbox2.append_text ("Breakpoints");
+			leftbox2.append_text ("Traces");
+			leftbox2.append_text ("Registers");
+			leftbox2.append_text ("Memory Maps");
+			leftbox2.append_text ("Processes");
+			leftbox2.append_text ("Threads");
+			leftbox2.set_active (0);
 			leftbox.changed.connect ( (x)=> {
-				change_leftlist (x.get_active_text ());
+				change_leftlist (listview, x.get_active_text ());
 			});
-			change_leftlist ("Information");
+			leftbox2.changed.connect ( (x)=> {
+				change_leftlist (listview2, x.get_active_text ());
+			});
+			change_leftlist (listview, "Information");
+			change_leftlist (listview2, "Registers");
 		}
 
 		public void setup_view () {
@@ -310,8 +288,7 @@ VBox $Ragui.MainBody border-width=1
 			grava.draw ();
 		}
 
-		private void change_leftlist (string type) {
-			var lv = listview;
+		private void change_leftlist (Listview.Widget lv, string type) {
 			var baddr = gc.core.bin.get_baddr();
 			lv.clear ();
 			lv.show ();
@@ -394,15 +371,6 @@ VBox $Ragui.MainBody border-width=1
 				var ret = gc.core.read_at (x, ptr, y);
 				gc.log_file (@"READING FROM 0x%08llx ++ $(ret)".printf (x));
 				return ret;
-			});
-		}
-
-		private void setup_console () {
-			var cons = console;
-			cons.cmd_handler.connect ((x) => {
-				var prompt = ("[0x%08"+uint64.FORMAT_MODIFIER+"x] ").printf (gc.core.offset);
-				var cmd = gc.core.cmd_str (x);
-				cons.set_text (prompt+x+"\n"+cmd);
 			});
 		}
 

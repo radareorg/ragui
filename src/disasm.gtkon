@@ -145,10 +145,10 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 					goto (newoff);
 					break;
 				case "breakpoint":
-					gc.cmd ("bp $newoff");
+					gc.cmd (@"bp $newoff");
 					break;
 				case "drop breakpoint":
-					gc.cmd ("bp-$newoff");
+					gc.cmd (@"bp-$newoff");
 					break;
 				}
 				print ("menu handler");

@@ -50,8 +50,9 @@ all: widgets.done
 GTKONFILES=seekstack.gtkon signatures.gtkon
 GTKONFILES+=scriptwidget.gtkon searchwidget.gtkon disasm.gtkon newproject.gtkon openfile.gtkon
 GTKONFILES+=debugwidget.gtkon openproject.gtkon preferences.gtkon console.gtkon flagswidget.gtkon
-GTKONFILES+=mainbody.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
+GTKONFILES+=bodyeditor.gtkon mainpanel.gtkon mainwindow.gtkon openprogram.gtkon openprocess.gtkon
 GTKONFILES+=openremote.gtkon dumpdata.gtkon analyze.gtkon
+GTKONFILES+=bodydebugger.gtkon
 # TODO: GTKONFILES+=datadump.gtkon
 OVALAFILES=guicore.vala guiconfig.vala main.vala
 VALAFILES=${OVALAFILES}
