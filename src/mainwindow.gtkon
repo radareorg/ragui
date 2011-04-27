@@ -151,7 +151,11 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			case "editor":
 				view_body_editor ();
 				break;
+			case "debugger":
+				view_body_debugger ();
+				break;
 			case "forensics":
+				view_body_forensics ();
 				break;
 			case "bindiff":
 				view_body_bindiff ();
@@ -299,7 +303,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		}
 
 		private void menuViewLeftpanel () {
-			body.show_panel (body.PanelType.LEFT);
+			body_editor.show_panel (body_editor.PanelType.LEFT);
 		}
 
 		private void OnMenuEditPreferences () {
@@ -335,8 +339,6 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			else gc.open_url ("http://www.radare.org/vdoc");
 		}
 
-		public MainPanel panel;
-		public MainBody body;
 
 		public void view_panel () {
 			if (panel == null)
@@ -345,7 +347,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			//box_body.children = null;
 			box_body.add (panel);
 			box_body.show_all ();
-			body.hide ();
+			body_editor.hide ();
 			menu_mode.sensitive = false;
 			//menu_view.sensitive = false;
 			//menu_edit.sensitive = false;
@@ -357,7 +359,22 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			view_body_editor ();
 		}
 
+		public MainPanel panel;
+		public MainBody body_editor = null;
 		public VBox body_bindiff = null;
+		public VBox body_forensics = null;
+		public VBox body_debugger = null;
+
+		public void view_body_hide_all () {
+			box_body.show_all ();
+			panel.hide ();
+			/* hide all bodies */
+			body_editor.hide ();
+			body_forensics.hide ();
+			body_debugger.hide ();
+			body_bindiff.hide ();
+		}
+
 		public void view_body_bindiff () {
 			if (body_bindiff == null) {
 				body_bindiff = new VBox (false, 4);
@@ -366,77 +383,69 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 				//box_body.show_all ();
 			}
 			box_body.show_all ();
-			panel.hide ();
-			body.hide ();
+			view_body_hide_all ();
+			body_bindiff.show_all ();
 			menu_mode.sensitive = true;
 		}
 
 		public void view_body_editor () {
 			is_open = true;
-			if (body == null) {
-				body = new MainBody ();
-				body.goto (gc.core.offset);
-				body.diff.set_core (gc.core);
-				body.diff.file_open.connect (() => {
+			if (body_editor == null) {
+				body_editor = new MainBody ();
+				body_editor.goto (gc.core.offset);
+				body_editor.diff.set_core (gc.core);
+				body_editor.diff.file_open.connect (() => {
 							var ret = gc.show_file_open ("Select second file");
 							if (ret != null) {
 								var core = new RCore ();
 								core.file_open (ret, 0, 0);
 								if (core.file != null) {
 									core.bin_load (null);
-									body.diff.set_core_two (core);
-									body.diff.diff_bins ();
+									body_editor.diff.set_core_two (core);
+									body_editor.diff.diff_bins ();
 								}
 							}
 						});
 				//box_body.children = null;
-				box_body.add (body);
+				box_body.add (body_editor);
 			}
-			box_body.show_all ();
-			panel.hide ();
-			body_bindiff.hide ();
-			body.show_all ();
-/*
-	body.nb2.show_all();
-	body.nb.hide ();
-*/
 			//menu_view.sensitive = true;
 			//menu_edit.sensitive = true;
 			menu_mode.sensitive = true;
+			box_body.show_all ();
+			view_body_hide_all ();
+			body_editor.show_all ();
 		}
 
-/*
 		public void view_body_debugger () {
-			if (body == null)
-				body = new MainDebugBody ();
-			is_open = true;
-			body.goto (gc.core.offset);
-			//box_body.children = null;
-			box_body.add (body);
+			if (body_debugger == null) {
+				body_debugger = new VBox (false, 4);
+				body_debugger.add (new Label ("debugger mode"));
+				box_body.add (body_debugger);
+				//box_body.show_all ();
+			}
+			menu_mode.sensitive = true;
 			box_body.show_all ();
-			panel.hide ();
-			body.show_all ();
-			menu_view.sensitive = true;
-			//menu_edit.sensitive = true;
+			view_body_hide_all ();
+			body_debugger.show_all ();
 		}
 
 		public void view_body_forensics() {
-			if (body == null)
-				body = new MainBody ();
-			is_open = true;
-			body.goto (gc.core.offset);
-			//box_body.children = null;
-			box_body.add (body);
+			if (body_forensics == null) {
+				body_forensics = new VBox (false, 4);
+				body_forensics.add (new Label ("forensics mode"));
+				box_body.add (body_forensics);
+				//box_body.show_all ();
+			}
 			box_body.show_all ();
-			panel.hide ();
-			body.show_all ();
-			menu_view.sensitive = true;
-			//menu_edit.sensitive = true;
+			view_body_hide_all ();
+			body_forensics.show_all ();
+			menu_mode.sensitive = true;
 		}
-*/
+
 		public void setup_view () {
-			if (body != null)
-				body.setup_view ();
+			if (body_editor != null)
+				body_editor.setup_view ();
 		}
 	}-
 }
