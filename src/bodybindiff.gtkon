@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org>, nibble<develsec.org> */
 
-VBox $Ragui.BodyDebugger border-width=1
+VBox $Ragui.BodyBindiff border-width=1
 	using=Gtk:Radare:Ragui
 	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview
 {
@@ -16,29 +16,18 @@ VBox $Ragui.BodyDebugger border-width=1
 			HPaned $panel position=250 {
 				VBox spacing=3 {
 					ComboBox text !expand $leftbox;
-					VBox $vb0 {
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview;
-						}
-						ComboBox text !expand $leftbox2;
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview2;
-						}
+					ScrolledWindow can-focus expand
+							hscrollbar-policy=PolicyType.AUTOMATIC
+							vscrollbar-policy=PolicyType.AUTOMATIC {
+						Listview:Widget $listview;
 					}
 				}
 				VBox add2 {
-					Toolbar !expand {
-						Button use-stock label="breakpoint";
-						VSeparator;
-						Button use-stock label="step";
-						Button use-stock label="continue";
-						Button use-stock label="continue";
-					}
 					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
+						VBox {
+							tab-label { Label label="bindiff"; }
+							Gradiff.Widget $diff;
+						}
 						VBox $.page_code {
 							tab-label { Label label="code"; }
 							/* Codeview:Widget $codeview; */
@@ -49,15 +38,6 @@ VBox $Ragui.BodyDebugger border-width=1
 									Hexview.Widget $hexview;
 								}
 							}
-						}
-						VBox $.page_graph {
-							tab-label { Label label="graph"; }
-							Ragui.SeekStack !expand $ss_graph;
-							Grava.Widget $grava;
-						}
-						VBox {
-							tab-label { Label label="flags"; }
-							Flags:Widget;
 						}
 						VBox {
 							tab-label { Label label="script"; }
@@ -82,15 +62,10 @@ VBox $Ragui.BodyDebugger border-width=1
 			/* switch with pointers are no valid in vala */
 			if ((void *)page == (void *)page_code) {
 				now = "disasm";
-			} else
-			if ((void *)page == (void *)page_graph) {
-				now = "graph";
 			}
-	//	print ("---> %d page=%p\n", p, page);
-	//	print ("===  > %p %p %p\n", page_code, page_data, page_graph);
 		}
 
-		public BodyDebugger () {
+		public BodyBindiff () {
 			// TODO: remove because unnecesary {{{
 #if 0
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
@@ -107,15 +82,17 @@ VBox $Ragui.BodyDebugger border-width=1
 				gc.seek (x);
 				hexview.seek (x);
 			});
+/*
 			ss_graph.handle_goto.connect ((x) => {
 				gc.seek (x);
-				grava_seek (x);
+				//grava_seek (x);
 			});
 			ss_graph.goto (gc.core.offset);//num.get ("entry0"));
+*/
 		}
 
 		public void goto (uint64 addr) {
-			ss_graph.goto (addr);
+//			ss_graph.goto (addr);
 			ss_data.goto (addr);
 			disasm.goto (addr);
 		}
@@ -132,23 +109,10 @@ VBox $Ragui.BodyDebugger border-width=1
 			leftbox.append_text ("Strings");
 			leftbox.append_text ("Comments");
 			leftbox.set_active (0);
-			leftbox2.append_text ("Backtrace");
-			leftbox2.append_text ("Filedescriptors");
-			leftbox2.append_text ("Breakpoints");
-			leftbox2.append_text ("Traces");
-			leftbox2.append_text ("Registers");
-			leftbox2.append_text ("Memory Maps");
-			leftbox2.append_text ("Processes");
-			leftbox2.append_text ("Threads");
-			leftbox2.set_active (0);
 			leftbox.changed.connect ( (x)=> {
 				change_leftlist (listview, x.get_active_text ());
 			});
-			leftbox2.changed.connect ( (x)=> {
-				change_leftlist (listview2, x.get_active_text ());
-			});
 			change_leftlist (listview, "Information");
-			change_leftlist (listview2, "Registers");
 		}
 
 		public void setup_view () {
@@ -217,7 +181,7 @@ VBox $Ragui.BodyDebugger border-width=1
 				case "analyze":
 					gc.cmd ("af");
 					disasm.goto (offset);
-					ss_graph.goto (offset);
+					//ss_graph.goto (offset);
 					break;
 				case "copy":
 					gc.show_message ("TODO: copy stuff into clipboard");
@@ -250,7 +214,7 @@ VBox $Ragui.BodyDebugger border-width=1
 				//	hexview.seek (offset);
 					break;
 				case "graph":
-					ss_graph.goto (offset);
+					//ss_graph.goto (offset);
 					//grava_seek (offset);
 					break;
 				case "set breakpoint":
@@ -279,6 +243,7 @@ VBox $Ragui.BodyDebugger border-width=1
 			return num.to_string ("0x%"+uint64.FORMAT_MODIFIER+"x");
 		}
 
+/*
 		public void grava_seek (uint64 offset) {
 			gc.cmd (@"s $offset");
 			gc.cmd ("pd 20");
@@ -294,6 +259,7 @@ VBox $Ragui.BodyDebugger border-width=1
 			grava.graph.update ();
 			grava.draw ();
 		}
+*/
 
 		private void change_leftlist (Listview.Widget lv, string type) {
 			var baddr = gc.core.bin.get_baddr();

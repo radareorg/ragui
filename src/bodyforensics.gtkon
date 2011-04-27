@@ -1,6 +1,6 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org>, nibble<develsec.org> */
 
-VBox $Ragui.BodyDebugger border-width=1
+VBox $Ragui.BodyForensics border-width=1
 	using=Gtk:Radare:Ragui
 	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview
 {
@@ -16,55 +16,34 @@ VBox $Ragui.BodyDebugger border-width=1
 			HPaned $panel position=250 {
 				VBox spacing=3 {
 					ComboBox text !expand $leftbox;
-					VBox $vb0 {
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview;
-						}
-						ComboBox text !expand $leftbox2;
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview2;
-						}
+					ScrolledWindow can-focus expand
+							hscrollbar-policy=PolicyType.AUTOMATIC
+							vscrollbar-policy=PolicyType.AUTOMATIC {
+						Listview:Widget $listview;
 					}
 				}
 				VBox add2 {
-					Toolbar !expand {
-						Button use-stock label="breakpoint";
-						VSeparator;
-						Button use-stock label="step";
-						Button use-stock label="continue";
-						Button use-stock label="continue";
-					}
 					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
-						VBox $.page_code {
-							tab-label { Label label="code"; }
-							/* Codeview:Widget $codeview; */
-							VPaned $vpaned position=300 {
-								Ragui.Disasm $disasm;
-								VBox add2 {
-									Ragui.SeekStack !expand $ss_data;
-									Hexview.Widget $hexview;
-								}
-							}
+						VBox {
+							tab-label { Label label="files"; }
+							Mounts:Widget $mounts; // fsystem='gc.core.fs';
 						}
-						VBox $.page_graph {
-							tab-label { Label label="graph"; }
-							Ragui.SeekStack !expand $ss_graph;
-							Grava.Widget $grava;
+						VBox $.page_data {
+							tab-label { Label label="data"; }
+							Ragui.SeekStack !expand $ss_data;
+							Hexview.Widget $hexview;
 						}
 						VBox {
 							tab-label { Label label="flags"; }
 							Flags:Widget;
 						}
 						VBox {
+							tab-label { Label label="search"; }
+							Search:Widget $search;
+						}
+						VBox {
 							tab-label { Label label="script"; }
 							Script:Widget $script;
-						}
-						VBox $vbheaders {
-							tab-label { Label label="headers"; }
 						}
 					}
 				}
@@ -80,44 +59,39 @@ VBox $Ragui.BodyDebugger border-width=1
 
 		public void chtab (NotebookPage page, uint pnum) {
 			/* switch with pointers are no valid in vala */
-			if ((void *)page == (void *)page_code) {
-				now = "disasm";
-			} else
-			if ((void *)page == (void *)page_graph) {
-				now = "graph";
-			}
-	//	print ("---> %d page=%p\n", p, page);
-	//	print ("===  > %p %p %p\n", page_code, page_data, page_graph);
+			now = "hexdump";
 		}
 
-		public BodyDebugger () {
+		public BodyForensics () {
 			// TODO: remove because unnecesary {{{
 #if 0
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 			grava.graph.update ();
 #endif
+			mounts.fs = gc.core.fs;
 			// }}}
 			setup_leftbox ();
 			setup_leftlist ();
 			setup_io ();
-			setup_headers ();
+			//setup_headers ();
 
 			/* scroll stacks */
 			ss_data.handle_goto.connect ((x) => {
 				gc.seek (x);
 				hexview.seek (x);
 			});
+/*
 			ss_graph.handle_goto.connect ((x) => {
 				gc.seek (x);
-				grava_seek (x);
+				//grava_seek (x);
 			});
 			ss_graph.goto (gc.core.offset);//num.get ("entry0"));
+*/
 		}
 
 		public void goto (uint64 addr) {
-			ss_graph.goto (addr);
+//			ss_graph.goto (addr);
 			ss_data.goto (addr);
-			disasm.goto (addr);
 		}
 
 		private void setup_leftbox () {
@@ -132,23 +106,10 @@ VBox $Ragui.BodyDebugger border-width=1
 			leftbox.append_text ("Strings");
 			leftbox.append_text ("Comments");
 			leftbox.set_active (0);
-			leftbox2.append_text ("Backtrace");
-			leftbox2.append_text ("Filedescriptors");
-			leftbox2.append_text ("Breakpoints");
-			leftbox2.append_text ("Traces");
-			leftbox2.append_text ("Registers");
-			leftbox2.append_text ("Memory Maps");
-			leftbox2.append_text ("Processes");
-			leftbox2.append_text ("Threads");
-			leftbox2.set_active (0);
 			leftbox.changed.connect ( (x)=> {
 				change_leftlist (listview, x.get_active_text ());
 			});
-			leftbox2.changed.connect ( (x)=> {
-				change_leftlist (listview2, x.get_active_text ());
-			});
 			change_leftlist (listview, "Information");
-			change_leftlist (listview2, "Registers");
 		}
 
 		public void setup_view () {
@@ -216,8 +177,8 @@ VBox $Ragui.BodyDebugger border-width=1
 				switch (action) {
 				case "analyze":
 					gc.cmd ("af");
-					disasm.goto (offset);
-					ss_graph.goto (offset);
+					//disasm.goto (offset);
+					//ss_graph.goto (offset);
 					break;
 				case "copy":
 					gc.show_message ("TODO: copy stuff into clipboard");
@@ -232,7 +193,7 @@ VBox $Ragui.BodyDebugger border-width=1
 				case "backup":
 					break;
 				case "disasm":
-					disasm.goto (offset);
+					//disasm.goto (offset);
 					break;
 				case "rename":
 					// TODO: rename what? function? symbol? flag?
@@ -250,7 +211,7 @@ VBox $Ragui.BodyDebugger border-width=1
 				//	hexview.seek (offset);
 					break;
 				case "graph":
-					ss_graph.goto (offset);
+					//ss_graph.goto (offset);
 					//grava_seek (offset);
 					break;
 				case "set breakpoint":
@@ -279,6 +240,7 @@ VBox $Ragui.BodyDebugger border-width=1
 			return num.to_string ("0x%"+uint64.FORMAT_MODIFIER+"x");
 		}
 
+/*
 		public void grava_seek (uint64 offset) {
 			gc.cmd (@"s $offset");
 			gc.cmd ("pd 20");
@@ -294,6 +256,7 @@ VBox $Ragui.BodyDebugger border-width=1
 			grava.graph.update ();
 			grava.draw ();
 		}
+*/
 
 		private void change_leftlist (Listview.Widget lv, string type) {
 			var baddr = gc.core.bin.get_baddr();
@@ -379,49 +342,6 @@ VBox $Ragui.BodyDebugger border-width=1
 				gc.log_file (@"READING FROM 0x%08llx ++ $(ret)".printf (x));
 				return ret;
 			});
-		}
-
-		private void setup_headers () {
-			var grabin = new Grabin.All (gc.core.bin);
-			grabin.sections.set_actions ("seek", "dump");
-			grabin.sections.menu_handler.connect ((m, d) => {
-					switch (d) {
-					case "seek":
-						//gc.seek ();
-						gc.show_error ("Section dump not yet implemented");
-						break;
-					case "dump":
-						gc.show_error ("Section dump not yet implemented");
-						break;
-					}
-					print ("Sections clicked "+m+": "+d+"\n");
-				});
-			grabin.symbols.set_actions ("Seek");
-			grabin.symbols.menu_handler.connect ((m, d) => {
-					print ("Symbols clicked "+m.to_string ()+": "+d+"\n");
-				});
-			grabin.imports.set_actions ("Seek");
-			grabin.imports.menu_handler.connect ((m, d) => {
-					print ("Imports clicked "+m.to_string ()+": "+d+"\n");
-				});
-			grabin.strings.set_actions ("Seek");
-			grabin.strings.set_retcolumn (Grabin.Strings.COLUMN.String);
-			grabin.strings.menu_handler.connect ((m, d) => {
-					print ("Strings clicked "+m.to_string ()+": "+d+"\n");
-				});
-			grabin.relocs.set_actions ("Seek");
-			grabin.relocs.menu_handler.connect ((m, d) => {
-					print ("Relocations clicked "+m.to_string ()+": "+d+"\n");
-				});
-			grabin.fat.set_actions ("Load", "Extract");
-			grabin.fat.menu_handler.connect ((m, d) => {
-					print ("SubBin clicked "+m.to_string ()+": "+d+"\n");
-					var outfile = gc.core.file.filename;
-					var ret = gc.system ("rabin2 -x %s".printf (outfile));
-					if (ret == 0) gc.show_message ("Check out/ directory");
-					else gc.show_error ("Oops, cannot extract sub-binaries");
-				});
-			vbheaders.add (grabin);
 		}
 
 		public enum PanelType {

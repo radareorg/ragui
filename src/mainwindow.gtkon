@@ -378,8 +378,8 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 
 		public MainPanel panel;
 		public BodyEditor body_editor = null;
-		public VBox body_bindiff = null;
-		public VBox body_forensics = null;
+		public BodyBindiff body_bindiff = null;
+		public BodyForensics body_forensics = null;
 		public BodyDebugger body_debugger = null;
 
 // TODO: rename panel to body_panel
@@ -395,10 +395,22 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 
 		public void view_body_bindiff () {
 			if (body_bindiff == null) {
-				body_bindiff = new VBox (false, 4);
-				body_bindiff.add (new Label ("bindiff mode"));
+				body_bindiff = new BodyBindiff ();
 				box_body.add (body_bindiff);
 				//box_body.show_all ();
+				body_bindiff.diff.set_core (gc.core);
+				body_bindiff.diff.file_open.connect (() => {
+						var ret = gc.show_file_open ("Select second file");
+						if (ret != null) {
+							var core = new RCore ();
+							core.file_open (ret, 0, 0);
+							if (core.file != null) {
+								core.bin_load (null);
+								body_bindiff.diff.set_core_two (core);
+								body_bindiff.diff.diff_bins ();
+							}
+						}
+					});
 			}
 			box_body.show_all ();
 			view_body_hide_all ();
@@ -411,19 +423,6 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			if (body_editor == null) {
 				body_editor = new BodyEditor ();
 				body_editor.goto (gc.core.offset);
-				body_editor.diff.set_core (gc.core);
-				body_editor.diff.file_open.connect (() => {
-						var ret = gc.show_file_open ("Select second file");
-						if (ret != null) {
-							var core = new RCore ();
-							core.file_open (ret, 0, 0);
-							if (core.file != null) {
-								core.bin_load (null);
-								body_editor.diff.set_core_two (core);
-								body_editor.diff.diff_bins ();
-							}
-						}
-					});
 				box_body.add (body_editor);
 			}
 			//menu_view.sensitive = true;
@@ -447,8 +446,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 
 		public void view_body_forensics() {
 			if (body_forensics == null) {
-				body_forensics = new VBox (false, 4);
-				body_forensics.add (new Label ("forensics mode"));
+				body_forensics = new BodyForensics ();
 				box_body.add (body_forensics);
 			}
 			box_body.show_all ();

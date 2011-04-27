@@ -64,15 +64,11 @@ VBox $Ragui.BodyEditor border-width=1
 						VBox $vbheaders {
 							tab-label { Label label="headers"; }
 						}
+/*
 						VBox {
 							tab-label { Label label="files"; }
 							Mounts:Widget $mounts; // fsystem='gc.core.fs';
 						}
-						VBox {
-							tab-label { Label label="bindiff"; }
-							Gradiff.Widget $diff;
-						}
-/*
 						VBox {
 							tab-label { Label label="debug"; }
 							Debug:Widget $debug;
@@ -121,7 +117,7 @@ VBox $Ragui.BodyEditor border-width=1
 			grava.graph.update ();
 #endif
 			// }}}
-			mounts.fs = gc.core.fs;
+			//mounts.fs = gc.core.fs;
 			//setup_console ();
 			setup_leftbox ();
 			setup_leftlist ();
