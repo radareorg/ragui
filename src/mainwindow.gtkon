@@ -68,11 +68,12 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 					Menu {
 						ImageMenuItem stock-id="Analyze .." activate=menuToolsAnalyze;
 						ImageMenuItem stock-id="Assembler" activate=menuToolsAssembler;
-						ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
+						//ImageMenuItem stock-id="Bindiff ..." activate=menuProjectDiff;
 						ImageMenuItem stock-id="Calculator" activate=menuToolsCalculator;
 						ImageMenuItem stock-id="Console" activate=menuToolsConsole;
 						ImageMenuItem stock-id="Headers" activate=menuToolsHeaders;
 						ImageMenuItem stock-id="Scripting" activate=menuToolsScripting;
+						ImageMenuItem stock-id="PatchSets" activate=menuToolsPatchSets;
 						ImageMenuItem stock-id="Signatures .." activate=menuToolsSignatures;
 						SeparatorMenuItem;
 						ImageMenuItem stock-id="Plugin manager";
@@ -131,7 +132,11 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 	-{
 		SList <RadioMenuItem> mode_group;
 		public signal void on_quit();
-
+		public MainPanel panel;
+		public BodyEditor body_editor = null;
+		public BodyBindiff body_bindiff = null;
+		public BodyForensics body_forensics = null;
+		public BodyDebugger body_debugger = null;
 		private string _ui_mode = "editor";
 
 		public void mode_changed () {
@@ -221,6 +226,10 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			//panel = new MainPanel ();
 			window_position = WindowPosition.CENTER;
 			//Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
+		}
+
+		private void menuToolsPatchSets() {
+			gc.show_error ("TODO");
 		}
 
 		private void menuToolsSignatures() {
@@ -375,12 +384,6 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			// XXX: deprecated with ui_mode (mode) ???
 			view_body_editor ();
 		}
-
-		public MainPanel panel;
-		public BodyEditor body_editor = null;
-		public BodyBindiff body_bindiff = null;
-		public BodyForensics body_forensics = null;
-		public BodyDebugger body_debugger = null;
 
 // TODO: rename panel to body_panel
 		public void view_body_hide_all () {

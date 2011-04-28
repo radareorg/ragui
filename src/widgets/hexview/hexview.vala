@@ -273,6 +273,8 @@ public class Hexview.Widget : ScrolledWindow {
 			pany += (eb.y<(h/2))?40:-40;
 		else cursor = panydelta;
 
+print (@"PANYDELTA --> cursor = $cursor\n");
+
 		//print  ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		if ((eb.x/zoom)>100 && ((eb.x/zoom)<340)) {
 			double x = (eb.x/zoom)-100;
@@ -346,7 +348,6 @@ public class Hexview.Widget : ScrolledWindow {
 		int foo = K*((int)((pany/zoom)/K));
 		var pwn = (int)(pany/K);
 		if (pany>K) {
-
 			if (foo>0 && foo>address) {
 				address = 0;
 			} else {
@@ -392,7 +393,7 @@ public class Hexview.Widget : ScrolledWindow {
 
 		set_color (Color.FOREGROUND);
 		int rows = (int)((h/zoom)/10);
-		for (int i=0;i<rows;i++) {
+		for (int i=-1;i<rows;i++) {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
 				ctx.save ();
@@ -433,19 +434,30 @@ public class Hexview.Widget : ScrolledWindow {
 			}
 			ctx.move_to (20, y);
 			set_color (Color.OFFSET);
-			ctx.show_text ("0x%08llx".printf ((uint64)address+(i*16)));
+			// 64 bit offset or what
+			bool use64bitoff = address >= uint32.MAX; //(((uint64)address) != ((uint32)address));
+			int offx_hex, offx_asc;
+			if (use64bitoff) {
+				ctx.show_text ("0x%08llx".printf ((uint64)address+(i*16)));
+				offx_hex = 180;
+				offx_asc = 430;
+			} else {
+				ctx.show_text ("0x%08llx".printf ((uint32)address+(i*16)));
+				offx_hex = 100;
+				offx_asc = 350;
+			}
 
 			set_color (Color.FOREGROUND);
 			uint8 *ptr = buffer.get_ptr (0, i);
 			if (ptr != null) {
-				for (int j=0;j<16;j+=2) {
-					ctx.move_to (100+(j*15), y);
+				for (int j=0; j<16; j+=2) {
+					ctx.move_to (offx_hex+(j*15), y);
 					ctx.show_text ("%02x%02x".printf (
 						ptr[j], ptr[j+1]));
 				}
 				for (int j=0;j<16;j++) {
 					char ch = (char)ptr[j];
-					ctx.move_to (350+(j*7), y);
+					ctx.move_to (offx_asc+(j*7), y);
 					if (ch<' '||ch>'~')
 						ch = '.';
 					ctx.show_text ("%c".printf (ch));

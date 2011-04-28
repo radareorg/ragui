@@ -461,9 +461,7 @@ VBox $Ragui.BodyEditor border-width=1
 		public void show_panel (PanelType pt) {
 			switch (pt) {
 			case PanelType.LEFT:
-				if (panel.position == 300)
-					panel.position = 0;
-				else panel.position = 300;
+				panel.position = (panel.position == 300)? 0: 300;
 				break;
 			case PanelType.CODE:
 				break;

@@ -4,77 +4,63 @@ VBox $Ragui.BodyDebugger border-width=1
 	using=Gtk:Radare:Ragui
 	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview
 {
-/*
-		Toolbar !expand {
-			Button use-stock label="preferences";
-			VSeparator;
-			Button use-stock label="breakpoint";
-			Button use-stock label="step";
-			Button use-stock label="continue";
-		}
-*/
-			HPaned $panel position=250 {
-				VBox spacing=3 {
-					ComboBox text !expand $leftbox;
-					VBox $vb0 {
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview;
-						}
-						ComboBox text !expand $leftbox2;
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview2;
-						}
-					}
+	HPaned $panel position=250 {
+		VBox spacing=3 {
+			ComboBox text !expand $leftbox;
+			VBox $vb0 {
+				ScrolledWindow can-focus expand
+						hscrollbar-policy=PolicyType.AUTOMATIC
+						vscrollbar-policy=PolicyType.AUTOMATIC {
+					Listview:Widget $listview;
 				}
-				VBox add2 {
-					Toolbar !expand {
-						Button use-stock label="breakpoint";
-						VSeparator;
-						Button use-stock label="step";
-						Button use-stock label="continue";
-						Button use-stock label="continue";
-					}
-					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
-						VBox $.page_code {
-							tab-label { Label label="code"; }
-							/* Codeview:Widget $codeview; */
-							VPaned $vpaned position=300 {
-								Ragui.Disasm $disasm;
-								VBox add2 {
-									Ragui.SeekStack !expand $ss_data;
-									Hexview.Widget $hexview;
-								}
-							}
-						}
-						VBox $.page_graph {
-							tab-label { Label label="graph"; }
-							Ragui.SeekStack !expand $ss_graph;
-							Grava.Widget $grava;
-						}
-						VBox {
-							tab-label { Label label="flags"; }
-							Flags:Widget;
-						}
-						VBox {
-							tab-label { Label label="script"; }
-							Script:Widget $script;
-						}
-						VBox $vbheaders {
-							tab-label { Label label="headers"; }
-						}
-					}
+				ComboBox text !expand $leftbox2;
+				ScrolledWindow can-focus expand
+						hscrollbar-policy=PolicyType.AUTOMATIC
+						vscrollbar-policy=PolicyType.AUTOMATIC {
+					Listview:Widget $listview2;
 				}
 			}
-/*
-		HBox !expand {
-			ProgressBar !expand;
-			Statusbar expand;
 		}
-*/
+		VBox add2 {
+			Toolbar !expand {
+				Button use-stock label="breakpoint";
+				VSeparator;
+				Button use-stock label="step";
+				Button use-stock label="step-over";
+				Button use-stock label="continue";
+				Button use-stock label="contsc";
+			}
+			Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
+				VBox $.page_code {
+					tab-label { Label label="code"; }
+					/* Codeview:Widget $codeview; */
+					VPaned $vpaned position=300 {
+						Ragui.Disasm $disasm;
+						VBox add2 {
+							Ragui.SeekStack !expand $ss_data;
+							Hexview.Widget $hexview;
+						}
+					}
+				}
+				VBox $.page_graph {
+					tab-label { Label label="graph"; }
+					Ragui.SeekStack !expand $ss_graph;
+					Grava.Widget $grava;
+				}
+				VBox {
+					tab-label { Label label="flags"; }
+					Flags:Widget;
+				}
+				VBox {
+					tab-label { Label label="script"; }
+					Script:Widget $script;
+				}
+				VBox $vbheaders {
+					tab-label { Label label="headers"; }
+				}
+			}
+		}
+	}
 	-{
 		private string now = "disasm"; // selected tab // TODO: rename
 
@@ -91,14 +77,8 @@ VBox $Ragui.BodyDebugger border-width=1
 		}
 
 		public BodyDebugger () {
-			// TODO: remove because unnecesary {{{
-#if 0
-			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
-			grava.graph.update ();
-#endif
-			// }}}
 			setup_leftbox ();
-			setup_leftlist ();
+			setup_leftlist (listview);
 			setup_io ();
 			setup_headers ();
 
@@ -151,18 +131,7 @@ VBox $Ragui.BodyDebugger border-width=1
 			change_leftlist (listview2, "Registers");
 		}
 
-		public void setup_view () {
-/* THIS IS NOT WORKING ON OLD GTK VERSIONS:.maybe we can just ignore this
-			if (this.get_has_window ()) {
-				int h = 0, w = 0;
-				this.window.get_size (out w, out h);
-				body.position = h/2;
-			}
-*/
-		}
-
-		private void setup_leftlist () {
-			var lv = listview;
+		private void setup_leftlist (Listview.Widget lv) {
 			lv.menu_construct.connect ((m) => {
 				var cbtext = leftbox.get_active_text ();
 				print (@"Choosen menu is $cbtext\n");
@@ -436,9 +405,7 @@ VBox $Ragui.BodyDebugger border-width=1
 		public void show_panel (PanelType pt) {
 			switch (pt) {
 			case PanelType.LEFT:
-				if (panel.position == 300)
-					panel.position = 0;
-				else panel.position = 300;
+				panel.position = (panel.position == 300)? 0: 300;
 				break;
 			case PanelType.CODE:
 				break;
