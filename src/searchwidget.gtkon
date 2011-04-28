@@ -18,14 +18,18 @@ VBox using=Gtk using:r=Radare $Search.Widget {
 		VBox {
 			tab-label { Label label="Results"; }
 
-			TreeView can-focus $tv headers-visible {
-				TreeViewColumn title="offset" clickable clicked="{sort_column(tv,0)}" {
-					CellRendererText $.col0 expand;
-					CellRendererText &col0 attribute="text" column=0;
-				}
-				TreeViewColumn title="context" clickable clicked="{sort_column(tv,1)}" {
-					CellRendererText $.col1 expand;
-					CellRendererText &col1 attribute="text" column=1;
+			ScrolledWindow can-focus expand
+					hscrollbar-policy=PolicyType.AUTOMATIC
+					vscrollbar-policy=PolicyType.AUTOMATIC {
+				TreeView can-focus $tv headers-visible {
+					TreeViewColumn title="offset" clickable clicked="{sort_column(tv,0)}" {
+						CellRendererText $.col0 expand;
+						CellRendererText &col0 attribute="text" column=0;
+					}
+					TreeViewColumn title="context" clickable clicked="{sort_column(tv,1)}" {
+						CellRendererText $.col1 expand;
+						CellRendererText &col1 attribute="text" column=1;
+					}
 				}
 			}
 		}

@@ -434,12 +434,12 @@ public class Hexview.Widget : ScrolledWindow {
 			ctx.move_to (20, y);
 			set_color (Color.OFFSET);
 			// 64 bit offset or what
-			bool use64bitoff = address >= uint32.MAX; //(((uint64)address) != ((uint32)address));
+			bool use64bitoff = false; //address >= 1<<50;//(uint32.MAX<<8); //(((uint64)address) != ((uint32)address));
 			int offx_hex, offx_asc;
 			if (use64bitoff) {
 				ctx.show_text ("0x%08llx".printf ((uint64)address+(i*16)));
-				offx_hex = 180;
-				offx_asc = 430;
+				offx_hex = 120;
+				offx_asc = 370;
 			} else {
 				ctx.show_text ("0x%08x".printf ((uint32)address+(i*16)));
 				offx_hex = 100;

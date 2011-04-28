@@ -80,6 +80,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		reset_style ();
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
+		//couriertag = code.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
 		couriertag = code.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
 		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
 		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);

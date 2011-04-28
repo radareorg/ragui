@@ -33,7 +33,7 @@ public class Codeview.Widget : ScrolledWindow {
 	[Widget]
 	public DrawingArea da;
 	public const double S = 96;
-	public double zoom = 1.4;
+	public double zoom = 1.6;
 	public int cursor = 0;
 	public int ccursor = 0;
 	public double lineh = 10;
@@ -324,12 +324,13 @@ public class Codeview.Widget : ScrolledWindow {
 		//ctx.save();
 		ctx.save();
 		// Sans Serif
-		ctx.select_font_face("mono", FontSlant.NORMAL, FontWeight.BOLD);
-		ctx.set_font_size(10);
-		ctx.translate(0, pany);
-		ctx.scale(zoom, zoom);
-		ctx.set_source_rgb(1, 1, 1);
-		ctx.paint();
+		//ctx.select_font_face("mono", FontSlant.NORMAL, FontWeight.BOLD);
+		ctx.select_font_face ("mono", FontSlant.NORMAL, FontWeight.NORMAL);
+		ctx.set_font_size (10);
+		ctx.translate (0, pany);
+		ctx.scale (zoom, zoom);
+		ctx.set_source_rgb (1, 1, 1);
+		ctx.paint ();
 		//		codew.draw(ctx);
 		//stdout.printf("widget.draw\n");
 		//da.expose(da, null);
