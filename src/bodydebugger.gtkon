@@ -339,6 +339,7 @@ VBox $Ragui.BodyDebugger border-width=1
 		private void setup_io () {
 			ss_data.goto (0); //hexview.seek (0);
 			hexview.buffer.update.connect ((x, y)=> {
+				if (y<0) return false;
 				hexview.buffer.start = x;
 				hexview.buffer.end = x+y;
 				hexview.buffer.size = y;

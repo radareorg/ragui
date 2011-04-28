@@ -273,8 +273,7 @@ public class Hexview.Widget : ScrolledWindow {
 			pany += (eb.y<(h/2))?40:-40;
 		else cursor = panydelta;
 
-print (@"PANYDELTA --> cursor = $cursor\n");
-
+		//print (@"PANYDELTA --> cursor = $cursor\n");
 		//print  ("x=%f y=%f zoom=%f xz=%f\n", eb.x, eb.y, zoom, eb.x/zoom);
 		if ((eb.x/zoom)>100 && ((eb.x/zoom)<340)) {
 			double x = (eb.x/zoom)-100;
@@ -393,7 +392,7 @@ print (@"PANYDELTA --> cursor = $cursor\n");
 
 		set_color (Color.FOREGROUND);
 		int rows = (int)((h/zoom)/10);
-		for (int i=-1;i<rows;i++) {
+		for (int i=0;i<rows;i++) {
 			double y = 20+(i*lineh);
 			if (i==cursor) {
 				ctx.save ();
@@ -442,7 +441,7 @@ print (@"PANYDELTA --> cursor = $cursor\n");
 				offx_hex = 180;
 				offx_asc = 430;
 			} else {
-				ctx.show_text ("0x%08llx".printf ((uint32)address+(i*16)));
+				ctx.show_text ("0x%08x".printf ((uint32)address+(i*16)));
 				offx_hex = 100;
 				offx_asc = 350;
 			}
