@@ -55,7 +55,12 @@ osxapp: osxdist
 	cp bin/osx/Ragui Ragui.app/Contents/MacOS/Ragui
 	chmod +x Ragui.app/Contents/MacOS/Ragui
 	cp bin/osx/PkgInfo bin/osx/Info.plist Ragui.app/Contents
+	cp bonus/Ragui.icns Ragui.app/Contents/Resources
 	zip -r ragui-osx-0.1b.zip Ragui.app
+
+osxdmg:
+	bin/osx/mkdmg ragui 0.1 Ragui.app
+	mv Ragui.app.dmg ragui-0.1b.dmg
 
 bindist:
 	rm -rf ${BINDIST}
