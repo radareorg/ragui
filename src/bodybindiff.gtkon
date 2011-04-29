@@ -13,42 +13,34 @@ VBox $Ragui.BodyBindiff border-width=1
 			Button use-stock label="continue";
 		}
 */
-			HPaned $panel position=250 {
-				VBox spacing=3 {
-					ComboBox text !expand $leftbox;
-					ScrolledWindow can-focus expand
-							hscrollbar-policy=PolicyType.AUTOMATIC
-							vscrollbar-policy=PolicyType.AUTOMATIC {
-						Listview:Widget $listview;
+		//HPaned $panel position=250 {
+			VBox {
+				Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
+					VBox {
+						tab-label { Label label="bindiff"; }
+						Gradiff.Widget $diff;
 					}
-				}
-				VBox add2 {
-					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
-						VBox {
-							tab-label { Label label="bindiff"; }
-							Gradiff.Widget $diff;
-						}
-						VBox $.page_code {
-							tab-label { Label label="code"; }
-							/* Codeview:Widget $codeview; */
-							VPaned $vpaned position=300 {
-								Ragui.Disasm $disasm;
-								VBox add2 {
-									Ragui.SeekStack !expand $ss_data;
-									Hexview.Widget $hexview;
-								}
+					VBox $.page_code {
+						tab-label { Label label="code"; }
+						/* Codeview:Widget $codeview; */
+						VPaned $vpaned position=300 {
+							Ragui.Disasm $disasm;
+							VBox add2 {
+								Ragui.SeekStack !expand $ss_data;
+								Hexview.Widget $hexview;
 							}
 						}
-						VBox {
-							tab-label { Label label="script"; }
-							Script:Widget $script;
-						}
-						VBox $vbheaders {
-							tab-label { Label label="headers"; }
-						}
+					}
+					VBox {
+						tab-label { Label label="script"; }
+						Script:Widget $script;
+					}
+					VBox $vbheaders {
+						tab-label { Label label="headers"; }
 					}
 				}
 			}
+		//}
 /*
 		HBox !expand {
 			ProgressBar !expand;
@@ -98,6 +90,7 @@ VBox $Ragui.BodyBindiff border-width=1
 		}
 
 		private void setup_leftbox () {
+/*
 			leftbox.append_text ("Information");
 			leftbox.append_text ("Libraries");
 			leftbox.append_text ("Sections");
@@ -113,6 +106,7 @@ VBox $Ragui.BodyBindiff border-width=1
 				change_leftlist (listview, x.get_active_text ());
 			});
 			change_leftlist (listview, "Information");
+*/
 		}
 
 		public void setup_view () {
@@ -126,6 +120,7 @@ VBox $Ragui.BodyBindiff border-width=1
 		}
 
 		private void setup_leftlist () {
+/*
 			var lv = listview;
 			lv.menu_construct.connect ((m) => {
 				var cbtext = leftbox.get_active_text ();
@@ -233,6 +228,7 @@ VBox $Ragui.BodyBindiff border-width=1
 				if (d != null) print ("clicked "+m.to_string ()+": "+
 					d.name+"at addr"+d.offset.to_string ()+"\n");
 			});
+*/
 		}
 
 		private inline string S(string str) {
@@ -402,9 +398,11 @@ VBox $Ragui.BodyBindiff border-width=1
 		public void show_panel (PanelType pt) {
 			switch (pt) {
 			case PanelType.LEFT:
+/*
 				if (panel.position == 300)
 					panel.position = 0;
 				else panel.position = 300;
+*/
 				break;
 			case PanelType.CODE:
 				break;

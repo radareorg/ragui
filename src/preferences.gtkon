@@ -153,7 +153,7 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 	}
 
 	public PreferencesWindow () {
-		resize (400, 300);
+		resize (400, 400);
 		window_position = WindowPosition.CENTER;
 		init_stuff ();
 	}

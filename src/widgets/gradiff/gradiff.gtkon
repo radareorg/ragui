@@ -1,6 +1,6 @@
 VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" using:Radare="Radare" {
 	VPaned position=400 {
-		HBox spacing=3 {
+		HBox {
 			VBox {
 				Label !expand label="" $l_one;
 				Grava.Widget $g_one;
@@ -82,11 +82,13 @@ VBox $Gradiff.Widget using=Gtk border-width=5 using:Grava="Grava" using:Radare="
 		if (addr_one != "") {
 			core_one->cmd0 (@"agd $addr_one > /tmp/diff_one.dot");
 			XDot.import (g_one.graph, "/tmp/diff_one.dot");
+			g_one.graph.update ();
 		}
 
 		if (addr_two != "") {
 			core_two->cmd0 (@"agd $addr_two > /tmp/diff_two.dot");
 			XDot.import (g_two.graph, "/tmp/diff_two.dot");
+			g_two.graph.update ();
 		}
 	}
 

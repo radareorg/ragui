@@ -126,7 +126,7 @@ public class Hexview.Widget : ScrolledWindow {
 		case ScrollDirection.UP:
 			switch (wheel_action) {
 			case WheelAction.PAN:
-				pany += 300*ZOOM_FACTOR;
+				pany += 500*ZOOM_FACTOR;
 				break;
 			case WheelAction.ZOOM:
 				zoom += ZOOM_FACTOR;
@@ -136,7 +136,7 @@ public class Hexview.Widget : ScrolledWindow {
 		case ScrollDirection.DOWN:
 			switch (wheel_action) {
 			case WheelAction.PAN:
-				pany -= 300*ZOOM_FACTOR;
+				pany -= 500*ZOOM_FACTOR;
 				break;
 			case WheelAction.ZOOM:
 				zoom -= ZOOM_FACTOR;

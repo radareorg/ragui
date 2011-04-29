@@ -1,0 +1,3 @@
+#!/bin/sh
+r=$(dirname "$0")
+exec "$r/../Resources/bin/ragui"

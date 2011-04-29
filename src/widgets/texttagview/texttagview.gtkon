@@ -13,6 +13,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	[Widget]
 	public SList<string> actions;
 
+	public string fontfamily = "courier"; // mono for linux ?
+
 	private bool button_release (Gtk.Widget _w, Gdk.EventButton eb) {
 		if (eb.button != 3)
 			return false;
@@ -81,9 +83,10 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);
 		//couriertag = code.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
-		couriertag = code.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
-		bluetag = code.buffer.create_tag ("blue", "foreground", "blue");
-		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1);
+		//couriertag = code.buffer.create_tag ("cour", "family", "mono"); //, "weight", "bold");
+		couriertag = code.buffer.create_tag ("cour", "family", fontfamily); //, "weight", "bold");
+		bluetag = code.buffer.create_tag ("blue", "foreground", "blue", "family", fontfamily);
+		undertag = code.buffer.create_tag ("ul", "underline-set", 1, "underline", 1, "family", fontfamily);
 		code.cursor_visible = false;
 		code.key_press_event.connect ((x, evkey) => {
 			if (evkey.state == Gdk.ModifierType.CONTROL_MASK)
@@ -191,6 +194,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 
 	public bool tag_parse(TextTag tag, string[] args) {
 		var style = styles.lookup (args[0]);
+		tag.family = fontfamily;
 		if (style != null)
 			foreach (var stu in style.split (","))
 				tag_parse_internal (tag, stu.split (" "));
@@ -225,6 +229,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	}
 
 	public TextTag? tag_get() {
+//curtag = couriertag;
 		return curtag;
 		// generate new tag with all the stacked ones
 	}
@@ -238,7 +243,6 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 
 	private TextTag tag_create (string s) {
 		var mytag = new TextTag (s);
-		mytag.family = "mono"; // HACK
 		var style = styles.lookup ("*");
 		if (style != null) {
 			var root = style.split (",");

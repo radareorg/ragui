@@ -194,23 +194,23 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		private void menuProjectDiff() {
 			var file = gc.show_file_open ("Bindiff against...");
 			if (file != null)
-				gc.system ("ragdiff2 %s %s &".printf (gc.core.file.filename, file));
+				gc.system ("radiff2 -g %s %s > foo.dot ; xdot foo.dot &".printf (gc.core.file.filename, file));
 		}
 
 		private void on_project_save() {
 			if (is_open) {
-				if (gc.prjfile != null) {
+				if (gc.prjfile != null)
 					gc.project_save (gc.prjfile);
-				} else on_project_save_as ();
+				else on_project_save_as ();
 			} else gc.show_error ("Nothing to save");
 		}
 
 		private void on_project_save_as() {
 			if (is_open) {
 				var prj = gc.show_input ("Project name", gc.prjfile);
-				if (prj != null && prj != "") {
+				if (prj != null && prj != "")
 					gc.project_save (prj);
-				} else gc.show_message ("Nothing done");
+				else gc.show_message ("Nothing done");
 			} else gc.show_error ("Nothing to save");
 		}
 

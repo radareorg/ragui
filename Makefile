@@ -14,6 +14,49 @@ mrproper: clean
 	rm -f src/widgets.done
 	rm -rf ragui-*
 
+PANGOVERSION=1.6.0
+
+copyosxlibs:
+	for a in `otool -L src/ragui | grep -v libr|grep -v :| awk '{print $$1}'| grep -v System` ; do \
+		cp $$a ${BINDIST}/lib ; \
+	done
+	# missing stuff
+	cp /opt/local/bin/pango-querymodules ${BINDIST}/bin
+	cp /opt/local/lib/libiconv.2.dylib ${BINDIST}/lib
+	cp /opt/local/lib/libpixman-1.0.dylib ${BINDIST}/lib
+	mkdir -p ${BINDIST}/lib/pango/${PANGOVERSION}/modules
+	cp /opt/local/lib/pango/${PANGOVERSION}/modules/*.so \
+		${BINDIST}/lib/pango/${PANGOVERSION}/modules
+
+osxdist:
+	rm -rf ${BINDIST}
+	mkdir -p ${BINDIST}/bin
+	mkdir -p ${BINDIST}/lib
+	${MAKE} copyosxlibs
+	cp bin/ragui.sh ${BINDIST}/bin/ragui
+	cp src/ragui ${BINDIST}/bin/ragui.bin
+	BINDIR=`pwd`/bindist ; \
+	echo $${BINDIR} ; \
+	cd ${R2DIR} ; ${MAKE} install PREFIX=/ DESTDIR=$${BINDIR}
+	rm -rf ragui-${VERSION}
+	rm -rf bindist/lib/libr_*.dylib.*
+	mv bindist ragui-${VERSION}
+	-for a in ragui-${VERSION}/bin/r* ; do strip -s $$a ; done
+	#	upx ragui-${VERSION}/bin/ragui.bin
+	tar cjvf ragui-${VERSION}.tar.bz2 ragui-${VERSION}
+
+osxapp: osxdist
+	rm -rf Ragui.app
+	mkdir -p Ragui.app/Contents
+	cd Ragui.app/Contents ; mkdir MacOS Resources
+	tar xzf ragui-${VERSION}.tar.bz2 -C Ragui.app/Contents/Resources
+	cd Ragui.app/Contents/Resources ; \
+		mv ragui*/* . ; rm -rf ragui*
+	cp bin/osx/Ragui Ragui.app/Contents/MacOS/Ragui
+	chmod +x Ragui.app/Contents/MacOS/Ragui
+	cp bin/osx/PkgInfo bin/osx/Info.plist Ragui.app/Contents
+	zip -r ragui-osx-0.1b.zip Ragui.app
+
 bindist:
 	rm -rf ${BINDIST}
 	mkdir -p ${BINDIST}/bin
