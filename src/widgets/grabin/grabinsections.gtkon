@@ -75,8 +75,9 @@ Grabin.Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sect
 				listmodel.get_iter (out it, row);
 				m.get_value (it, 2, out a);
 				m.get_value (it, 4, out b);
-				sb.mark_range (min, max, a.get_string ().to_uint64 (),
-					b.get_string ().to_uint64 ());
+				sb.mark_range (min, max,
+					uint64.parse (a.get_string ()),
+					uint64.parse (b.get_string ()));
 				break;
 			}     
 		});
