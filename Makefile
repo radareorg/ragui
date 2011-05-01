@@ -38,8 +38,8 @@ osxdist:
 	BINDIR=`pwd`/bindist ; \
 	echo $${BINDIR} ; \
 	cd ${R2DIR} ; ${MAKE} install PREFIX=/ DESTDIR=$${BINDIR}
+	#rm -rf bindist/lib/libr_*.dylib.*
 	rm -rf ragui-${VERSION}
-	rm -rf bindist/lib/libr_*.dylib.*
 	mv bindist ragui-${VERSION}
 	-for a in ragui-${VERSION}/bin/r* ; do strip -s $$a ; done
 	#	upx ragui-${VERSION}/bin/ragui.bin
@@ -56,11 +56,13 @@ osxapp: osxdist
 	chmod +x Ragui.app/Contents/MacOS/Ragui
 	cp bin/osx/PkgInfo bin/osx/Info.plist Ragui.app/Contents
 	cp bonus/Ragui.icns Ragui.app/Contents/Resources
-	zip -r ragui-osx-0.1b.zip Ragui.app
+	zip -r ragui-osx-${VERSION}.zip Ragui.app
 
 osxdmg:
-	bin/osx/mkdmg ragui 0.1 Ragui.app
-	mv Ragui.app.dmg ragui-0.1b.dmg
+	rm -f ragui-${VERSION}.dmg
+	# TODO: pass version and so on
+	ruby bin/osx/mkdmg Ragui.app
+	mv Ragui.app.dmg ragui-${VERSION}.dmg
 
 bindist:
 	rm -rf ${BINDIST}
