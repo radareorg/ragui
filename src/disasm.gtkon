@@ -53,7 +53,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 			gc.cmd ("pd 10");
 			//gc.cmd ("e asm.bytes=0");
 			gc.cmd ("e scr.color=0");
-			gc.cmd ("e io.va=1");
+			//gc.cmd ("e io.va=1");
 			gc.cmd ("s "+addr.to_string ());
 			gc.cmd ("b 512");
 			var dis = gc.cmdstr ("pd");
