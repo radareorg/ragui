@@ -1,4 +1,4 @@
-/* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
+/* ragui - Copyright(C) 2009-2011 - pancake<nopcode.org> */
 Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destroy-event=OnWindowCloseEvent {
 	VBox border-width=10 spacing=10 {
 		Notebook {
@@ -17,8 +17,10 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 				}
 				CheckButton !expand label="Hide comments" toggled=cbComments $hidecomments;
 				CheckButton !expand label="Show stack pointer" toggled=cbStackptr $hidestck;
-				HSeparator !expand;
 				CheckButton !expand label="Show branch lines" toggled=cbBranchlines $hidelines;
+				CheckButton !expand label="Pseudocode" toggled=cbPseudo $usepseudo;
+				HSeparator !expand;
+				CheckButton !expand label="Use source metadata (DWARF, PDB, ..)" toggled=cbSourceMeta $hidesrcmeta;
 				HBox !expand spacing=5 {
 					Label !expand label="Branch lines width";
 					Entry !expand $lineswidth;
@@ -94,6 +96,7 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 	}
 -{
 	public void init_stuff() {
+		int idx;
 		cb_cpu.append_text ("x86");
 		cb_cpu.append_text ("x86.olly");
 		cb_cpu.append_text ("arm");
@@ -106,17 +109,40 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 		cb_cpu.append_text ("powerpc");
 		cb_cpu.append_text ("java");
 		cb_cpu.append_text ("bf");
-		cb_cpu.set_active (0);
+		idx = 0;
+		switch (gc.core.config.get ("asm.bits")) {
+		case "x86": idx = 0; break;
+		case "x86.olly": idx = 1; break;
+		case "arm": idx = 2; break;
+		case "armthumb": idx = 3; break;
+		case "mips": idx = 4; break;
+		case "msil": idx = 5; break;
+		case "avr": idx = 6; break;
+		case "csr": idx = 7; break;
+		case "dalvik": idx = 8; break;
+		case "powerpc": idx = 9; break;
+		case "java": idx = 10; break;
+		case "bf": idx = 11; break;
+		}
+		cb_cpu.set_active (idx);
 
 		cb_bits.append_text ("8");
 		cb_bits.append_text ("16");
 		cb_bits.append_text ("32");
 		cb_bits.append_text ("64");
-		cb_bits.set_active (2);
-
+		idx = 2; // XXX: this is redundant ..like the above switch
+		switch (gc.core.config.get_i ("asm.bits")) {
+		case 8: idx = 0; break;
+		case 16: idx = 1; break;
+		case 32: idx = 2; break;
+		case 64: idx = 3; break;
+		}
+		cb_bits.set_active (idx);
+		
 		cb_endian.append_text ("big");
 		cb_endian.append_text ("little");
-		cb_endian.set_active (1);
+		idx = (gc.core.config.get_i ("cfg.bigendian") != 0)?0:1;
+		cb_endian.set_active (idx);
 
 		lineswidth.text = gc.core.config.get_i ("asm.lineswidth").to_string ();
 		opcodebytes.text = gc.core.config.get_i ("asm.nbytes").to_string ();
@@ -125,6 +151,15 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 		analsplit.active = (gc.core.config.get_i ("anal.split") == 0)?false:true;
 		analdepth.text = gc.core.config.get_i ("anal.depth").to_string ();
 		analptrdepth.text = gc.core.config.get_i ("anal.ptrdepth").to_string ();
+
+		useva.active = (bool)gc.core.config.get_i ("io.va");;
+		usepseudo.active = (bool)gc.core.config.get_i ("asm.pseudo");
+		hidecomments.active = (bool)gc.core.config.get_i ("asm.comments");
+		hidestck.active = (bool)gc.core.config.get_i ("asm.stackptr");
+		hidelines.active = (bool)gc.core.config.get_i ("asm.lines");
+		hidebytes.active = (bool)gc.core.config.get_i ("asm.bytes");
+		hidesrcmeta.active = (bool)gc.core.config.get_i ("asm.dwarf");
+
 		cb_anal.append_text ("x86");
 		cb_anal.append_text ("x86.simple");
 		cb_anal.append_text ("ppc");
@@ -136,7 +171,10 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 		cb_anal.append_text ("arm");
 		cb_anal.set_active (0);
 
-		useva.active = (bool)gc.core.config.get_i ("io.va");;
+		plugsdir.text = gc.core.config.get ("dir.plugins");
+		// TODO tmpdir.text = RUtil.file_tmpdir ();
+		tmpdir.text = "/tmp";
+		prjdir.text = "~/.radare2/rdb";
 	}
 
 	private void cbAddressing() {
@@ -152,6 +190,14 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 
 	private void cbBranchlines() {
 		gc.core.config.set ("asm.lines", (!hidelines.active).to_string ());
+	}
+
+	private void cbPseudo() {
+		gc.core.config.set ("asm.pseudo", (!usepseudo.active).to_string ());
+	}
+
+	private void cbSourceMeta() {
+		gc.core.config.set ("asm.dwarf", (!hidesrcmeta.active).to_string ());
 	}
 
 	private void cbComments() {
