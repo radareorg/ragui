@@ -116,6 +116,8 @@ VBox $Ragui.BodyEditor border-width=1
 			Grava.XDot.import (grava.graph, "widgets/grava/test.xdot");
 			grava.graph.update ();
 #endif
+			grava.menu_construct.connect (grava_menu);
+			grava.menu_handler.connect (grava_handler);
 			// }}}
 			//mounts.fs = gc.core.fs;
 			//setup_console ();
@@ -290,6 +292,21 @@ VBox $Ragui.BodyEditor border-width=1
 
 		private inline string N(uint64 num) {
 			return num.to_string ("0x%"+uint64.FORMAT_MODIFIER+"x");
+		}
+
+		public void grava_handler (string? cmd) {
+			print ("CMD = %s\n", cmd);
+		}
+
+		public void grava_menu(Grava.Node? node) {
+			grava.actions = new SList<string?> ();
+			if (node != null) {
+				grava.actions.append ("inspect basic block");
+print ("inspect bb\n");
+			} else {
+				grava.actions.append ("change background color");
+print ("change background\n");
+			}
 		}
 
 		public void grava_seek (uint64 offset) {

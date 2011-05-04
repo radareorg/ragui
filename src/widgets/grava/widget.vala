@@ -49,6 +49,10 @@ public class Grava.Widget : VBox {
 	public signal void run_cmd(string addr);
 	public signal bool key_pressed(int key);
 
+	public SList<string> actions = new SList<string> ();
+	public signal void menu_construct(Node? node);
+	public signal void menu_handler(string? action);
+
 	// isn't silly?
 	public Gtk.Widget get_widget() {
 		return this;
@@ -101,20 +105,21 @@ public class Grava.Widget : VBox {
 
 	/* capture mouse motion */
 	private bool scroll_press (Gtk.Widget _w, Gdk.EventScroll es) {
+		int WHEELPAN = 40;
 		var da = (DrawingArea)_w;
 		sw.grab_focus();
 
 		switch (es.direction) {
 		case ScrollDirection.LEFT:
-			graph.panx += 10;
+			graph.panx += WHEELPAN;
 			break;
 		case ScrollDirection.RIGHT:
-			graph.panx -= 10;
+			graph.panx -= WHEELPAN;
 			break;
 		case ScrollDirection.UP:
 			switch (wheel_action) {
 			case WheelAction.PAN:
-				graph.pany += 10;
+				graph.pany += WHEELPAN;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom += ZOOM_FACTOR;
@@ -128,7 +133,7 @@ public class Grava.Widget : VBox {
 		case ScrollDirection.DOWN:
 			switch (wheel_action) {
 			case WheelAction.PAN:
-				graph.pany -= 10;
+				graph.pany -= WHEELPAN;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom -= ZOOM_FACTOR;
@@ -167,7 +172,7 @@ public class Grava.Widget : VBox {
 		print ("Key pressed %d (%c)\n", (int)ek.keyval, (int)ek.keyval);
 
 		if (user_key_pressed (w, ek.keyval)) {
-			draw();
+			draw ();
 			return true;
 		}
 
@@ -291,52 +296,56 @@ run_cmd("s eip");
 		case 'u': // undo selection
 run_cmd("s-");
 load_graph_at("$$");
-			graph.undo_select();
+			graph.undo_select ();
 			break;
 		case 'U': // undo selection
 run_cmd("s+");
 load_graph_at("$$");
-			graph.undo_select();
+			graph.undo_select ();
 			break;
 		case 't': // selected true branch
-			graph.select_true();
+			graph.select_true ();
 			break;
 		case 'f': // selected false branch
-			graph.select_false();
+			graph.select_false ();
 			break;
 		case '+':
 			graph.panx -= 50;
 			graph.pany -= 50;
-			graph.do_zoom(+ZOOM_FACTOR);
+			graph.do_zoom (+ZOOM_FACTOR);
 			//graph.zoom+=ZOOM_FACTOR;
 			break;
 		case '-':
 			graph.panx += 50;
 			graph.pany += 50;
-			graph.do_zoom(-ZOOM_FACTOR);
+			graph.do_zoom (-ZOOM_FACTOR);
 			//graph.zoom-=ZOOM_FACTOR;
 			break;
 		case '*':
 			graph.angle+=0.05;
 			break;
 		case '/':
-			graph.angle-=0.05;
+			graph.angle -= 0.05;
 			break;
 		default:
 			handled = false;
 			break;
 		}
-
-		//expose(da, ev);
 		refresh (da);
-
 		return true;
 	}
 
 	public void do_popup_generic() {
-		ImageMenuItem imi;
  		menu = new Menu();
-
+		menu_construct (null);
+		foreach (var str in actions) {
+print (@"--> $str\n");
+			var imi = new ImageMenuItem.with_label (str);
+			imi.activate.connect ((x)=> { menu_handler (x.label); });
+			//imi.activate.connect ((x)=> { menu_handler (str, data); }); // XXX vala bug
+			menu.append (imi);
+		}
+#if 0
 		/* XXX: most of this should be done in a tab panel or so */
 		imi = new ImageMenuItem.from_stock("undo seek", null);
 		imi.activate.connect ((imi) => {
@@ -381,14 +390,22 @@ load_graph_at("$$");
 			load_graph_at ("$$");
 		});
 		menu.append (imi);
+#endif
 		menu.show_all ();
 		menu.popup (null, null, null, 0, 0);
 	}
 
 	public void do_popup_menu() {
-		ImageMenuItem imi;
  		menu = new Menu();
 
+		menu_construct (graph.selected);
+		foreach (var str in actions) {
+			var imi = new ImageMenuItem.with_label (str);
+			imi.activate.connect ((x)=> { menu_handler (x.label); });
+			//imi.activate.connect ((x)=> { menu_handler (str, data); }); // XXX vala bug
+			menu.append (imi);
+		}
+#if 0
 		//imi = new ImageMenuItem.with_label("Focus");
 		imi = new ImageMenuItem.from_stock("gtk-zoom-in", null);
 		imi.activate.connect ((imi) => {
@@ -440,6 +457,7 @@ load_graph_at("$$");
 			}
 		}
 
+#endif
 		menu.show_all();
 		//menu.popup(null, null, null, null, eb.button, 0);
 		menu.popup(null, null, null, 0, 0);
@@ -455,11 +473,7 @@ load_graph_at("$$");
 		graph.selected = n;
 		if (eb.button == 3) {
 			refresh (da);
-return true;
-/*
-			if (n != null) do_popup_menu ();
-			else do_popup_generic ();
-*/
+			return true;
 		}
 		if (n != null) {
 			/* XXX this is not scaling properly */
