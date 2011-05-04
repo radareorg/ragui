@@ -2,6 +2,7 @@
 CC?=gcc
 
 VALAFLAGS=--pkg gtk+-2.0 --pkg cairo --pkg posix -g
+VALAFLAGS+=-D USE_VALA14
 
 SOURCES=default_layout.vala edge.vala graph.vala layout.vala \
 	node.vala renderer.vala widget.vala shape.vala dot.vala \

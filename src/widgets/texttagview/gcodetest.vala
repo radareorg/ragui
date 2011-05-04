@@ -81,6 +81,7 @@ return true;
 	w.add (gcode);
 gcode.set_markup ("<c red>hello</c> <b>world</b> <i>jiji</i>\n");
 gcode.set_markup ("<a /call/0x8048000>0x8048000</>\n");
+gcode.set_actions ("one", "two", "tri", "foo");
 	w.show_all ();
 	Gtk.main ();
 	return 0;

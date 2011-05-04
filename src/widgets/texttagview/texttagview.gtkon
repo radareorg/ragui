@@ -1,4 +1,4 @@
-/* gcode - Copyright(C) 2009-2010 - nibble<develsec.org> pancake<nopcode.org> */
+/* gcode - Copyright(C) 2009-2011 - nibble<develsec.org> pancake<nopcode.org> */
 
 HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	ScrolledWindow can-focus hscrollbar-policy="{PolicyType.AUTOMATIC}" $.scroll {
@@ -14,6 +14,12 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	public SList<string> actions;
 
 	public string fontfamily = "courier"; // mono for linux ?
+
+	private bool button_press (Gtk.Widget _w, Gdk.EventButton eb) {
+		if (eb.button == 3)
+			return true;
+		return false;
+	}
 
 	private bool button_release (Gtk.Widget _w, Gdk.EventButton eb) {
 		if (eb.button != 3)
@@ -34,7 +40,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	public void set_actions(string x, ...) {
 		this.actions = new SList<string> ();
 		this.actions.append (x);
-		var l = va_list();
+		var l = va_list ();
 		for (;;) {
 			string? k = l.arg ();
 			if (k == null)
@@ -78,7 +84,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 	private double oy = 0;
 
 	public TextTagView() {
-		code.button_press_event.connect (button_release);
+		code.button_press_event.connect (button_press);
+		code.button_release_event.connect (button_release);
 		reset_style ();
 		vadj = scroll.get_vadjustment();
 		vadj.value_changed.connect (scroll_change);

@@ -23,6 +23,16 @@ public class Listview.Widget : ScrolledWindow {
 	public signal void menu_handler(string? action, ListviewData? row);
 	public signal void menu_construct();
 
+	enum Column {
+		OFFSET,
+		NAME,
+		INDEX
+	}
+
+	construct {
+		create_widgets ();
+	}
+
 	private bool _show_headers;
 	public bool show_headers {
 		set {
@@ -54,6 +64,11 @@ public class Listview.Widget : ScrolledWindow {
 	}
 
 	private bool button_press (Gtk.Widget _w, Gdk.EventButton eb) {
+		/* nothing here.. just to make right click select the row */
+		return false;
+	}
+
+	private bool button_release (Gtk.Widget _w, Gdk.EventButton eb) {
 		if (eb.button != 3)
 			return false;
 
@@ -79,16 +94,6 @@ public class Listview.Widget : ScrolledWindow {
 		menu.show_all ();
 		menu.popup (null, null, null, 0, 0);
 		return false;
-	}
-
-	enum Column {
-		OFFSET,
-		NAME,
-		INDEX
-	}
-
-	construct {
-		create_widgets ();
 	}
 
 	private int sort_offset(TreeModel model, TreeIter a, TreeIter b) {
@@ -179,7 +184,8 @@ public class Listview.Widget : ScrolledWindow {
 			print (@"Go fuck myself $s $t $d\n");
 		//});
 */
-		view.button_release_event.connect (button_press);
+		view.button_press_event.connect (button_press);
+		view.button_release_event.connect (button_release);
 		view.set_search_column (Column.NAME);
 		view.set_enable_search (true);
 		add (view);

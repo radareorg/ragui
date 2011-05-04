@@ -1,6 +1,6 @@
 /*
  *  Grava - General purpose graphing library for Vala
- *  Copyright (C) 2007-2010  pancake <youterm.com>
+ *  Copyright (C) 2007-2011  pancake <youterm.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -47,7 +47,9 @@ public class Grava.Widget : VBox {
 	public signal void load_graph_at(string addr);
 	public signal void breakpoint_at(string addr);
 	public signal void run_cmd(string addr);
+	public signal bool key_pressed(int key);
 
+	// isn't silly?
 	public Gtk.Widget get_widget() {
 		return this;
 	}
@@ -110,7 +112,7 @@ public class Grava.Widget : VBox {
 			graph.panx -= 10;
 			break;
 		case ScrollDirection.UP:
-			switch(wheel_action) {
+			switch (wheel_action) {
 			case WheelAction.PAN:
 				graph.pany += 10;
 				break;
@@ -124,22 +126,22 @@ public class Grava.Widget : VBox {
 			}
 			break;
 		case ScrollDirection.DOWN:
-			switch(wheel_action) {
+			switch (wheel_action) {
 			case WheelAction.PAN:
 				graph.pany -= 10;
 				break;
 			case WheelAction.ZOOM:
 				//	graph.zoom -= ZOOM_FACTOR;
-			graph.do_zoom(-ZOOM_FACTOR);
+				graph.do_zoom (-ZOOM_FACTOR);
 				break;
 			case WheelAction.ROTATE:
-				graph.angle+=0.04;
+				graph.angle += 0.04;
 				break;
 			}
 			break;
 		}
 
-		da.queue_draw_area (0, 0, 5000, 2000);
+		refresh (da);
 		return false;
 	}
 
@@ -269,7 +271,7 @@ public class Grava.Widget : VBox {
 				Graph.selected.y-=S*graph.zoom;
 			break;
 		case 'L':
-			if ( wheel_action == WheelAction.ZOOM) {
+			if (wheel_action == WheelAction.ZOOM) {
 			} else {
 				graph.panx-=S*graph.zoom;
 				if (Graph.selected != null)
@@ -326,7 +328,7 @@ load_graph_at("$$");
 		}
 
 		//expose(da, ev);
-		da.queue_draw_area(0,0,5000,2000);
+		refresh (da);
 
 		return true;
 	}
@@ -452,8 +454,12 @@ load_graph_at("$$");
 		sw.grab_focus();
 		graph.selected = n;
 		if (eb.button == 3) {
+			refresh (da);
+return true;
+/*
 			if (n != null) do_popup_menu ();
 			else do_popup_generic ();
+*/
 		}
 		if (n != null) {
 			/* XXX this is not scaling properly */
@@ -465,13 +471,24 @@ load_graph_at("$$");
 			//opanx = graph.zoom*(eb.x-graph.panx); //*graph.zoom;
 			//opany = graph.zoom*(eb.y-graph.pany); //*graph.zoom;
 			opanx = opany = 0; // already calculated in 2nd motion iteration
-			da.queue_draw_area (0, 0, 5000, 3000);
+			refresh (da);
 		}
 		return true;
 	}
 
+        public void refresh(DrawingArea da) {
+                int w, h;
+                da.window.get_size (out w, out h);
+                da.queue_draw_area (0, 0, w+200, h+200);
+        }
+
 	Node on = null;
-	private bool button_release(Gtk.Widget w, Gdk.EventButton em) {
+	private bool button_release(Gtk.Widget w, Gdk.EventButton eb) {
+		if (eb.button == 3) {
+			Node n = graph.click (eb.x-graph.panx, eb.y-graph.pany);
+			if (n != null) do_popup_menu ();
+			else do_popup_generic ();
+		}
 		on = null;
 		opanx = opany = 0;
 		return true;
@@ -500,7 +517,7 @@ load_graph_at("$$");
 			n.x = (emx - offx)/graph.zoom;
 			n.y = (emy - offy)/graph.zoom;
 
-			da.queue_draw_area (0, 0, 5000, 3000);
+			refresh (da);
 			Graph.selected = n;
 		} else {
 			/* pan view */
@@ -509,7 +526,7 @@ load_graph_at("$$");
 				double y = em.y-opany;
 				graph.panx += x;//*0.8;
 				graph.pany += y;//*0.8;
-				da.queue_draw_area (0, 0, 5000, 3000);
+				refresh (da);
 			}
 			opanx = em.x;
 			opany = em.y;

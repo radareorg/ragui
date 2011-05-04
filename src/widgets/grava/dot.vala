@@ -1,6 +1,5 @@
 using GLib;
 using Grava;
-//using Grava.Graph;
 
 [Compact]
 public static class Grava.Dot {
@@ -12,15 +11,28 @@ public static class Grava.Dot {
 [Compact]
 public static class Grava.XDot {
 	private static bool parse_node(string node, out string node1) {
+#if USE_VALA14
+		int quote = node.index_of_char ('"');
+		if (quote == -1)
+			return false;
+		node1 = node.offset (quote + 1);
+		quote = node1.index_of_char ('"');
+		if (quote == -1)
+			return false;
+		node1 = node1.substring (0, quote);
+		return true;
+#else
 		char *str = node.chr (-1, '"');
 		if (str == null)
 			return false;
+
 		node1 = (string)(str+1);
 		str = node1.chr (-1, '"');
 		if (str == null)
 			return false;
 		str[0] = '\0';
 		return true;
+#endif
 	}
 
 	private static bool parse_pos(string str, out int x, out int y) {
@@ -73,7 +85,7 @@ public static class Grava.XDot {
 			char *ptr = row.chr (-1, '[');
 			if (ptr != null) {
 				ptr[0] = '\0';
-				if (row.str ("\" -> \"") != null) {
+				if (row.index_of ("\" -> \"") != -1) {
 					string node1, node2;
 					if (parse_edge (row, out node1, out node2)) {
 						print ("EDGE '%s' -> '%s'\n", node1, node2);
@@ -125,7 +137,10 @@ public static class Grava.XDot {
 						string color;
 						if (field[6]=='"') {
 							string p = field[7:field.length];
-							int to = (int)p.pointer_to_offset (p.chr (-1, '"'));
+							//int to = (int)p.pointer_to_offset (p.chr (-1, '"'));
+							int to = p.index_of_char ('"');
+							if (to == -1)
+								stderr.printf ("Oops: Cannot find matching '\"'\n");
 							color = p[0:to];
 						} else {
 							weak string str = (string?)((char*)field+6);
@@ -207,10 +222,10 @@ public static class Grava.XDot {
 	}
 }
 
-/*
+#if TEST
 void main() {
 	Graph g = new Graph ();
 	//XDot.import (g, "file.xdot");
 	XDot.export (g, "out.xdot");
 }
-*/
+#endif

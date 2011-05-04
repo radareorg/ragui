@@ -265,8 +265,6 @@ public class Hexview.Widget : ScrolledWindow {
 
 	private bool button_press (Gtk.Widget widget, Gdk.EventButton eb) {
 		var panydelta = (int)((eb.y-(pany)-(20*zoom))/(lineh*zoom));
-		if (eb.button == 3)
-			do_popup_generic ();
 		if (eb.x < 50)
 			breakpoint = address+16*panydelta;
 		if (eb.x > w-30)
@@ -288,7 +286,9 @@ public class Hexview.Widget : ScrolledWindow {
 	}
 
 	Node on = null;
-	private bool button_release(Gtk.Widget da, Gdk.EventButton em) {
+	private bool button_release(Gtk.Widget da, Gdk.EventButton eb) {
+		if (eb.button == 3)
+			do_popup_generic ();
 		on = null;
 		opanx = opany = 0;
 		return true;
