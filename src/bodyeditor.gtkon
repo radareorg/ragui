@@ -294,18 +294,41 @@ VBox $Ragui.BodyEditor border-width=1
 			return num.to_string ("0x%"+uint64.FORMAT_MODIFIER+"x");
 		}
 
-		public void grava_handler (string? cmd) {
-			print ("CMD = %s\n", cmd);
+		public void grava_handler (string? row) {
+			int p = row.index_of_char (' ');
+			if (p != -1) {
+				string cmd = row.substring (0, p);
+				string arg = row.substring (p+1);
+				switch (cmd) {
+				case "call":
+				case "graph":
+					grava_seek (uint64.parse (arg));
+					break;
+				}
+			}
+			print ("CMD = %s\n", row);
 		}
 
 		public void grava_menu(Grava.Node? node) {
 			grava.actions = new SList<string?> ();
 			if (node != null) {
+				var label = node.data.lookup ("label");
+				int p = label.index_of_char ('_');
+				if (p != -1)
+					label = label.substring (p+1);
+				print ("NODE CALLS: (%s) 0x%llx\n".printf (label, uint64.parse (label)));
+				var bb = gc.core.anal.bb_from_offset (uint64.parse (label));
+				foreach (var op in bb->ops) {
+					print ("OPCODE ... 0x%08llx %d %s\n", op.addr, op.type, op.mnemonic);
+					if (op.type == RAnal.OpType.CALL) {
+						grava.actions.append ("call 0x%08llx".printf (op.jump));
+					}
+				}
+
+				grava.actions.append ("graph " + label);
 				grava.actions.append ("inspect basic block");
-print ("inspect bb\n");
 			} else {
 				grava.actions.append ("change background color");
-print ("change background\n");
 			}
 		}
 
