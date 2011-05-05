@@ -20,6 +20,8 @@ using Gtk;
 using Gdk;
 using Cairo;
 
+
+// XXX: cursor position is not rotated according to angle
 public class Grava.Widget : VBox {
 	enum WheelAction {
 		PAN = 0,
@@ -52,6 +54,11 @@ public class Grava.Widget : VBox {
 	public SList<string> actions = new SList<string> ();
 	public signal void menu_construct(Node? node);
 	public signal void menu_handler(string? action);
+
+	public void inverse_background () {
+		graph.inverse = !graph.inverse;
+		refresh (da);
+	}
 
 	// isn't silly?
 	public Gtk.Widget get_widget() {
@@ -97,10 +104,6 @@ public class Grava.Widget : VBox {
 		sw.key_release_event.connect (key_release);
 
 		sw.add_with_viewport (vp);
-
-		load_graph_at.connect ((obj, addr) => {
-//			print ("HOWHOWHOW "+addr);
-		});
 	}
 
 	/* capture mouse motion */
@@ -126,7 +129,7 @@ public class Grava.Widget : VBox {
 				graph.do_zoom (+ZOOM_FACTOR);
 				break;
 			case WheelAction.ROTATE:
-				graph.angle-=0.04;
+				graph.angle -= 0.04;
 				break;
 			}
 			break;
@@ -179,11 +182,11 @@ public class Grava.Widget : VBox {
 		switch (ek.keyval) {
 		case 'b':
 		case 65471: // F2 - set breakpoint
-			set_breakpoint (null, Graph.selected.get("label"));
+			set_breakpoint (null, Graph.selected.get ("label"));
 			break;
 		case 'B':
 		//case 65471: // F2 - set breakpoint
-			set_breakpoint (null, "-%s".printf(Graph.selected.get("label")));
+			set_breakpoint (null, "-%s".printf (Graph.selected.get ("label")));
 			break;
 		case 'i':
 			graph.inverse = !graph.inverse;
@@ -230,9 +233,9 @@ public class Grava.Widget : VBox {
 			//graph.select_prev();
 			break;
 		case 65289: // tab : select next node
-			graph.select_next();
+			graph.select_next ();
 			if (graph.selected == null)
-				graph.select_next();
+				graph.select_next ();
 			if (Graph.selected != null) {
 				//sw.get_size(ref w, ref, h);
 				// XXXX get window size
@@ -246,34 +249,34 @@ public class Grava.Widget : VBox {
 			break;
 		case 65361: // arrow left
 		case 'h':
-			graph.panx+=S*graph.zoom;
+			graph.panx += S*graph.zoom;
 			break;
 		case 65364: // arrow down
 		case 'j':
-			graph.pany-=S*graph.zoom;
+			graph.pany -= S*graph.zoom;
 			break;
 		case 65362: // arrow up
 		case 'k':
-			graph.pany+=S*graph.zoom;
+			graph.pany += S*graph.zoom;
 			break;
 		case 65363: // arrow right
 		case 'l':
-			graph.panx-=S*graph.zoom;
+			graph.panx -= S*graph.zoom;
 			break;
 		case 'H':
-			graph.panx+=S*graph.zoom;
+			graph.panx += S*graph.zoom;
 			if (Graph.selected != null)
-				Graph.selected.x-=S*graph.zoom;
+				Graph.selected.x -= S*graph.zoom;
 			break;
 		case 'J':
 			graph.pany-=S*graph.zoom;
 			if (Graph.selected != null)
-				Graph.selected.y+=S*graph.zoom;
+				Graph.selected.y += S*graph.zoom;
 			break;
 		case 'K':
-			graph.pany+=S*graph.zoom;
+			graph.pany += S*graph.zoom;
 			if (Graph.selected != null)
-				Graph.selected.y-=S*graph.zoom;
+				Graph.selected.y -= S*graph.zoom;
 			break;
 		case 'L':
 			if (wheel_action == WheelAction.ZOOM) {
@@ -285,12 +288,12 @@ public class Grava.Widget : VBox {
 			break;
 		case '.':
 			if (Graph.selected != null)
-				load_graph_at(Graph.selected.get("label"));
-			else graph.select_next();
+				load_graph_at (Graph.selected.get ("label"));
+			else graph.select_next ();
 			break;
 		case ':':
 run_cmd("s eip");
-			load_graph_at("eip");
+			load_graph_at ("eip");
 			Graph.selected = graph.selected = null;
 			break;
 		case 'u': // undo selection
@@ -322,7 +325,7 @@ load_graph_at("$$");
 			//graph.zoom-=ZOOM_FACTOR;
 			break;
 		case '*':
-			graph.angle+=0.05;
+			graph.angle += 0.05;
 			break;
 		case '/':
 			graph.angle -= 0.05;
@@ -339,58 +342,11 @@ load_graph_at("$$");
  		menu = new Menu();
 		menu_construct (null);
 		foreach (var str in actions) {
-print (@"--> $str\n");
 			var imi = new ImageMenuItem.with_label (str);
+			//imi = new ImageMenuItem.from_stock("gtk-zoom-in", null);
 			imi.activate.connect ((x)=> { menu_handler (x.label); });
-			//imi.activate.connect ((x)=> { menu_handler (str, data); }); // XXX vala bug
 			menu.append (imi);
 		}
-#if 0
-		/* XXX: most of this should be done in a tab panel or so */
-		imi = new ImageMenuItem.from_stock("undo seek", null);
-		imi.activate.connect ((imi) => {
-			/* foo */
-			run_cmd("s-");
-			load_graph_at("$$");
-		});
-		menu.append(imi);
-
-		imi = new ImageMenuItem.from_stock("redo seek", null);
-		imi.activate.connect ((imi) => {
-			/* foo */
-			run_cmd("s+");
-			load_graph_at("$$");
-		});
-		menu.append(imi);
-
-		imi = new ImageMenuItem.from_stock("Seek to eip", null);
-		imi.activate.connect ((imi) => {
-			/* foo */
-			run_cmd("s eip");
-			load_graph_at("$$");
-		});
-		menu.append(imi);
-
-		menu.append(new SeparatorMenuItem());
-
-		imi = new ImageMenuItem.from_stock("Step", null);
-		imi.activate.connect ((imi) => {
-			/* foo */
-			run_cmd("!step");
-			run_cmd(".!regs*");
-			load_graph_at("$$");
-		});
-		menu.append(imi);
-
-		imi = new ImageMenuItem.from_stock("Continue", null);
-		imi.activate.connect ((imi) => {
-			/* foo */
-			run_cmd ("!continue");
-			run_cmd (".!regs*");
-			load_graph_at ("$$");
-		});
-		menu.append (imi);
-#endif
 		menu.show_all ();
 		menu.popup (null, null, null, 0, 0);
 	}
@@ -405,59 +361,6 @@ print (@"--> $str\n");
 			//imi.activate.connect ((x)=> { menu_handler (str, data); }); // XXX vala bug
 			menu.append (imi);
 		}
-#if 0
-		//imi = new ImageMenuItem.with_label("Focus");
-		imi = new ImageMenuItem.from_stock("gtk-zoom-in", null);
-		imi.activate.connect ((imi) => {
-	//		print ("go in!\n");
-			focus_at_label(null, Graph.selected.get("label"));
-			//MenuItem mi = menu.get_active();
-			//load_graph_at(((Label)imi.child).get_text()); //"0x400");
-			//print (" cocococo "+ menu.);
-		});
-		menu.append(imi);
-
-		imi = new ImageMenuItem.with_label("Breakpoint here");
-		imi.activate.connect ((imi) => {
-	//		print ("add bp!\n");
-			set_breakpoint(null, Graph.selected.get("label"));
-		});
-		menu.append(imi);
-
-		imi = new ImageMenuItem.with_label("Remove breakpoint");
-		imi.activate.connect ((imi) => {
-			unset_breakpoint(null, Graph.selected.get("label"));
-		});
-		menu.append(imi);
-
-		// TODO: add continue until here
-/*
-		imi = new ImageMenuItem.with_label("Remove true branch");
-		imi.activate.connect ((imi) => {
-///			print ("Focus!\n");
-		});
-		menu.append(imi);
-
-		imi = new ImageMenuItem.with_label("Remove false branch");
-		imi.activate.connect ((imi) => {
-	//		print ("Focus!\n");
-		});
-		menu.append(imi);
-*/
-		if (graph.selected != null) {
-			menu.append(new SeparatorMenuItem());
-
-			foreach(string str in graph.selected.calls) {
-				imi = new ImageMenuItem.with_label (str);
-				imi.activate.connect ((imi) => {
-					//print ("FUCKME: \n"+imi.submenu_placement());
-					load_graph_at(((Label)imi.child).get_text()); //"0x400");
-				});
-				menu.append (imi);
-			}
-		}
-
-#endif
 		menu.show_all();
 		//menu.popup(null, null, null, null, eb.button, 0);
 		menu.popup(null, null, null, 0, 0);
@@ -516,18 +419,12 @@ print (@"--> $str\n");
 			double emx = em.x - graph.panx;
 			double emy = em.y - graph.pany;
 			/* drag node */
-			/* TODO: properly handle the graph.zoom */
 			if (n != on) {
 				/* offx, offy are the delta between click and node x,y */
-				//offx = (emx/graph.zoom - n.x);
-				//offy = (emy/graph.zoom - n.y);
-				offx = (emx-n.x)/graph.zoom;
-				offy = (emy-n.y)/graph.zoom;
-				//print ("ONCE DELTA %lf %lf\n", offx, offy);
-				offx = 0; offy = 0; // select top-left corner of node
+				offx = (emx- n.x*graph.zoom);
+				offy = (emy - n.y*graph.zoom);
 				on = n;
 			}
-
 			n.x = (emx - offx)/graph.zoom;
 			n.y = (emy - offy)/graph.zoom;
 
@@ -538,8 +435,8 @@ print (@"--> $str\n");
 			if ((opanx!=0) && (opany!=0)) {
 				double x = em.x-opanx;
 				double y = em.y-opany;
-				graph.panx += x;//*0.8;
-				graph.pany += y;//*0.8;
+				graph.panx += x;
+				graph.pany += y;
 				refresh (da);
 			}
 			opanx = em.x;
@@ -572,22 +469,8 @@ print (@"--> $str\n");
 
 	public int separator = 0;
 
-	/* XXX : do not make it static */
-        public signal int focus_at_label(void *obj, string addr);
+	// deprecate //
         public signal int set_breakpoint(void *obj, string addr);
         public signal int unset_breakpoint(void *obj, string addr);
         public signal bool user_key_pressed(void *obj, uint key);
-#if 0
-        [Import]
-        [CCode (cname="core_load_graph_at_label")]
-        public static extern void focus_at_label(void *obj, string addr);
-
-        [Import]
-        [CCode (cname="mygrava_bp_at")]
-        public static extern void set_breakpoint(void *obj, string addr);
-
-        [Import]
-        [CCode (cname="mygrava_bp_rm_at")]
-        public static extern void unset_breakpoint(void *obj, string addr);
-#endif
 }

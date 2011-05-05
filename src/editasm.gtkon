@@ -1,0 +1,37 @@
+/* ragui - copyright(C) 2011 - pancake<nopcode.org> */
+VBox using=Gtk $Editasm.Widget {
+	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
+		TextView $tv;
+	}
+	HBox !expand {
+		Label !expand label="bytes";
+		Entry $bytes;
+	}
+	HBox !expand spacing=5 {
+		Label label="" $title expand;
+		Button label="reset" !expand activate=click_reset released=click_reset;
+		Button label="cancel" !expand activate=click_run released=click_run;
+		Button label="save" !expand activate=click_run released=click_run;
+	}
+-{
+	private void click_reset() {
+		// restart to initial mode
+		tv.buffer.text = "";
+		init (addr, size);
+	}
+
+	private void click_run () {
+		/* assemble and fun */
+	}
+
+	uint64 addr = 0LL;
+	uint64 size = 0LL;
+
+	public void init (uint64 addr, uint64 size) {
+		this.addr = addr;
+		this.size = size;
+		tv.buffer.text = "TODO";
+		// TODO: generate this list by using the plugin API
+	}
+}-
+}

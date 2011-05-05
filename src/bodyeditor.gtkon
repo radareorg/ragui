@@ -2,7 +2,7 @@
 
 VBox $Ragui.BodyEditor border-width=1
 	using=Gtk:Radare:Ragui
-	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview
+	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview:Editasm
 {
 /*
 		Toolbar !expand {
@@ -300,9 +300,29 @@ VBox $Ragui.BodyEditor border-width=1
 				string cmd = row.substring (0, p);
 				string arg = row.substring (p+1);
 				switch (cmd) {
+				case "edit":
+					uint64 addr = uint64.parse (arg);
+					var bb = gc.core.anal.bb_from_offset (addr);
+					if (bb == null) {
+						stderr.printf ("Cant find basic block\n");
+						return;
+					}
+					var w = new Window (WindowType.TOPLEVEL);
+					w.resize (400, 400);
+					w.title = "Edit basic block "+arg;
+					var n = new Editasm.Widget ();
+					n.init (addr, bb->size);
+					w.add (n);
+					w.show_all ();
+					break;
+				case "change":
+					grava.inverse_background ();
+					break;
 				case "call":
 				case "graph":
-					grava_seek (uint64.parse (arg));
+					uint64 addr = uint64.parse (arg);
+					//grava_seek (
+					ss_graph.goto (addr);
 					break;
 				}
 			}
@@ -316,6 +336,7 @@ VBox $Ragui.BodyEditor border-width=1
 				int p = label.index_of_char ('_');
 				if (p != -1)
 					label = label.substring (p+1);
+				grava.actions.append ("graph " + label);
 				print ("NODE CALLS: (%s) 0x%llx\n".printf (label, uint64.parse (label)));
 				var bb = gc.core.anal.bb_from_offset (uint64.parse (label));
 				foreach (var op in bb->ops) {
@@ -324,9 +345,7 @@ VBox $Ragui.BodyEditor border-width=1
 						grava.actions.append ("call 0x%08llx".printf (op.jump));
 					}
 				}
-
-				grava.actions.append ("graph " + label);
-				grava.actions.append ("inspect basic block");
+				grava.actions.append ("edit "+label);
 			} else {
 				grava.actions.append ("change background color");
 			}
