@@ -155,14 +155,18 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			switch (mode) {
 			case "editor":
 				view_body_editor ();
+mode_e.active = true;
 				break;
 			case "debugger":
 				view_body_debugger ();
+mode_d.active = true;
 				break;
 			case "forensics":
 				view_body_forensics ();
+mode_f.active = true;
 				break;
 			case "bindiff":
+mode_b.active = true;
 				view_body_bindiff ();
 				break;
 			default:
@@ -459,8 +463,8 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		}
 
 		public void setup_view () {
-			if (body_editor != null)
-				body_editor.setup_view ();
+			//if (body_editor != null)
+			//	body_editor.setup_view ();
 		}
 	}-
 }

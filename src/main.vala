@@ -15,11 +15,15 @@ public class Ragui.Main {
 	public static string project = "";
 	public static bool norc = true;
 	public static bool debugger = false;
+	public static bool bindiff = false;
+	public static bool forensics = false;
 	[CCode (array_length = false, array_null_terminated = true)]
 	public static string[] files;
 
 	static const OptionEntry[] options = {
 		{ "debugger", 'd', 0, OptionArg.NONE, ref debugger, "Run in debugger mode", null },
+		{ "forensics", 'f', 0, OptionArg.NONE, ref forensics, "Run in forensics mode", null },
+		{ "bindiff", 'b', 0, OptionArg.NONE, ref bindiff, "Run in bindiff mode", null },
 		{ "project", 'p', 0, OptionArg.FILENAME, ref project, "Open project file", null },
 		{ "norc", 'n', 0, OptionArg.NONE, ref norc, "Do not load RC file", null },
 		{ "script", 's', 0, OptionArg.FILENAME, ref script, "Run script after loading file", "FILE" },
@@ -116,7 +120,11 @@ public class Ragui.Main {
 		mw.on_quit.connect (quit_program);
 		mw.resize (800, 600);
 		mw.show_all ();
-		mw.setup_view ();
+		if (debugger) mw.ui_mode ("debugger");
+		else if (forensics) mw.ui_mode ("forensics");
+		else if (bindiff) mw.ui_mode ("bindiff");
+		else mw.ui_mode ("editor");
+		//mw.setup_view ();
 		Gtk.main ();
 
 		return 0;
