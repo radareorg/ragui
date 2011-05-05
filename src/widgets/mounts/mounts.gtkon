@@ -3,8 +3,11 @@ VBox $Mounts.Widget border-width=5 using=Gtk:Radare:Ragui:Gdk:Listview {
 		ComboBox !expand $fstype text;
 		Entry $mountpoint;
 		Entry $offset;
-		Button !expand label=mount clicked=do_mount;
-		Button !expand label=partitions clicked=show_partitions; //FIXME: partitions method
+		Button !expand label=mount clicked={
+			do_mount (fstype.get_active_text (), mountpoint.text,
+					uint64.parse (offset.text));
+		};
+		Button !expand label=partitions clicked=show_partitions;
 	}
 	VPaned position=200 {
 		Listview:Widget $listview;
@@ -67,7 +70,6 @@ VBox $Mounts.Widget border-width=5 using=Gtk:Radare:Ragui:Gdk:Listview {
 				}
 				switch (action) {
 				case "Show":
-					print ("Estoy en show\n");
 					path = row.name;
 					update_icons ();
 					break;
@@ -86,14 +88,14 @@ VBox $Mounts.Widget border-width=5 using=Gtk:Radare:Ragui:Gdk:Listview {
 		dirs.set_pixbuf_column (1);
 	}
 
-	public void do_mount () {
-		void *p = fs->mount (fstype.get_active_text (), mountpoint.text, uint64.parse (offset.text));
+	public void do_mount (string type, string path_text, uint64 off) {
+		void *p = fs->mount (type, path_text, off);
 		if (p == null) {
 			// TODO: how to call gc.show_error() ?
 			gc.show_error ("Cannot mount filesystem");
 		} else {
 			update_list ();
-			path = mountpoint.text;
+			path = path_text;
 			update_icons ();
 		}
 	}
@@ -270,17 +272,45 @@ VBox $Mounts.Widget border-width=5 using=Gtk:Radare:Ragui:Gdk:Listview {
 	}
 
 	public void show_partitions () {
-		print ("Partitions\n");
 		RList<RFSPartition> ls;
 
 		ls = fs->partitions ("msdos", 0);
 		if (ls != null) {
 			if (ls.length () > 0) {
+				var wi = new Gtk.Window ();
+				wi.modal = false; // not modal.. main ragui window can still be usable
+				wi.transient_for = gc.window;
+				wi.title = @"Partitions";
+				wi.set_default_size (200, 300);
+				var lv = new Listview.Widget ();
+				lv.set_actions ("Mount", "Properties");
+				lv.row_activated.connect ((row) => {
+						lv.menu_handler ("Mount", row);
+						return true;
+				});
+				lv.menu_handler.connect ((action, row) => {
+					switch (action) {
+						case "Mount":
+							path = row.name;
+							do_mount (row.name, "/"+row.name+row.offset.to_string (), row.offset);
+							update_icons ();
+							break;
+						case "Properties":
+							print (@"Umount $(row.name)\n");
+							break;
+					}
+				});
+				lv.clear ();
 				foreach (var part in ls) {
-					stdout.printf ("Type: %i\nOffset: %llx\n", part.number, part.start);
+					var type = fs->partition_type ("msdos", part.type);
+					lv.add_row (part.start, type);
+					stdout.printf ("Type(%i): %s\nOffset: %llx\n",
+							part.number, type , part.start);
 				}
+				wi.add (lv);
+				wi.show_all ();
 			} else gc.show_error ("No partitions found!\n");
-		}
+		} else gc.show_error ("No partitions found!\n");
 	}
 }-
 }
