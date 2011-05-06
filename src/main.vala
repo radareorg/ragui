@@ -41,11 +41,20 @@ public class Ragui.Main {
 			gc.core.bin_load (null);
 			gc.core.config.set ("io.va", "true");
 			gc.core.config.set ("scr.color", "false");
-			mw.view_body ();
+			view_body (); //mw.ui_mode (null);
 		}
 	}
 
 	private static MainWindow mw;
+
+	private static void view_body () {
+		if (gc.core.file != null) {
+			if (debugger) mw.ui_mode ("debugger");
+			else if (forensics) mw.ui_mode ("forensics");
+			else if (bindiff) mw.ui_mode ("bindiff");
+			else mw.ui_mode ("editor");
+		} else mw.view_panel ();
+	}
 
 	public static int main (string[] args) {
 		try {
@@ -73,8 +82,8 @@ public class Ragui.Main {
 				if (gc.core.file != null) {
 					gc.core.bin_load (null);
 					gc.project_open (project);
-					mw.view_body ();
 					mw.title = "ragui : %s".printf (file);
+					view_body ();
 				} else {
 					gc.show_error ("Cannot open file referenced by the project");
 					mw.view_panel ();
@@ -88,7 +97,7 @@ public class Ragui.Main {
 			gc.core.file_open (files[0], 0, 0);
 			if (gc.core.file != null) {
 				gc.core.bin_load (null);
-				mw.view_body ();
+				view_body ();
 				mw.title = "ragui : %s".printf (files[0]);
 			} else {
 				gc.show_error ("Cannot open file");
@@ -104,7 +113,7 @@ public class Ragui.Main {
 					gc.core.bin_load (null);
 					gc.core.config.set ("io.va", "true");
 					gc.core.config.set ("scr.color", "false");
-					mw.view_body ();
+					view_body ();
 					return true; // XXX: must check if open fails or what
 				}
 				return false;
@@ -116,15 +125,11 @@ public class Ragui.Main {
 				mw.OnMenuHelpAPI ();
 			});
 		}
-		//print ("==> %s\n", typeof (mw.leftbox));
 		mw.on_quit.connect (quit_program);
 		mw.resize (800, 600);
 		mw.show_all ();
-		if (debugger) mw.ui_mode ("debugger");
-		else if (forensics) mw.ui_mode ("forensics");
-		else if (bindiff) mw.ui_mode ("bindiff");
-		else mw.ui_mode ("editor");
-		//mw.setup_view ();
+
+		view_body ();
 		Gtk.main ();
 
 		return 0;

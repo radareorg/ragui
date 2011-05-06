@@ -4,88 +4,79 @@ VBox $Ragui.BodyEditor border-width=1
 	using=Gtk:Radare:Ragui
 	using=Script:Search:Gradiff:Debug:Flags:Grava:Mounts:Grasmwidget:Codeview:Hexview:Listview:Editasm
 {
-/*
-		Toolbar !expand {
-			Button use-stock label="preferences";
-			VSeparator;
-			Button use-stock label="breakpoint";
-			Button use-stock label="step";
-			Button use-stock label="continue";
-		}
-*/
-			HPaned $panel position=250 {
-				VBox spacing=3 {
-					ComboBox text !expand $leftbox;
-					VBox $vb0 {
-						ScrolledWindow can-focus expand
-								hscrollbar-policy=PolicyType.AUTOMATIC
-								vscrollbar-policy=PolicyType.AUTOMATIC {
-							Listview:Widget $listview;
-						}
-					}
-				}
-				VBox add2 {
-/*
-					// TODO: set each tab to a var, and use it from see code/graph
-					Notebook $nb2 expand scrollable tab-vborder=1 switch-page=chtab {
-						VBox {
-							tab-label { Label label="PENIS"; }
-						}
-					}
-*/
-					Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
-						VBox $.page_code {
-							tab-label { Label label="code"; }
-							/* Codeview:Widget $codeview; */
-							Ragui.Disasm $disasm;
-						}
-						VBox $.page_data {
-							tab-label { Label label="data"; }
-							Ragui.SeekStack !expand $ss_data;
-							Hexview.Widget $hexview;
-						}
-						VBox $.page_graph {
-							tab-label { Label label="graph"; }
-							Ragui.SeekStack !expand $ss_graph;
-							Grava.Widget $grava;
-						}
-						VBox {
-							tab-label { Label label="flags"; }
-							Flags:Widget;
-						}
-						VBox {
-							tab-label { Label label="script"; }
-							Script:Widget $script;
-						}
-						VBox {
-							tab-label { Label label="search"; }
-							Search:Widget $search;
-						}
-						VBox $vbheaders {
-							tab-label { Label label="headers"; }
-						}
-/*
-						VBox {
-							tab-label { Label label="files"; }
-							Mounts:Widget $mounts; // fsystem='gc.core.fs';
-						}
-						VBox {
-							tab-label { Label label="debug"; }
-							Debug:Widget $debug;
-						}
-						VBox {
-							tab-label { Label label="console"; }
-							Ragui:Console $console;
-						}
-*/
-						/*Label label="hash-foo" {
-						  tab-label {
-						  Label label="data analysis";
-						  }
-						  }*/
-					}
+	HPaned $panel position=250 {
+		VBox spacing=3 {
+			ComboBox text !expand $leftbox;
+			VBox $vb0 {
+				ScrolledWindow can-focus expand
+						hscrollbar-policy=PolicyType.AUTOMATIC
+						vscrollbar-policy=PolicyType.AUTOMATIC {
+					Listview:Widget $listview;
 				}
 			}
+		}
+		VBox add2 {
+/*
+			// TODO: set each tab to a var, and use it from see code/graph
+			Notebook $nb2 expand scrollable tab-vborder=1 switch-page=chtab {
+				VBox {
+					tab-label { Label label="PENIS"; }
+				}
+			}
+*/
+			Notebook $nb expand scrollable tab-vborder=1 switch-page=chtab {
+				VBox $.page_code {
+					tab-label { Label label="code"; }
+					/* Codeview:Widget $codeview; */
+					Ragui.Disasm $disasm;
+				}
+				VBox $.page_data {
+					tab-label { Label label="data"; }
+					Ragui.SeekStack !expand $ss_data;
+					Hexview.Widget $hexview;
+				}
+				VBox $.page_graph {
+					tab-label { Label label="graph"; }
+					Ragui.SeekStack !expand $ss_graph;
+					Grava.Widget $grava;
+				}
+				VBox {
+					tab-label { Label label="flags"; }
+					Flags:Widget;
+				}
+				VBox {
+					tab-label { Label label="script"; }
+					Script:Widget $script;
+				}
+				VBox {
+					tab-label { Label label="search"; }
+					Search:Widget $search;
+				}
+				VBox $vbheaders {
+					tab-label { Label label="headers"; }
+				}
+/*
+				VBox {
+					tab-label { Label label="files"; }
+					Mounts:Widget $mounts; // fsystem='gc.core.fs';
+				}
+				VBox {
+					tab-label { Label label="debug"; }
+					Debug:Widget $debug;
+				}
+				VBox {
+					tab-label { Label label="console"; }
+					Ragui:Console $console;
+				}
+*/
+				/*Label label="hash-foo" {
+				  tab-label {
+				  Label label="data analysis";
+				  }
+				  }*/
+			}
+		}
+	}
 /*
 		HBox !expand {
 			ProgressBar !expand;
@@ -164,16 +155,6 @@ VBox $Ragui.BodyEditor border-width=1
 				change_leftlist (x.get_active_text ());
 			});
 			change_leftlist ("Information");
-		}
-
-		public void setup_view () {
-/* THIS IS NOT WORKING ON OLD GTK VERSIONS:.maybe we can just ignore this
-			if (this.get_has_window ()) {
-				int h = 0, w = 0;
-				this.window.get_size (out w, out h);
-				body.position = h/2;
-			}
-*/
 		}
 
 		private void setup_leftlist () {
@@ -388,7 +369,7 @@ VBox $Ragui.BodyEditor border-width=1
 					lv.add_row_s ("subsystem", S(info.subsystem));
 					lv.add_row_s ("bits", info.bits.to_string ());
 					lv.add_row_s ("endian", info.big_endian?"big":"little");
-				} else {
+				} else if (gc.core.file != null) {
 					// TODO put file name and size!!
 					lv.add_row_s ("file", gc.core.file.filename);
 					lv.add_row_s ("type", "unknown");
@@ -397,6 +378,8 @@ VBox $Ragui.BodyEditor border-width=1
 					lv.add_row_s ("size", N(gc.core.file.size));
 					lv.add_row_s ("rwx", N(gc.core.file.rwx));
 					lv.add_row_s ("fd", N(gc.core.file.fd.fd));
+				} else {
+					lv.add_row_s ("oops", "no open file");
 				}
 				// TODO lv.add_row_s ("relocs", info.dbg_info.is_stripped ()?"true":"false");
 				break;

@@ -137,7 +137,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 		public BodyBindiff body_bindiff = null;
 		public BodyForensics body_forensics = null;
 		public BodyDebugger body_debugger = null;
-		private string _ui_mode = "editor";
+		public string _ui_mode = "editor";
 
 		public void mode_changed () {
 			string new_mode = "unknown";
@@ -150,23 +150,25 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 			_ui_mode = new_mode;
 		}
 
-		public void ui_mode(string mode) {
+		public void ui_mode(string? mode) {
+			if (mode == null)
+				mode = _ui_mode;
 			print ("MODE IS NOW "+mode+"\n");
 			switch (mode) {
 			case "editor":
 				view_body_editor ();
-mode_e.active = true;
+				mode_e.active = true;
 				break;
 			case "debugger":
 				view_body_debugger ();
-mode_d.active = true;
+				mode_d.active = true;
 				break;
 			case "forensics":
 				view_body_forensics ();
-mode_f.active = true;
+				mode_f.active = true;
 				break;
 			case "bindiff":
-mode_b.active = true;
+				mode_b.active = true;
 				view_body_bindiff ();
 				break;
 			default:
@@ -198,7 +200,8 @@ mode_b.active = true;
 		private void menuProjectDiff() {
 			var file = gc.show_file_open ("Bindiff against...");
 			if (file != null)
-				gc.system ("radiff2 -g %s %s > foo.dot ; xdot foo.dot &".printf (gc.core.file.filename, file));
+				gc.system ("radiff2 -g %s %s > foo.dot ; xdot foo.dot &".printf (
+					gc.core.file.filename, file));
 		}
 
 		private void on_project_save() {
@@ -383,11 +386,13 @@ mode_b.active = true;
 			//menu_edit.sensitive = false;
 		}
 
+/*
 		public void view_body () {
-			/* default view */
+			// default view
 			// XXX: deprecated with ui_mode (mode) ???
 			view_body_editor ();
 		}
+*/
 
 // TODO: rename panel to body_panel
 		public void view_body_hide_all () {
@@ -460,11 +465,6 @@ mode_b.active = true;
 			view_body_hide_all ();
 			body_forensics.show_all ();
 			menu_mode.sensitive = true;
-		}
-
-		public void setup_view () {
-			//if (body_editor != null)
-			//	body_editor.setup_view ();
 		}
 	}-
 }
