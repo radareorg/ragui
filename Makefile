@@ -15,24 +15,37 @@ mrproper: clean
 	rm -rf ragui-*
 
 PANGOVERSION=1.6.0
+SYSPFX=/opt/local
 
 copyosxlibs:
 	for a in `otool -L src/ragui | grep -v libr|grep -v :| awk '{print $$1}'| grep -v System` ; do \
 		cp $$a ${BINDIST}/lib ; \
 	done
 	# missing stuff
-	cp /opt/local/bin/pango-querymodules ${BINDIST}/bin
-	cp /opt/local/lib/libiconv.2.dylib ${BINDIST}/lib
-	cp /opt/local/lib/libpixman-1.0.dylib ${BINDIST}/lib
+	cp ${SYSPFX}/bin/pango-querymodules ${BINDIST}/bin
+	cp ${SYSPFX}/bin/gdk-pixbuf-query-loaders ${BINDIST}/bin
+	cp ${SYSPFX}/lib/libiconv.2.dylib ${BINDIST}/lib
+	cp ${SYSPFX}/lib/libpixman-1.0.dylib ${BINDIST}/lib
 	mkdir -p ${BINDIST}/lib/pango/${PANGOVERSION}/modules
-	cp /opt/local/lib/pango/${PANGOVERSION}/modules/*.so \
+	cp ${SYSPFX}/lib/pango/${PANGOVERSION}/modules/*.so \
 		${BINDIST}/lib/pango/${PANGOVERSION}/modules
+
+GTKENGINESDIR=/lib/gtk-2.0/2.10.0/engines
+GTKPIXBUF=lib/gdk-pixbuf-2.0/2.10.0/loaders/
+copyosxtheme:
+	mkdir -p ${BINDIST}/${GTKPIXBUF}
+	cp ${SYSPFX}/${GTKPIXBUF}/* ${BINDIST}/${GTKPIXBUF}
+	mkdir -p ${BINDIST}/${GTKENGINESDIR}
+	cp ${SYSPFX}/${GTKENGINESDIR}/libclearlooks.so ${BINDIST}/${GTKENGINESDIR}
+	mkdir -p ${BINDIST}/share/themes
+	cp -rf ${SYSPFX}/share/themes/Clearlooks ${BINDIST}/share/themes
 
 osxdist:
 	rm -rf ${BINDIST}
 	mkdir -p ${BINDIST}/bin
 	mkdir -p ${BINDIST}/lib
 	${MAKE} copyosxlibs
+	${MAKE} copyosxtheme
 	cp bin/ragui.sh ${BINDIST}/bin/ragui
 	cp src/ragui ${BINDIST}/bin/ragui.bin
 	BINDIR=`pwd`/bindist ; \
@@ -45,7 +58,7 @@ osxdist:
 	#	upx ragui-${VERSION}/bin/ragui.bin
 	tar cjvf ragui-${VERSION}.tar.bz2 ragui-${VERSION}
 
-osxapp: osxdist
+osxapp:
 	rm -rf Ragui.app
 	mkdir -p Ragui.app/Contents
 	cd Ragui.app/Contents ; mkdir MacOS Resources
@@ -57,6 +70,7 @@ osxapp: osxdist
 	cp bin/osx/PkgInfo bin/osx/Info.plist Ragui.app/Contents
 	cp bonus/Ragui.icns Ragui.app/Contents/Resources
 	zip -r ragui-osx-${VERSION}.zip Ragui.app
+	${MAKE} osxdmg
 
 osxdmg:
 	rm -f ragui-${VERSION}.dmg
