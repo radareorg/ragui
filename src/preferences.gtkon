@@ -80,13 +80,14 @@ Window using=Gtk $Ragui.PreferencesWindow modal title="Ragui preferences" destro
 			}
 			VBox spacing=5 border-width=5 {
 				tab-label { Label label="Directories"; }
+				/* tables sucks.. any alternative? */
 				Table n-rows=3 n-columns=2 !homogeneous !expand {
-					Label label="Plugins directory" attach_defaults left_attach=0 right_attach=1 top_attach=0 bottom_attach=1;
-					Entry text=/bar $plugsdir       attach_defaults left_attach=1 right_attach=2 top_attach=0 bottom_attach=1;
-					Label label="Project directory" attach_defaults left_attach=0 right_attach=1 top_attach=1 bottom_attach=2;
-					Entry text="/foo" $prjdir       attach_defaults left_attach=1 right_attach=2 top_attach=1 bottom_attach=2;
+					Label label="Plugins directory"  attach_defaults left_attach=0 right_attach=1 top_attach=0 bottom_attach=1;
+					Entry text=/bar $plugsdir        attach_defaults left_attach=1 right_attach=2 top_attach=0 bottom_attach=1;
+					Label label="Project directory"  attach_defaults left_attach=0 right_attach=1 top_attach=1 bottom_attach=2;
+					Entry text="/foo" $prjdir        attach_defaults left_attach=1 right_attach=2 top_attach=1 bottom_attach=2;
 					Label label="Temporal directory" attach_defaults left_attach=0 right_attach=1 top_attach=2 bottom_attach=3;
-					Entry text="/tmp" $tmpdir       attach_defaults left_attach=1 right_attach=2 top_attach=2 bottom_attach=3;
+					Entry text="/tmp" $tmpdir        attach_defaults left_attach=1 right_attach=2 top_attach=2 bottom_attach=3;
 				}
 			}
 		}

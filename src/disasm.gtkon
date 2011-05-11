@@ -43,6 +43,7 @@ VBox using=Gtk using:Ragui=Ragui $Ragui.Disasm {
 		}
 
 		public void goto(uint64 addr, bool clear=false) {
+			off = addr;
 			ss_code.goto (addr, clear);
 			dodis (addr, true);
 		}

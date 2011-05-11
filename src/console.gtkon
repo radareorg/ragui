@@ -1,4 +1,4 @@
-/* ragui - Copyright(C) 2009-2010 - pancake<nopcode.org> */
+/* ragui - Copyright(C) 2009-2011 - pancake<nopcode.org> */
 
 VBox using=Gtk $Ragui.Console {
 	ScrolledWindow can-focus hscrollbar-policy=PolicyType.AUTOMATIC {
@@ -6,6 +6,7 @@ VBox using=Gtk $Ragui.Console {
 		TextView !editable $.console;
 	}
 	HBox !expand {
+		CheckButton !expand $.monitor;
 		Entry expand $.line;
 		Button label=">" !expand $.button;
 	}
@@ -25,7 +26,16 @@ VBox using=Gtk $Ragui.Console {
 		send_cmd ();
 	}
 
+	private string lastcmd = "";
 	private void send_cmd() {
+		if (monitor.active) {
+			Timeout.add (1000, () => {
+				if (lastcmd != "")
+					cmd_handler (lastcmd);
+				return true;
+			});
+		}
+		lastcmd = line.text;
 		cmd_handler (line.text);
 		line.set_text ("");
 	}
