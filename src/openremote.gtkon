@@ -20,6 +20,7 @@ VBox using=Gtk $OpenRemote border_width=5 spacing=5 {
 			proto.append_text ("gdb");
 			proto.set_active (0);
 		}
+
 		public string get_url () {
 			return proto.get_active_text () + "://"+
 				host.text+":"+port.text+"/"+opt.text;

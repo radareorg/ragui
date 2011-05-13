@@ -28,6 +28,16 @@ public class Ragui.GuiCore {
 		core.config.set ("asm.bytes", "false");
 	}
 
+	public void set_debugger(bool enable) {
+		debugger = enable;
+		if (debugger) {
+			core.config.set ("cfg.debug", "true");
+			core.config.set ("io.va", "false");
+		} else {
+			core.config.set ("cfg.debug", "false");
+		}
+	}
+
 	public void project_open (string file) {
 		// open gtk dialog and so on.. 
 	}
@@ -286,7 +296,7 @@ public class Ragui.GuiCore {
 		}
 	}
 
-	public static const string VERSION = "0.1";
+	public static const string VERSION = "0.3b"
 
 #if TEST
 	static void main(string[] args) {

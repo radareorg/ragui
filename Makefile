@@ -1,4 +1,4 @@
-VERSION=0.1b
+VERSION=`cat VERSION`
 R2DIR?=${HOME}/prg/radare2
 BINDIST=`pwd`/bindist
 
@@ -8,6 +8,11 @@ all:
 
 clean:
 	cd src && ${MAKE} clean
+
+setversion:
+	mv src/guicore.vala src/guicore.vala.orig
+	sed -e "s,string VERSION .*$$,string VERSION = \"${VERSION}\"," < src/guicore.vala.orig > src/guicore.vala
+	rm -f src/guicore.vala.orig
 
 mrproper: clean
 	cd src/widgets && ${MAKE} clean

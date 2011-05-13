@@ -142,8 +142,9 @@ VBox using=Gtk $Ragui.MainPanel {
 		w.hide ();
 		w = null;
 		if (ret == 1) {
-			// TODO: setup all that shit
+			gc.set_debugger (true);
 			open_file ("dbg://"+of.fc.get_filename (), true);
+			gc.core.dbg.use ("native");
 		}
 	}
 
@@ -164,8 +165,9 @@ VBox using=Gtk $Ragui.MainPanel {
 		w.hide ();
 		w = null;
 		if (ret == 1) {
-			// TODO: setup all that shit
+			gc.set_debugger (true);
 			open_file (of.get_url (), true);
+			gc.core.dbg.use ("gdb"); // XXX: or rap://
 		}
 	}
 
@@ -187,7 +189,9 @@ VBox using=Gtk $Ragui.MainPanel {
 		w = null;
 		if (ret == 1) {
 			// TODO: setup all that debug shit
+			gc.set_debugger (true);
 			open_file ("attach://%d".printf (of.get_pid ()), false);
+			gc.core.dbg.use ("native");
 		}
 	}
 

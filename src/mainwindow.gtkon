@@ -123,7 +123,7 @@ Window $Ragui.MainWindow title="ragui" delete-event="OnWindowCloseEvent"
 	AboutDialog gtkaml:standalone $.aboutdialog delete-event="aboutdialog.hide_on_delete"
 		border-width=5 title="About ragui" !resizable modal !has-separator
 		window-position=WindowPosition.CENTER_ON_PARENT
-		program-name=ragui version=0.1
+		program-name=ragui version={GuiCore.VERSION}
 		copyright="Copyright (c) 2009-2011 pancake/nibble/earada"
 		comments="Graphical hexadecimal editor, disassembler and debugger"
 		website="http://www.radare.org/"
