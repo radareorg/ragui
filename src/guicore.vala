@@ -296,7 +296,7 @@ public class Ragui.GuiCore {
 		}
 	}
 
-	public static const string VERSION = "0.3b"
+	public static const string VERSION = "0.3b";
 
 #if TEST
 	static void main(string[] args) {
