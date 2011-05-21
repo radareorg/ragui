@@ -1,4 +1,4 @@
-Grabin.Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Sections {
+Grabin.Widget using=Gtk:Grabin:Radare $Grabin.Sections {
 	TreeView $view {
 		TreeViewColumn title="Index" clickable clicked="{sort_column (view, 0)}" {
 			CellRendererText $.column0 expand;

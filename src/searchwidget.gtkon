@@ -83,11 +83,11 @@ print ("SORT COLUMN OR GTFO\n");
 		switch (mode) {
 		case "string":
 			gc.core.search.reset (RSearch.Mode.KEYWORD);
-			gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt));
+			gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt, false));
 			break;
 		case "wide string":
 			gc.core.search.reset (RSearch.Mode.KEYWORD);
-			gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt));
+			gc.core.search.kw_add (new RSearch.Keyword.str (txt, "", txt, false));
 			break;
 		case "hexpair":
 			break;

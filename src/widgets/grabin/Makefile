@@ -1,4 +1,4 @@
-VALAFLAGS=--pkg gtk+-2.0 --pkg r_core --vapidir=../include --Xcc=-I../include --pkg segmentbar
+VALAFLAGS=--pkg gtk+-2.0 --pkg r_core --pkg r_util --vapidir=../include --Xcc=-I../include --pkg segmentbar
 PKG=--pkg grabin --pkg grabinsections --pkg grabinsymbols --pkg grabinimports
 PKG+=--pkg grabinstrings --pkg grabinrelocs --pkg grabinfat
 CFILES=grabin.c grabinsections.c grabinsymbols.c grabinimports.c
