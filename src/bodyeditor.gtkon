@@ -333,19 +333,23 @@ VBox $Ragui.BodyEditor border-width=1
 		}
 
 		public void grava_seek (uint64 offset) {
+			var tmp = RFile.temp ("graph.xdot");
 			gc.cmd (@"s $offset");
 			gc.cmd ("pd 20");
 			gc.cmd ("af");
-			gc.cmd (@"ag $offset > graph.xdot");
+			gc.cmd (@"ag $offset > $tmp");
 			bool use_xdot = false;
 			if (use_xdot) {
-				RSystem.cmd ("xdot graph.xdot &");
+				RSystem.cmd (@"xdot $tmp &");
 				return;
 			}
 			grava.graph.init ();
-			Grava.XDot.import (grava.graph, "graph.xdot");
+			// TODO: use proper tmp file name
+			Grava.XDot.import (grava.graph, tmp);
 			grava.graph.update ();
+			grava.graph.center ();
 			grava.draw ();
+			RFile.rm (tmp);
 		}
 
 		private void change_leftlist (string type) {

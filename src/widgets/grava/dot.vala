@@ -2,14 +2,14 @@ using GLib;
 using Grava;
 
 [Compact]
-public static class Grava.Dot {
+namespace Grava.Dot {
 	public static bool import (Graph gr, string file) {
 		return false;
 	}
 }
 
 [Compact]
-public static class Grava.XDot {
+public class Grava.XDot {
 	private static bool parse_node(string node, out string node1) {
 #if USE_VALA14
 		int quote = node.index_of_char ('"');

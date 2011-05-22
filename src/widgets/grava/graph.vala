@@ -143,6 +143,24 @@ public class Grava.Graph {
 		layout.run (this);
 	}
 
+	public void center () {
+		double x = 0;
+		double y = -10;
+		this.zoom = 1;
+/*
+		foreach (unowned Node node in nodes) {
+			if (y==0 || node.y<y) {
+				x = node.x-(node.w/2);
+				y = node.y;
+			}
+			Graph.selected = selected = node;
+			break;
+		}
+*/
+		this.panx = x;
+		this.pany = y;
+	}
+
 	// esteve modificat perque insereixi a la llista ordenat per baseaddr.
 	// volia fer servir node.sort, pero no m'ha sortit...
 	public void add_node(Node n) {
