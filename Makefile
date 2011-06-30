@@ -87,8 +87,8 @@ bindist:
 	rm -rf ${BINDIST}
 	mkdir -p ${BINDIST}/bin
 	mkdir -p ${BINDIST}/lib
-	cp /usr/lib/libgmp.so ${BINDIST}/lib
-	cp /usr/lib/libgmp.so.10 ${BINDIST}/lib
+	#cp /usr/lib/libgmp.so ${BINDIST}/lib
+	#cp /usr/lib/libgmp.so.10 ${BINDIST}/lib
 	cp bin/ragui.sh ${BINDIST}/bin/ragui
 	cp src/ragui ${BINDIST}/bin/ragui.bin
 	BINDIR=`pwd`/bindist ; \
@@ -98,7 +98,7 @@ bindist:
 	mv bindist ragui-${VERSION}
 	-strip -s ragui-${VERSION}/bin/*
 	-strip -s ragui-${VERSION}/lib/*
-	upx ragui-${VERSION}/bin/ragui.bin
+	#upx ragui-${VERSION}/bin/ragui.bin
 	tar cjvf ragui-${VERSION}.tar.bz2 ragui-${VERSION}
 
 #TODO: Push on a arch-specific subdir (x86-32, x86-64, powerpc, ...)
