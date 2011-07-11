@@ -62,7 +62,8 @@ GTKON_C_FILES+=mainwindow.c
 VALAFILES+=${RMVALAFILES}
 VALAFILES+=${RMGTKON_FILES}
 CFILES=$(subst .vala,.c,$(VALAFILES))
-OFILES=$(subst .vala,.o,$(VALAFILES))
+OFILES=$(subst .c,.o,$(CFILES))
+OFILES+=img/images.o
 CFLAGS+=-Iwidgets/include `pkg-config --cflags gtk+-2.0 ${R2DEPS}`
 
 include ../config.mk
@@ -136,6 +137,7 @@ gtkon:
 widgets.done:
 	${MAKE} vapi
 	cd widgets && ${MAKE}
+	cd img && ${MAKE}
 	:> widgets.done
 
 clean:

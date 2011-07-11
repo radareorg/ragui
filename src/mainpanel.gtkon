@@ -1,47 +1,107 @@
 /* ragui - copyright(C) 2009-2011 - pancake<nopcode.org> */
 
-VBox using=Gtk $Ragui.MainPanel {
-	Label label="";
-	HBox {
-		Label label="";
-		VBox {
-			Label label="";
-			Label !expand label="Editor";
-			Button !expand label="Open file" activate=onOpenFile released=onOpenFile;
-			Button !expand label="Open program" activate=onOpenProgram released=onOpenProgram;
-			Button !expand label="Open project" activate=onOpenProject released=onOpenProject;
-		}
-		Label label="";
-		VBox {
-			Label label="";
-			Label !expand label="Debugger";
-			Button !expand label="Debug local program" activate=onDebugProgram released=onDebugProgram;
-			Button !expand label="Attach to process" activate=onDebugAttach released=onDebugAttach;
-			Button !expand label="Remote debugger" activate=onDebugRemote released=onDebugRemote;
-		}
-		Label label="";
+VBox using=Gtk:Gdk $Ragui.MainPanel homogeneous="false" border_width="10" spacing="10" {
+	VBox spacing="10" {
+		Image !expand !fill pixbuf={img_get_rlogo()};
+		Label !expand !fill label="Welcome to <b>Radare2</b>, the reverse engineering framework" use-markup="true";
 	}
-	Label label="";
-	HBox {
-		Label label="";
-		VBox {
-			Label !expand label="Diffing";
-			Button !expand label="Diff files";
-			Button !expand label="Diff programs";
-			Button !expand label="Diff projects";
-			Label label="";
+	HBox homogeneous="false" spacing="10" {
+		VBox homogeneous="false" spacing="5" {
+			// Box for the icon and the label
+			HBox homogeneous="false" spacing="5" !expand !fill {
+				Image !expand !fill stock="gtk-edit";
+				Alignment !expand !fill xalign=0, yalign=0, xscale=0, yscale=0 {
+					Label label="Editor:" justify=Justification.RIGHT;
+				}
+			}
+			VBox spacing="5" {
+				//Label !expand label="Editor";
+				Button !expand label="Open file" activate=onOpenFile released=onOpenFile;
+				Button !expand label="Open program" activate=onOpenProgram released=onOpenProgram;
+				Button !expand label="Open project" activate=onOpenProject released=onOpenProject;
+			}
 		}
-		Label label="";
-		VBox {
-			Label !expand label="Help";
-			// lambda required to match signature
-			Button !expand label="API documentation" released="{onHelpAPI();}";
-			Button !expand label="About this program" released="{onHelpAbout();}";
-			Label label="";
+		VSeparator !expand !fill;
+		VBox homogeneous="false" spacing="5" {
+			// Box for the icon and the label
+			HBox homogeneous="false" spacing="5" !expand !fill {
+				Image !expand !fill stock="gtk-execute";
+				Alignment !expand !fill xalign=0, yalign=0, xscale=0, yscale=0 {
+					Label label="Debugger:" justify=Justification.RIGHT;
+				}
+			}
+			VBox spacing="5" {
+				//Label !expand label="Debugger";
+				Button !expand label="Debug local program" activate=onDebugProgram released=onDebugProgram;
+				Button !expand label="Attach to process" activate=onDebugAttach released=onDebugAttach;
+				Button !expand label="Remote debugger" activate=onDebugRemote released=onDebugRemote;
+			}
 		}
-		Label label="";
+		VSeparator !expand !fill;
+		VBox homogeneous="false" spacing="5" {
+			// Box for the icon and the label
+			HBox homogeneous="false" spacing="5" !expand !fill {
+				Image !expand !fill stock="gtk-copy";
+				Alignment !expand !fill xalign=0, yalign=0, xscale=0, yscale=0 {
+					Label label="Diffing:" justify=Justification.RIGHT;
+				}
+			}
+			VBox spacing="5" {
+				//Label !expand label="Diffing";
+				Button !expand label="Diff files";
+				Button !expand label="Diff programs";
+				Button !expand label="Diff projects";
+				Label label="";
+			}
+		}
 	}
-	Label label="";
+	// Box for the lower elements: recent files and Help buttons
+	HBox homogeneous="false" spacing="10" {
+		// Box for the recent files elements
+		VBox homogeneous="false" spacing="10" {
+			// Box for the icon and the label
+			HBox homogeneous="false" spacing="5" !expand !fill {
+				Image !expand !fill stock="gtk-open";
+				Alignment !expand !fill xalign=0, yalign=0, xscale=0, yscale=0 {
+					Label label="Recently opened files, programs and projects:" justify=Justification.RIGHT;
+				}
+			}
+			Notebook tab-vborder="1" {
+				//Recent files tab
+				VBox {
+					tab-label { Label label="Files"; }
+					RecentChooserWidget;
+				}
+				//Recent programs tab
+				VBox {
+					tab-label { Label label="Programs"; }
+					RecentChooserWidget;
+				}
+				//Recent projects tab
+				VBox {
+					tab-label { Label label="Projects"; }
+					RecentChooserWidget;
+				}
+			}
+		}
+		VSeparator !expand !fill;
+		VBox homogeneous="false" spacing="5" {
+			// Box for the icon and the label
+			HBox homogeneous="false" spacing="5" !expand !fill {
+				Image !expand !fill stock="gtk-help";
+				Alignment !expand !fill xalign=0, yalign=0, xscale=0, yscale=0 {
+					Label label="Help:" justify=Justification.RIGHT;
+				}
+			}
+			VBox spacing="5" {
+				//Label !expand label="Help";
+				// lambda required to match signature
+				Button !expand label="API documentation" released="{onHelpAPI();}";
+				Button !expand label="About this program" released="{onHelpAbout();}";
+			}
+		}
+	}
+
 -{
 	public signal void onHelpAPI ();
 	public signal void onHelpAbout ();
@@ -196,5 +256,7 @@ VBox using=Gtk $Ragui.MainPanel {
 	}
 
 	public signal bool open_file(string file, bool analyze);
+	[CCode (cname="img_get_rlogo")]
+	public static extern Gdk.Pixbuf img_get_rlogo();
 }-
 }
