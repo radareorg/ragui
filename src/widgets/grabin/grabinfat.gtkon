@@ -30,7 +30,7 @@ Grabin:Widget using=Gtk using:Grabin="Grabin" using:Radare="Radare" $Grabin.Fat 
 		listmodel = new ListStore (4, typeof (string), typeof (string),
 				typeof (string), typeof (string));
 		for (int i = 0; i < bin.narch; i++) {
-			bin.set_archidx (i);
+			bin.select_idx (i);
 			var info = bin.get_info ();
 			if (info != null) {
 				TreeIter iter;
