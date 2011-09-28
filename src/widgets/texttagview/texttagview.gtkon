@@ -105,20 +105,18 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 			int x, y;
 			code.window_to_buffer_coords (TextWindowType.WIDGET,
 				(int)event.x, (int)event.y, out x, out y);
-			TextIter? iter = null;
+			TextIter iter;
 			code.get_iter_at_location (out iter, x, y);
-			if (iter != null) {
-				var tags = iter.get_tags ();
-				if (tags != null) {
-					var tag = tags.data;
-					if (tag.name[0] == 'a')
-						hovering = true;
-					if (hovering)
-						tag.underline = Pango.Underline.SINGLE;
-					if (lasttag != tag && lasttag != null)
-						lasttag.underline = Pango.Underline.NONE;
-					lasttag = tag;
-				}
+			var tags = iter.get_tags ();
+			if (tags != null) {
+				var tag = tags.data;
+				if (tag.name[0] == 'a')
+					hovering = true;
+				if (hovering)
+					tag.underline = Pango.Underline.SINGLE;
+				if (lasttag != tag && lasttag != null)
+					lasttag.underline = Pango.Underline.NONE;
+				lasttag = tag;
 			}
 			code.get_window (TextWindowType.TEXT).set_cursor (hovering?pointer:cursor);
 			return false;
@@ -135,7 +133,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 			var idx = ti.get_visible_line_index ();
 			var linetxt = txt[idx:idx+len];
 
-			word = getword (txt, off);
+			//word = getword (txt, off);
+			// TODO: use hashtable here
 			foreach (var a in ti.get_tags ()) {
 			//	print ("TAG: %s %d\n", a.name, a.size);
 				if (a.name[0] == 'a') {
@@ -177,7 +176,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		case "s":
 			if (args.length<2)
 				return false;
-			tag.size = args[1].to_int ();
+			tag.size = int.parse (args[1]);
 			break;
 		case "a":
 			tag.weight = Pango.Weight.BOLD;
@@ -268,7 +267,7 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 		styles = new HashTable<string,string>(str_hash, str_equal);
 	}
 
-	public void set_style(string key, string val) {
+	public new void set_style(string key, string val) {
 		styles.replace (key, val);
 		if (stack.length () == 0 && key == "*") {
 			var tag = tag_create ("root");
@@ -355,6 +354,8 @@ HBox using=Gtk using:p=Pango $Ragui.TextTagView {
 					if (tag_get () == null) {
 						//code.buffer.insert (ei, s, -1);
 						code.buffer.insert_with_tags (ei, s, -1, couriertag);
+						if (append) code.buffer.get_end_iter (out ei); 
+						else code.buffer.get_start_iter (out ei); 
 						s="";
 					}
 					c = (char) ch;

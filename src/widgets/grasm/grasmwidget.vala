@@ -111,7 +111,7 @@ public class Grasmwidget.Widget : VBox {
 		);
 
 		/* TODO: Change color of node depending on ignored or not */
-		foreach(weak Grava.Node node in gw.graph.nodes) {
+		foreach (weak Grava.Node node in gw.graph.nodes) {
 			double posx = (node.x+gw.graph.panx)*gw.graph.zoom;
 			string body = node.get("body");
 			if (posx < 100) {
@@ -140,11 +140,11 @@ public class Grasmwidget.Widget : VBox {
 	}
 
 	public void create_widgets () {
-		rasm = new Radare.RAsm();
-		rasm.use("x86.olly");
-		rasm.set_syntax(RAsm.Syntax.INTEL);
-		rasm.set_bits(32);
-		rasm.set_big_endian(false);
+		rasm = new Radare.RAsm ();
+		rasm.use ("x86.olly");
+		rasm.set_syntax (RAsm.Syntax.INTEL);
+		rasm.set_bits (32);
+		rasm.set_big_endian (false);
 
 		var hb0 = new HBox (false, 2);
 		var vb0 = new VBox (false, 2);

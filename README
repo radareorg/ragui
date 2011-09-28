@@ -2,6 +2,9 @@
 RADARE GUI
 ==========
 
+to debug:
+export G_DEBUG=fatal_warnings
+
 * Project types: 
   - Forensics
     * need to add API's to read/write any filesystem

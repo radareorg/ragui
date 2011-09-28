@@ -70,7 +70,9 @@ include ../config.mk
 
 ifeq ($(DEBUG),1)
 CFLAGS+=-g
-VALAFLAGS+=-g
+# vala level debug -- VALAFLAGS+=-g
+# c level debug
+VALAFLAGS+=-X -g
 endif
 
 %.o:%.c
