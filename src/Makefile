@@ -130,7 +130,7 @@ gtkon:
 			echo "  GTKAMLC  ${GTKONFILES}" ; \
 			echo "  RM  ragui $${vala}" ; \
 			rm -f $${vala} ${BIN} ${GTKON_C_FILES} ; \
-			${GTKAMLC} -V ${PKG} ${GTKAMLFLAGS} ${GTKONFILES} ; \
+			${GTKAMLC} -C ${PKG} ${GTKAMLFLAGS} ${GTKONFILES} ; \
 			exit $? ; \
 		fi ; \
 	done

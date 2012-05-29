@@ -75,7 +75,7 @@ print ("SORT COLUMN OR GTFO\n");
 
 	const int BSIZE = 4096;
 	// XXX CREEPY!!1
-	public static int count { get; set; }
+	public static int count; // { get; set; }
 	private void click_run () {
 		var txt = entry.text;
 		entry.text = "";
