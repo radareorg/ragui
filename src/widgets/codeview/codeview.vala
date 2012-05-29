@@ -42,7 +42,7 @@ public class Codeview.Widget : ScrolledWindow {
 	private double opanx = 0;
 	private double opany = 0;
 	private WheelAction wheel_action = WheelAction.PAN;
-	Menu menu;
+	Gtk.Menu menu;
 
 	/*
 	   public signal void load_codew_at(string addr);
@@ -193,7 +193,7 @@ public class Codeview.Widget : ScrolledWindow {
 
 	public void do_popup_generic() {
 		ImageMenuItem imi;
-		menu = new Menu();
+		menu = new Gtk.Menu();
 
 		// XXX: most of this should be done in a tab panel or so
 		imi = new ImageMenuItem.from_stock("Set breakpoint", null);

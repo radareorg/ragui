@@ -27,6 +27,6 @@ main: lib
 	${CC} ${CFLAGS} ${LDFLAGS} -I../include `pkg-config --cflags --libs gtk+-2.0 r_core` ${CFILES} ../segmentbar/segmentedbar.c grabintest.c -o grabintest
 
 clean:
-	rm -f *.c grabintest
+	rm -f *.c grabintest *.gtkaml *.a
 
 .PHONY: main lib

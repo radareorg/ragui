@@ -36,7 +36,7 @@ public class Grava.Widget : VBox {
 	public const double S = 96;
 	private WheelAction wheel_action = WheelAction.PAN;
 	ScrolledWindow sw;
-	Menu menu;
+	Gtk.Menu menu;
 
 	/* drag nodes */
 	private double opanx = 0;
@@ -339,7 +339,7 @@ load_graph_at("$$");
 	}
 
 	public void do_popup_generic() {
- 		menu = new Menu();
+ 		menu = new Gtk.Menu();
 		menu_construct (null);
 		foreach (var str in actions) {
 			var imi = new ImageMenuItem.with_label (str);
@@ -352,7 +352,7 @@ load_graph_at("$$");
 	}
 
 	public void do_popup_menu() {
- 		menu = new Menu();
+ 		menu = new Gtk.Menu();
 
 		menu_construct (graph.selected);
 		foreach (var str in actions) {

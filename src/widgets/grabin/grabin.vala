@@ -37,7 +37,7 @@ public class Grabin.Widget : ScrolledWindow {
 			model.get_value (iter, retcol, out val);
 			data = val.get_string ();
 		}
-		var menu = new Menu();
+		var menu = new Gtk.Menu();
 		foreach (var str in this.actions) {
 			var imi = new ImageMenuItem.with_label (str);
 			imi.activate.connect ((x)=> { menu_handler (x.label, data); });

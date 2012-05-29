@@ -10,7 +10,7 @@ VBox $Gracalc.Widget using=Gtk using:Radare="Radare" border-width=5 {
 		}
 	}
 	Label label="" expand;
-	HButtonBox !expand border-width=3 layout-style=ButtonBoxStyle.END {
+	HButtonBox !expand border-width=3 {
 		Button label="update";
 	}
 

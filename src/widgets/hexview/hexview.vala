@@ -44,7 +44,7 @@ public class Hexview.Widget : ScrolledWindow {
 	private double opanx = 0;
 	private double opany = 0;
 	private WheelAction wheel_action = WheelAction.PAN;
-	public Menu menu { set; get; }
+	public Gtk.Menu menu { set; get; }
 
 	public uint64 address = 0;//0x4023000;
 	public uint64 offset;
@@ -232,7 +232,7 @@ public class Hexview.Widget : ScrolledWindow {
 
 	public void do_popup_generic() {
 		ImageMenuItem imi;
-		menu = new Menu();
+		menu = new Gtk.Menu();
 
 		// XXX: most of this should be done in a tab panel or so
 		imi = new ImageMenuItem.from_stock("Copy", null);

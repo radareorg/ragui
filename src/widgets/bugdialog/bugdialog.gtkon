@@ -9,7 +9,7 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 		ScrolledWindow can-focus $.scroll padding=3
 				hscrollbar-policy="{PolicyType.AUTOMATIC}"
 				vscrollbar-policy="{PolicyType.AUTOMATIC}" {
-			TextView can-focus editable $.body wrap-mode=WrapMode.WORD;
+			TextView can-focus editable $.body;
 		}
 		HBox !expand spacing=3 {
 			ComboBox !expand $bugtype text;
@@ -110,7 +110,8 @@ Window $BugDialog.Widget using=Gtk using:Radare=Radare {
 		subject = Base64.encode (subject.data);
 		message = Base64.encode (message.data);
 		// send //
-		RSocket.http_post (uri, @"from=$from&title=$subject&body=$message", out code);
+		int rlen;
+		RSocket.http_post (uri, @"from=$from&title=$subject&body=$message", out code, out rlen);
 	}
 
 	public signal void message (string msg, bool pini);

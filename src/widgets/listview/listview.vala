@@ -83,7 +83,7 @@ public class Listview.Widget : ScrolledWindow {
 				break;
 			}
 		}
-		var menu = new Menu();
+		var menu = new Gtk.Menu();
 		menu_construct ();
 		foreach (var str in this.actions) {
 			var imi = new ImageMenuItem.with_label (str);
