@@ -54,7 +54,7 @@ public class Ragui.GuiCore {
 
 	public int cmd (string cmd) {
 		int ret = gc.core.cmd0 (cmd);
-		gc.core.cons.flush ();
+		Radare.RCons.flush ();
 		return ret;
 	}
 
@@ -68,7 +68,7 @@ public class Ragui.GuiCore {
 			th = Thread.create <void*>( () => {
 				bgtask = true;
 				int ret = gc.core.cmd0 (cmd);
-				gc.core.cons.flush ();
+				Radare.RCons.flush ();
 				return null;
 			}, true);
 			//unowned Thread th2 = 

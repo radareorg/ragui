@@ -96,7 +96,7 @@ link: ${OFILES}
 
 vapi:
 	echo "  CC guicore.vapi" ; \
-	valac --library guicore \
+	valac --thread --library guicore \
 		--vapi widgets/include/guicore.vapi -H widgets/include/guicore.h \
 		guicore.vala --pkg r_core --pkg gtk+-2.0 -C
 
